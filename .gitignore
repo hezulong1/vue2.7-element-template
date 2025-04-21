@@ -1,0 +1,11 @@
+node_modules
+dist
+coverage
+package-lock.json
+pnpm-lock.yaml
+yarn.lock
+.DS_Store
+.idea
+.pnpm-debug.log*
+.eslintcache
+*.local
