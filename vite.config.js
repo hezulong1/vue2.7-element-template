@@ -2,10 +2,10 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { defineConfig } from 'vite';
-import vue from '@vitejs/plugin-vue2';
-import vueJsx from '@vitejs/plugin-vue2-jsx';
-import legacy from '@vitejs/plugin-legacy';
-import DefineOptions from 'unplugin-vue-define-options/vite';
+import Vue from '@vitejs/plugin-vue2';
+import VueJsx from '@vitejs/plugin-vue2-jsx';
+import VueLegacy from '@vitejs/plugin-legacy';
+import VueDefineOptions from 'unplugin-vue-define-options/vite';
 import autoprefixer from 'autoprefixer';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -20,10 +20,10 @@ export default defineConfig(({ mode }) => {
   return {
     base: isDev ? '/' : './',
     plugins: [
-      vue(),
-      vueJsx(),
-      DefineOptions(),
-      legacy({
+      Vue(),
+      VueJsx(),
+      VueDefineOptions(),
+      VueLegacy({
         targets: '>0.3%, Chrome>=58, IE>=10',
       }),
     ],

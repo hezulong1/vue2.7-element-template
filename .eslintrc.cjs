@@ -17,7 +17,6 @@ module.exports = {
   extends: 'h21/ts-vue2',
   rules: {
     'local/code-no-native-private': 2,
-    'local/code-perfer-dayjs': 2,
     'local/code-prefer-vueuse-core': 2,
     'no-restricted-imports': [2, { paths: restricted }],
     'unicorn/no-lonely-if': 0,

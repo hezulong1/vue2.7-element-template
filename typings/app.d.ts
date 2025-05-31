@@ -1,0 +1,16 @@
+/// <reference types="vite/client" />
+/// <reference types="unplugin-vue-define-options/macros-global" />
+
+interface ImportMetaEnv {
+
+}
+
+interface ImportMeta {
+  readonly env: ImportMetaEnv;
+}
+
+declare module '*.vue' {
+  import type { DefineComponent } from 'vue';
+  var component: DefineComponent;
+  export default component;
+}
