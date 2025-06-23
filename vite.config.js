@@ -28,9 +28,10 @@ export default defineConfig(({ mode }) => {
       }),
     ],
     resolve: {
-      alias: [
-        { find: '@/', replacement: `${path.join(__dirname, 'src')}/` },
-      ],
+      alias: {
+        '@': path.resolve(__dirname, 'src'),
+        'element-ui': path.resolve(__dirname, 'src/components/ui'),
+      },
     },
     build: {
       emptyOutDir: true,

@@ -12,7 +12,7 @@
     // Interop Constraints
     "isolatedModules": true,
     "esModuleInterop": true,
-    // "verbatimModuleSyntax": true,
+    "verbatimModuleSyntax": true,
     "forceConsistentCasingInFileNames": true,
 
     // Emit
@@ -26,7 +26,8 @@
     "rootDir": ".",
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "element-ui": ["src/components/ui/index.ts"]
     },
 
     // Type Checking
@@ -39,7 +40,23 @@
   },
   "vueCompilerOptions": {
     "target": 2.7,
-    "plugins": ["@vue-macros/volar/define-options"]
+    "plugins": ["@vue-macros/volar/define-options"],
+    // https://github.com/vuejs/language-tools/issues/1969
+    // https://github.com/vuejs/language-tools/issues/1821
+    "experimentalModelPropName": {
+      "": {
+        "input": true
+      },
+      "value": {
+        "input": { "type": "text" },
+        "textarea": true,
+        "select": true
+      },
+      "checked": {
+        "ElRadio": true,
+        "ElCheckbox": true
+      }
+    }
   },
   "include": [
     "src",

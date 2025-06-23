@@ -11,10 +11,12 @@
     "preview": "vite preview",
     "lint": "eslint .",
     "lint-fix": "eslint . --fix",
-    "prettier": "prettier \"**/*.{css,scss,json,md,html,yml}\""
+    "prettier": "prettier \"**/*.{css,scss,json,md,html,yml}\"",
+    "gen-ui": "node scripts/gen-ui.js"
   },
   "dependencies": {
     "@vueuse/core": "~11.3.0",
+    "async-validator": "^4.2.5",
     "normalize-wheel-es": "^1.2.0",
     "url-polyfill": "^1.1.12",
     "vue": "~2.7.16",
