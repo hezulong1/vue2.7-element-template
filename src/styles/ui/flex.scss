@@ -1,0 +1,63 @@
+@import '../mixins/mixins';
+
+@include b(flex) {
+  display: flex;
+  flex-direction: row;
+
+  @include m(inline) {
+    display: inline-flex;
+  }
+
+  @include m(reverse) {
+    flex-direction: row-reverse;
+  }
+
+  @include m(vertical) {
+    flex-direction: column;
+
+    @include m(reverse) {
+      flex-direction: column-reverse;
+    }
+  }
+
+  @include m(wrap) {
+    flex-wrap: wrap;
+  }
+
+  @include m(justify-start) {
+    justify-content: flex-start;
+  }
+
+  @include m(justify-between) {
+    justify-content: space-between;
+  }
+
+  @include m(justify-evenly) {
+    justify-content: space-evenly;
+  }
+
+  @include m(justify-around) {
+    justify-content: space-around;
+  }
+
+  @include m(justify-center) {
+    justify-content: center;
+  }
+
+  @include m(justify-end) {
+    justify-content: flex-end;
+  }
+
+  @include m(items-center) {
+    align-items: center;
+  }
+
+  @include m(items-start) {
+    align-items: flex-start;
+  }
+
+  @include m(items-end) {
+    align-items: flex-end;
+  }
+}
+

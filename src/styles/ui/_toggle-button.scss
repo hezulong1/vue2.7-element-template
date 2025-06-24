@@ -1,0 +1,82 @@
+@import '../mixins/mixins';
+
+@include b(toggle-button) {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  border: 1px solid $--button-default-border-color;
+  border-radius: $--button-border-radius;
+  background-color: $--button-default-background-color;
+
+  line-height: 1;
+  vertical-align: middle;
+  text-align: center;
+  font-weight: 500;
+  white-space: nowrap;
+  color: $--button-default-font-color;
+
+  appearance: none;
+  box-sizing: border-box;
+  outline: none;
+  user-select: none;
+  cursor: pointer;
+
+  font-size: $--button-font-size;
+  padding: $--button-padding-vertical $--button-padding-horizontal;
+
+  &:hover {
+    color: $--toggle-button-hover-color;
+  }
+
+  @include e(inner) {
+    position: absolute;
+    top: -1px; right: -1px; bottom: -1px; left: -1px;
+    z-index: 1;
+    border-radius: $--button-border-radius;
+  }
+
+  @include e(original) {
+    opacity: 0;
+    outline: none;
+    position: absolute;
+    margin: 0;
+    width: 0;
+    height: 0;
+    z-index: -1;
+
+    &:focus-visible + .#{$namespace}-toggle-button__inner {
+      outline: 2px solid $--color-primary-light-5;
+      outline-offset: 1px;
+    }
+  }
+
+  @include e(label) {
+    font-size: inherit;
+  }
+
+  @include when(checked) {
+    background-color: $--toggle-button-checked-background-color;
+    border-color: $--toggle-button-checked-border-color;
+    color: $--toggle-button-checked-font-color;
+  }
+
+  @include when(disabled) {
+    cursor: not-allowed;
+    background-color: $--button-disabled-background-color;
+    border-color: $--button-disabled-border-color;
+    color: $--button-disabled-font-color;
+
+    &.is-checked {
+      background-color: mix($--toggle-button-checked-background-color, $--color-white);
+      border-color: mix($--toggle-button-checked-background-color, $--color-white);
+      color: $--toggle-button-checked-font-color;
+    }
+  }
+
+  @include m(small) {
+    padding: $--button-small-padding-vertical $--button-small-padding-horizontal;
+    font-size: $--button-small-font-size;
+  }
+}

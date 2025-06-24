@@ -1,0 +1,240 @@
+@import '../common/var';
+@import '../mixins/button';
+@import '../mixins/mixins';
+@import '../mixins/utils';
+
+@include b(button) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  border: 1px solid transparent;
+  border-radius: $--button-border-radius;
+
+  line-height: 1;
+  vertical-align: middle;
+  text-align: center;
+  font-weight: 500;
+  white-space: nowrap;
+
+  appearance: none;
+  box-sizing: border-box;
+  outline: none;
+  user-select: none;
+  cursor: pointer;
+
+  font-size: $--button-font-size;
+  padding: $--button-padding-vertical $--button-padding-horizontal;
+
+  .#{$namespace}-icon:not(.#{$namespace}-icon--left) {
+    font-size: 1.2em;
+  }
+
+  &::-moz-focus-inner {
+    border: 0;
+  }
+
+  &:focus-visible {
+    outline: 2px solid transparent;
+    outline-offset: 1px;
+  }
+
+  @include when(loading) {
+    position: relative;
+    pointer-events: none;
+
+    &:before {
+      pointer-events: none;
+      content: '';
+      position: absolute;
+      left: -1px;
+      top: -1px;
+      right: -1px;
+      bottom: -1px;
+      border-radius: inherit;
+      background-color: rgba(255,255,255,.35);
+    }
+  }
+
+  @include when(square) {
+    width: $--component-size;
+    height: $--component-size;
+    padding: 0;
+  }
+
+  @include when(block) {
+    width: 100% !important;
+  }
+
+  @include m(small) {
+    padding: $--button-small-padding-vertical $--button-small-padding-horizontal;
+    font-size: $--button-small-font-size;
+
+    @include when(square) {
+      width: $--component-small-size;
+      height: $--component-small-size;
+    }
+  }
+
+  @include when(disabled) {
+    cursor: not-allowed;
+  }
+
+  @include when(link) {
+    padding: 2px;
+
+    &,
+    &:hover,
+    &:active {
+      background-color: transparent !important;
+      border-color: transparent !important;
+    }
+  }
+
+  @include when(text) {
+    background-color: transparent;
+    border-color: transparent;
+
+    &:hover {
+      background-color: $--fill-light;
+      border-color: $--fill-light;
+    }
+
+    &:active,
+    &.is-active {
+      background-color: $--fill-base;
+      border-color: $--fill-base;
+    }
+
+    @include when(has-bg) {
+      background-color: $--fill-light;
+
+      &:hover {
+        background-color: $--fill-base;
+        border-color: $--fill-base;
+      }
+
+      &:active,
+      &.is-active {
+        background-color: $--fill-dark;
+        border-color: $--fill-dark;
+      }
+    }
+
+    &.is-disabled,
+    &.is-loading {
+      background-color: transparent !important;
+      border-color: transparent !important;
+    }
+  }
+
+  // Theme
+
+  @include m(default) {
+    background-color: $--button-default-background-color;
+    border-color: $--button-default-border-color;
+    color: $--button-default-font-color;
+
+    &:hover {
+      background-color: $--color-primary-light-9;
+      border-color: $--color-primary-light-7;
+      color: $--color-primary;
+    }
+
+    &:active,
+    &.is-active {
+      border-color: shade-color($--color-primary, $--button-active-shade-percent);
+      color: shade-color($--color-primary, $--button-active-shade-percent);
+    }
+
+    &:focus-visible {
+      outline-color: $--color-primary-light-5;
+    }
+
+    @include when(disabled) {
+      &,
+      &:hover,
+      &:focus {
+        background-color: $--button-disabled-background-color;
+        border-color: $--button-disabled-border-color;
+        color: $--button-disabled-font-color;
+      }
+    }
+
+    @include when(plain) {
+      &:not(.is-disabled) {
+        &:hover {
+          background-color: $--color-white;
+          border-color: $--color-primary;
+        }
+
+        &:active,
+        &.is-active {
+          background-color: $--color-white;
+          border-color: shade-color($--color-primary, $--button-active-shade-percent);
+        }
+      }
+    }
+
+    @include when(text) {
+      &,
+      &:hover,
+      &:active,
+      &.is-active {
+        color: $--button-default-font-color;
+      }
+
+      @include when(disabled) {
+        color: $--button-disabled-font-color;
+      }
+    }
+
+    @include when(link) {
+      &:not(.is-disabled) {
+        &:hover {
+          color: $--button-default-link-hover-color
+        }
+
+        &:active {
+          color: $--button-default-link-active-color;
+        }
+      }
+    }
+  }
+
+  @include m(primary) {
+    @include button-variant(
+      $--button-primary-font-color,
+      $--button-primary-background-color,
+      $--button-primary-border-color
+    );
+  }
+  @include m(success) {
+    @include button-variant(
+      $--button-success-font-color,
+      $--button-success-background-color,
+      $--button-success-border-color
+    );
+  }
+  @include m(warning) {
+    @include button-variant(
+      $--button-warning-font-color,
+      $--button-warning-background-color,
+      $--button-warning-border-color
+    );
+  }
+  @include m(danger) {
+    @include button-variant(
+      $--button-danger-font-color,
+      $--button-danger-background-color,
+      $--button-danger-border-color
+    );
+  }
+  @include m(info) {
+    @include button-variant(
+      $--button-info-font-color,
+      $--button-info-background-color,
+      $--button-info-border-color
+    );
+  }
+}

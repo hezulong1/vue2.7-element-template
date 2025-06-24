@@ -1,0 +1,40 @@
+@import '../mixins/mixins';
+
+.#{$namespace}-icon-loading {
+  animation: rotating 2s linear infinite;
+}
+.#{$namespace}-icon--right {
+  margin-left: 4px;
+}
+.#{$namespace}-icon--left {
+  margin-right: 4px;
+}
+
+@keyframes rotating {
+  100% {
+    transform: rotateZ(1turn);
+  }
+}
+
+@include b(icon) {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+
+  height: 1em;
+  width: 1em;
+  line-height: 1em;
+
+  position: relative;
+  fill: currentColor;
+  font-size: inherit;
+
+  @include when(loading) {
+    animation: rotating 2s linear infinite;
+  }
+
+  svg {
+    height: 1em;
+    width: 1em;
+  }
+}

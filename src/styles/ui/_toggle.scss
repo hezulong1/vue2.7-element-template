@@ -1,0 +1,261 @@
+@import '../mixins/mixins';
+
+@include b(toggle) {
+  color: $--toggle-font-color;
+  font-weight: 500;
+  font-size: $--toggle-font-size;
+  position: relative;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
+  user-select: none;
+  outline: none;
+  margin-right: 8px;
+  height: $--component-size;
+  vertical-align: middle;
+
+  &:last-of-type {
+    margin-right: 0;
+  }
+
+  @include e(inner) {
+    display: inline-block;
+    position: relative;
+    border: $--toggle-input-border;
+    box-sizing: border-box;
+    width: $--toggle-input-width;
+    height: $--toggle-input-height;
+    background-color: $--toggle-input-background-color;
+    z-index: 1;
+    transition:
+      border-color .25s cubic-bezier(.71,-.46,.29,1.46),
+      background-color .25s cubic-bezier(.71,-.46,.29,1.46);
+
+    &:hover {
+      border-color: $--toggle-hover-input-border-color;
+    }
+  }
+
+  @include e(original) {
+    opacity: 0;
+    outline: none;
+    position: absolute;
+    margin: 0;
+    width: 0;
+    height: 0;
+    z-index: -1;
+
+    // top: 0;
+    // left: 0;
+    // right: 0;
+    // bottom: 0;
+
+    &:focus-visible + .#{$namespace}-toggle__inner {
+      outline: 2px solid $--color-primary-light-5;
+      outline-offset: 1px;
+    }
+  }
+
+  @include e(input) {
+    display: flex;
+    position: relative;
+  }
+
+  @include e(label) {
+    padding: 0 8px;
+    font-size: inherit;
+  }
+
+  @include when(focus) {
+    &:not(.is-checked) {
+      .#{$namespace}-toggle__original:not(:focus-visible) + .#{$namespace}-toggle__inner {
+        border-color: $--toggle-hover-input-border-color;
+      }
+    }
+  }
+
+  @include when(checked) {
+    @include e(inner) {
+      background-color: $--toggle-checked-input-background-color;
+      border-color: $--toggle-checked-input-border-color;
+    }
+
+    @include e(label) {
+      color: $--toggle-checked-font-color;
+    }
+  }
+
+  @include when(indeterminate) {
+    @include e(inner) {
+      background-color: $--toggle-checked-input-background-color;
+      border-color: $--toggle-checked-input-border-color;
+
+      &::before {
+        content: '';
+        position: absolute;
+        display: block;
+        background-color: $--toggle-checked-icon-color;
+        height: 2px;
+        transform: scale(0.5);
+        left: 0;
+        right: 0;
+        top: 5px;
+      }
+
+      &::after {
+        display: none;
+      }
+    }
+  }
+
+  @include when(disabled) {
+    cursor: not-allowed;
+
+    @include e(inner) {
+      background-color: $--toggle-disabled-input-background-color;
+      border-color: $--toggle-disabled-input-border-color;
+    }
+
+    @include e(label) {
+      color: $--disabled-color-base;
+    }
+
+    // &.is-checked {
+    //   .#{$namespace}-toggle__inner {
+    //     background-color: $--toggle-disabled-checked-input-background-color;
+    //     border-color: $--toggle-disabled-checked-input-border-color;
+    //   }
+    // }
+
+    &.is-indeterminate {
+      .#{$namespace}-toggle__inner {
+        // background-color: $--toggle-disabled-checked-input-background-color;
+        // border-color: $--toggle-disabled-checked-input-border-color;
+
+        &::before {
+          background-color: $--toggle-disabled-checked-icon-color;
+          // border-color: $--toggle-disabled-checked-icon-color;
+        }
+      }
+    }
+  }
+
+  @at-root {
+    .#{$namespace}-checkbox {
+      .#{$namespace}-toggle__inner {
+        border-radius: $--toggle-checkbox-input-border-radius;
+
+        &::after {
+          box-sizing: content-box;
+          content: '';
+          border: 1px solid $--toggle-checked-icon-color;
+          border-left: 0;
+          border-top: 0;
+          height: 7px;
+          left: 4px;
+          position: absolute;
+          top: 1px;
+          transform: rotate(45deg) scaleY(0);
+          width: 3px;
+          transition: transform .15s ease-in .05s;
+          transform-origin: center;
+        }
+      }
+
+      @include when(checked) {
+        @include e(inner) {
+          &:after {
+            transform: rotate(45deg) scaleY(1);
+          }
+        }
+      }
+
+      @include when(disabled) {
+        @include e(inner) {
+          &::after {
+            border-color: $--toggle-disabled-icon-color;
+          }
+        }
+
+        // &.is-checked {
+        //   .#{$namespace}-toggle__inner {
+        //     &::after {
+        //       border-color: $--toggle-disabled-checked-icon-color;
+        //     }
+        //   }
+        // }
+      }
+    }
+
+    .#{$namespace}-radio {
+      .#{$namespace}-toggle__inner {
+        border-radius: $--toggle-radio-input-border-radius;
+
+        &::after {
+          width: 4px;
+          height: 4px;
+          border-radius: $--toggle-radio-input-border-radius;
+          background-color: $--toggle-checked-icon-color;
+          content: '';
+          position: absolute;
+          left: 50%;
+          top: 50%;
+          transform: translate(-50%, -50%) scale(0);
+          transition: transform .15s ease-in;
+        }
+      }
+
+      @include when(checked) {
+        @include e(inner) {
+          &::after {
+            transform: translate(-50%, -50%) scale(1);
+          }
+        }
+      }
+
+      @include when(disabled) {
+        @include e(inner) {
+          &::after {
+            background-color: $--toggle-disabled-icon-color;
+          }
+        }
+
+        // &.is-checked {
+        //   .#{$namespace}-toggle__inner {
+        //     &::after {
+        //       background-color: $--toggle-disabled-checked-icon-color;
+        //     }
+        //   }
+        // }
+      }
+    }
+  }
+
+  @include m(small) {
+    font-size: $--toggle-small-font-size;
+    height: $--component-small-size;
+
+    @include e(inner) {
+      height: $--toggle-small-input-height;
+      width: $--toggle-small-input-width;
+    }
+
+    @include when(indeterminate) {
+      @include e(inner) {
+        &::before {
+          top: 4px;
+        }
+      }
+    }
+
+    &.#{$namespace}-checkbox {
+      @include e(inner) {
+        &::after {
+          width: 2px;
+          height: 6px;
+        }
+      }
+    }
+  }
+}
