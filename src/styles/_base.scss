@@ -1,0 +1,97 @@
+*, *:before, *:after {
+  box-sizing: border-box;
+}
+
+* {
+  margin: 0;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  -moz-tab-size: 4;
+  tab-size: 4;
+  font-feature-settings: normal;
+  font-variation-settings: normal;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    interpolate-size: allow-keywords;
+  }
+}
+
+body {
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+img, picture, video, canvas, svg {
+  display: block;
+  max-width: 100%;
+}
+
+input, button, textarea, select {
+  font: inherit;
+}
+
+p, h1, h2, h3, h4, h5, h6 {
+  overflow-wrap: break-word;
+}
+
+p {
+  text-wrap: pretty;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  text-wrap: balance;
+}
+
+// Use the modern Firefox focus style for all focusable elements.
+:-moz-focusring {
+  outline: auto;
+}
+
+// Remove the additional `:invalid` styles in Firefox. (https://github.com/mozilla/gecko-dev/blob/2f9eacd9d3d995c937b4251a5557d95d494c9be1/layout/style/res/forms.css#L728-L737)
+:-moz-ui-invalid {
+  box-shadow: none;
+}
+
+// Correct the cursor style of increment and decrement buttons in Safari.
+::-webkit-inner-spin-button,
+::-webkit-outer-spin-button {
+  height: auto;
+}
+
+// Make sure disabled buttons don't get the pointer cursor.
+:disabled {
+  cursor: default;
+}
+
+// Make elements with the HTML hidden attribute stay hidden by default.
+[hidden]:where(:not([hidden="until-found"])) {
+  display: none !important;
+}
+
+#app {
+  isolation: isolate;
+}
+
+iframe {
+  border-style: none;
+}
+
+ol, ul, menu {
+  list-style: none;
+}
+
+table {
+  text-indent: 0;
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+a {
+  text-decoration: none;
+}
