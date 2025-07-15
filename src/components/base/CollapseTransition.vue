@@ -5,12 +5,16 @@ type RendererElement = any;
 
 export default defineComponent({
   functional: true,
-  render(h, { children }) {
+  props: {
+    fade: Boolean,
+  },
+  render(h, { props, children }) {
     const reset = (el: RendererElement) => {
       el.style.maxHeight = '';
       el.style.overflow = el.dataset.oldOverflow;
       el.style.paddingTop = el.dataset.oldPaddingTop;
       el.style.paddingBottom = el.dataset.oldPaddingBottom;
+      el.style.opacity = el.dataset.oldOpacity;
     };
 
     const data = {
@@ -25,20 +29,17 @@ export default defineComponent({
           el.dataset.oldPaddingBottom = el.style.paddingBottom;
           if (el.style.height) el.dataset.elExistsHeight = el.style.height;
 
+          if (props.fade) {
+            el.dataset.oldOpacity = el.style.opacity;
+            el.style.opacity = '0';
+          }
+
           el.style.maxHeight = '0';
           el.style.paddingTop = '0';
           el.style.paddingBottom = '0';
         },
 
         enter(el: RendererElement) {
-          el.dataset.oldOverflow = el.style.overflow;
-          if (el.scrollHeight !== 0) {
-            el.style.height = el.scrollHeight + 'px';
-          } else {
-            el.style.height = '';
-          }
-
-          el.style.overflow = 'hidden';
           requestAnimationFrame(() => {
             el.dataset.oldOverflow = el.style.overflow;
             if (el.dataset.elExistsHeight) {
@@ -47,6 +48,10 @@ export default defineComponent({
               el.style.maxHeight = `${el.scrollHeight}px`;
             } else {
               el.style.maxHeight = '0';
+            }
+
+            if (props.fade) {
+              el.style.opacity = el.dataset.oldOpacity || '1';
             }
 
             el.style.paddingTop = el.dataset.oldPaddingTop;
@@ -58,6 +63,7 @@ export default defineComponent({
         afterEnter(el: RendererElement) {
           el.style.maxHeight = '';
           el.style.overflow = el.dataset.oldOverflow;
+          el.style.opacity = el.dataset.oldOpacity;
         },
 
         enterCancelled(el: RendererElement) {
@@ -69,6 +75,7 @@ export default defineComponent({
           el.dataset.oldPaddingTop = el.style.paddingTop;
           el.dataset.oldPaddingBottom = el.style.paddingBottom;
           el.dataset.oldOverflow = el.style.overflow;
+          el.dataset.oldOpacity = el.style.opacity;
 
           el.style.maxHeight = `${el.scrollHeight}px`;
           el.style.overflow = 'hidden';
@@ -79,6 +86,9 @@ export default defineComponent({
             el.style.maxHeight = '0';
             el.style.paddingTop = '0';
             el.style.paddingBottom = '0';
+            if (props.fade) {
+              el.style.opacity = '0';
+            }
           }
         },
 
@@ -100,6 +110,10 @@ export default defineComponent({
 <style>
 .el-collapse-transition-leave-active,
 .el-collapse-transition-enter-active {
-  transition: 0.3s max-height ease-in-out, 0.3s padding-top ease-in-out, 0.3s padding-bottom ease-in-out;
+  transition:
+    0.3s max-height ease-in-out,
+    0.3s opacity ease-in-out,
+    0.3s padding-top ease-in-out,
+    0.3s padding-bottom ease-in-out;
 }
 </style>
