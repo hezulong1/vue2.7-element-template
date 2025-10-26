@@ -38,8 +38,9 @@
     "strict": true,
     "useUnknownInCatchVariables": false
   },
+  // Vue(Official)@3.0.0
   "vueCompilerOptions": {
-    "target": 2.7,
+    "target": "auto",
     "plugins": ["@vue-macros/volar/define-options"],
     // https://github.com/vuejs/language-tools/issues/1969
     // https://github.com/vuejs/language-tools/issues/1821

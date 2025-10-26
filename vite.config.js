@@ -42,7 +42,7 @@ export default defineConfig(({ mode }) => {
           manualChunks(id) {
             if (id.includes('node_modules')) {
               return 'vendor';
-            } else if (id.includes('element-ui')) {
+            } else if (id.includes('components/ui')) {
               return 'element-ui';
             }
           },

@@ -5,6 +5,10 @@ const restricted = [
     name: '@vueuse/core',
     importNames: ['isIOS', 'hasOwn'],
   },
+  {
+    name: '@vue/shared',
+    message: '通过 `src/utils` 导出使用',
+  },
 ];
 
 const dependencies = Object.keys(pkg.dependencies)
@@ -42,6 +46,12 @@ module.exports = {
       rules: {
         'no-alert': 0,
         'no-console': 0,
+        'no-restricted-imports': 0,
+      },
+    },
+    {
+      files: ['src/utils/**/*'],
+      rules: {
         'no-restricted-imports': 0,
       },
     },
