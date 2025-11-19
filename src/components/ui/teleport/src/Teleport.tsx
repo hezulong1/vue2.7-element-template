@@ -1,4 +1,3 @@
-<script lang="tsx">
 // Github: https://github.com/lixl39505/teleport-vue2
 // Blog: https://juejin.cn/post/7363579190971482162
 
@@ -9,12 +8,12 @@ import type { PropType } from 'vue';
 import { defineComponent, getCurrentInstance, onMounted, onUnmounted, onUpdated } from 'vue';
 import { OnlyChild as ElOnlyChild } from '../../slot';
 
-interface InternalStatus {
+interface InternalState {
   teleported: boolean;
   lastTo: string | HTMLElement;
-  originalEl: Node | null | undefined; // 合并 rootEl 和 dumbEl 类型
+  parentEl: Node | null | undefined; // 兼容 $vnode.elm 和 element.insertBefore 类型
   rootEl: Node | undefined; // 兼容 $vnode.elm
-  dumbEl: Node | null; // 兼容 element.insertBefore
+  dumbEl: Node;
 }
 
 export default defineComponent({
@@ -27,11 +26,11 @@ export default defineComponent({
     },
     disabled: Boolean,
   },
-  setup(props) {
-    const status: InternalStatus = {
+  setup(props, { slots }) {
+    const state: InternalState = {
       teleported: false,
       lastTo: '',
-      originalEl: null,
+      parentEl: null,
       rootEl: void 0,
       dumbEl: document.createComment(' el-teleport '),
     };
@@ -40,35 +39,36 @@ export default defineComponent({
 
     const restore = () => {
       if (!vm) return;
-      if (!status.teleported) return;
+      if (!state.teleported) return;
 
-      vm.$vnode.elm = status.rootEl;
-      status.teleported = false;
-      status.lastTo = '';
-      if (!status.originalEl) return;
-      status.rootEl && status.originalEl.insertBefore(status.rootEl, status.dumbEl);
-      status.dumbEl?.parentNode?.removeChild(status.dumbEl);
+      vm.$vnode.elm = state.rootEl;
+      state.teleported = false;
+      state.lastTo = '';
+
+      if (!state.parentEl) return;
+      state.rootEl && state.parentEl.insertBefore(state.rootEl, state.dumbEl);
+      state.dumbEl.parentNode?.removeChild(state.dumbEl);
     };
 
     const teleport = () => {
       if (!vm) return;
-      if (!status.rootEl || !status.originalEl || !status.dumbEl) return;
-      if (!status.teleported) status.originalEl.insertBefore(status.dumbEl, status.rootEl);
+      if (!state.rootEl || !state.parentEl) return;
+      if (!state.teleported) state.parentEl.insertBefore(state.dumbEl, state.rootEl);
 
-      vm.$vnode.elm = status.dumbEl;
-      status.teleported = true;
+      vm.$vnode.elm = state.dumbEl;
+      state.teleported = true;
 
       let targetEl;
-      if (props.to !== status.lastTo) targetEl = typeof props.to === 'string' ? document.querySelector(props.to) : props.to;
+      if (props.to !== state.lastTo) targetEl = typeof props.to === 'string' ? document.querySelector(props.to) : props.to;
       if (!targetEl) return;
-      targetEl.appendChild(status.rootEl);
-      status.lastTo = props.to;
+      targetEl.appendChild(state.rootEl);
+      state.lastTo = props.to;
     };
 
     const onEnter = () => {
       // @ts-expect-error 调用私有属性
-      status.rootEl = vm._vnode.elm;
-      status.originalEl = status.teleported ? status.dumbEl?.parentNode : status.rootEl?.parentNode;
+      state.rootEl = vm._vnode.elm;
+      state.parentEl = state.teleported ? state.dumbEl?.parentNode : state.rootEl?.parentNode;
       props.disabled ? restore() : teleport();
     };
 
@@ -81,16 +81,16 @@ export default defineComponent({
     });
 
     onUnmounted(() => {
-      status.dumbEl?.parentNode?.removeChild(status.dumbEl);
-      status.rootEl?.parentNode?.removeChild(status.rootEl);
-      status.rootEl = void 0;
-      status.dumbEl = null;
+      state.dumbEl.parentNode?.removeChild(state.dumbEl);
+      state.rootEl?.parentNode?.removeChild(state.rootEl);
+      state.rootEl = void 0;
+      state.parentEl = null;
     });
 
-    return {};
-  },
-  render(h) {
-    return <ElOnlyChild>{ this.$slots.default }</ElOnlyChild>;
+    return () => (
+      <ElOnlyChild>
+        { slots.default?.() }
+      </ElOnlyChild>
+    );
   },
 });
-</script>

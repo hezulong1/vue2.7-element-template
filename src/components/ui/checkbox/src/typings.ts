@@ -1,8 +1,7 @@
 import type { ComputedRef } from 'vue';
-import type { AcceptableValue } from '@/utils/typingUtils';
 import type { ComponentSize } from '@/components/base/ConfigProvider';
 
-export type CheckboxValue = Exclude<AcceptableValue, boolean>;
+export type CheckboxValue = string | number | Record<string, any>;
 
 export interface CheckboxGroupContext<T extends CheckboxValue = CheckboxValue> {
   modelValue: ComputedRef<T[]>;

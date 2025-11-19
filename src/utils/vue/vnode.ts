@@ -1,9 +1,14 @@
 import type { VNode, VNodeData } from 'vue';
 import { isObject, hasOwn, normalizeStyle, normalizeClass } from '@vue/shared';
-import { isNonEmptyArray } from '../types';
+import { isNotEmptyArray } from '../types';
+
+// take from /core/vdom/helpers/is-async-placeholder
+export function isAsyncPlaceholder(node: VNode): boolean {
+  return node.isComment && (<any>node).asyncFactory;
+}
 
 export function isVNode(value: any): value is VNode {
-  return isObject(value) && hasOwn(value, 'componentOptions') && hasOwn(value, 'context');
+  return isObject(value) && (hasOwn(value, 'componentOptions') || isAsyncPlaceholder(value as VNode));
 }
 
 export function isEmptyVNode(vnode: VNode): boolean {
@@ -57,11 +62,11 @@ function _cloneVNode(vnode: VNode): VNode {
 
 function _deepCloneVNode(vnode: VNode): VNode {
   const cloned = _cloneVNode(vnode);
-  if (isNonEmptyArray(vnode.children)) {
+  if (isNotEmptyArray(vnode.children)) {
     cloned.children = vnode.children.map(_deepCloneVNode);
   }
-  if (isNonEmptyArray(vnode.componentOptions?.children)) {
-    cloned.componentOptions!.children = vnode.componentOptions.children.map(_deepCloneVNode);
+  if (isNotEmptyArray(vnode.componentOptions?.children)) {
+    cloned.componentOptions!.children = vnode.componentOptions!.children.map(_deepCloneVNode);
   }
   return cloned;
 }
@@ -126,7 +131,7 @@ export function cloneVNode(vnode: VNode, extraProps?: ExtraProps | null, deep?: 
     directives: mergedDirectives,
   });
 
-  const children = isNonEmptyArray(extraProps.children) ? extraProps.children : null;
+  const children = isNotEmptyArray(extraProps.children) ? extraProps.children : null;
 
   if (node.componentOptions) {
     let mergedProps = node.componentOptions.propsData;

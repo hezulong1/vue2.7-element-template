@@ -1,1 +1,1 @@
-export { default as Teleport } from './src/Teleport.vue';
+export { default as Teleport } from './src/Teleport';

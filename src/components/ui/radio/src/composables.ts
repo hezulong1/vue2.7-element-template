@@ -1,10 +1,14 @@
-import type { InjectionKey } from 'vue';
 import type { RadioGroupContext, RadioValue } from './typings';
+import { inject, provide } from 'vue';
 
-import { inject } from 'vue';
+const radioGroupContextKey = Symbol('radioGroupContext');
 
-export const radioGroupContextKey = 'elRadioGroupContextKey' as unknown as InjectionKey<RadioGroupContext>;
+export function provideRadioGroup<T extends RadioValue>(context: RadioGroupContext<T>) {
+  provide(radioGroupContextKey, context);
+}
 
-export function useRadioGroup<T extends RadioValue = RadioValue>() {
-  return inject(radioGroupContextKey, undefined) as unknown as RadioGroupContext<T>;
+export function useRadioGroup<T extends RadioValue>(): RadioGroupContext<T> | undefined;
+export function useRadioGroup<T extends RadioValue>(fallback: RadioGroupContext<T>): RadioGroupContext<T>;
+export function useRadioGroup<T extends RadioValue>(fallback?: RadioGroupContext<T>) {
+  return inject(radioGroupContextKey, fallback);
 }

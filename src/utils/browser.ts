@@ -1,7 +1,7 @@
 const userAgent = navigator.userAgent;
 
 export const isWindows = /*@__PURE__*/(userAgent.indexOf('Windows') >= 0);
-export const isMacintosh = /*@__PURE__*/(userAgent.indexOf('Macintosh') >= 0);
+export const isMac = /*@__PURE__*/(userAgent.indexOf('Macintosh') >= 0);
 export const isLinux = /*@__PURE__*/(userAgent.indexOf('Linux') >= 0);
 
 export const isFirefox = /*@__PURE__*/(userAgent.indexOf('Firefox') >= 0);

@@ -1,15 +1,15 @@
-import { createContext } from '@/composables/create-context';
+import { inject, provide } from 'vue';
 
-const [provider, injection] = createContext('forwardRefSetter');
+const forwardRefSetterContextKey = Symbol('forwardRefSetterContext');
 
 export type ForwardRefSetter<T = Element> = (el: T | null) => void;
 
-export function providerForwardRefSetter<T = Element>(setForwardRef: ForwardRefSetter<T>) {
-  provider(setForwardRef);
+export function provideForwardRefSetter<T = Element>(setForwardRef: ForwardRefSetter<T>) {
+  provide(forwardRefSetterContextKey, setForwardRef);
 }
 
 export function useForwardRefSetter<T = Element>(): ForwardRefSetter<T> | undefined;
 export function useForwardRefSetter<T = Element>(fallback: ForwardRefSetter<T>): ForwardRefSetter<T>;
 export function useForwardRefSetter<T>(fallback?: ForwardRefSetter<T>) {
-  return injection(fallback);
+  return inject(forwardRefSetterContextKey, fallback);
 }

@@ -1,10 +1,12 @@
 import { isClient } from '@vueuse/core';
-import { randomString } from './string';
+import { customAlphabet } from './nanoid';
+
+const nanoid = customAlphabet('scrollbar', 5);
 
 export const supportCustomizeScrollbar = (() => {
   if (!isClient) return false;
 
-  const id = randomString(5, 'cs');
+  const id = nanoid();
   const el = document.createElement('div');
 
   el.id = id;

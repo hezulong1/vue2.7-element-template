@@ -6,13 +6,13 @@
 
 <script setup lang="ts" generic="T extends RadioValue">
 import type { PropType } from 'vue';
-import type { RadioGroupContext, RadioValue } from './typings';
+import type { RadioValue } from './typings';
 
-import { computed, nextTick, provide, watch } from 'vue';
+import { computed, nextTick, watch } from 'vue';
 import { useSizeProp } from '@/components/base/ConfigProvider';
 import { useId } from '@/composables/useId';
 import { useFormItem } from '../../form';
-import { radioGroupContextKey } from './composables';
+import { provideRadioGroup } from './composables';
 
 defineOptions({
   name: 'ElRadioGroup',
@@ -53,7 +53,7 @@ const idRef = useId(props.id);
 const radioId = useId(undefined, idRef.value);
 const nameRef = computed(() => props.name || radioId.value);
 
-provide<RadioGroupContext<T>>(radioGroupContextKey, {
+provideRadioGroup<T>({
   modelValue: computed(() => modelValue.value),
   disabled: computed(() => props.disabled),
   button: computed(() => props.button),

@@ -6,14 +6,14 @@
 
 <script setup lang="ts" generic="T extends CheckboxValue">
 import type { PropType } from 'vue';
-import type { CheckboxGroupContext, CheckboxValue } from './typings';
+import type { CheckboxValue } from './typings';
 
-import { computed, nextTick, provide, watch } from 'vue';
+import { computed, nextTick, watch } from 'vue';
 import { isDefined } from '@vueuse/core';
 import { useSizeProp } from '@/components/base/ConfigProvider';
 import { useId } from '@/composables/useId';
 import { useFormItem } from '../../form';
-import { checkboxGroupContextKey } from './composables';
+import { provideCheckboxGroup } from './composables';
 
 defineOptions({
   name: 'ElCheckboxGroup',
@@ -56,7 +56,7 @@ const idRef = useId(props.id);
 const checkboxId = useId(undefined, idRef.value);
 const nameRef = computed(() => props.name || checkboxId.value);
 
-provide<CheckboxGroupContext<T>>(checkboxGroupContextKey, {
+provideCheckboxGroup<T>({
   modelValue: computed(() => modelValue.value),
   disabled: computed(() => props.disabled),
   button: computed(() => props.button),

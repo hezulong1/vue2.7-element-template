@@ -1,9 +1,10 @@
-import { hasOwn, capitalize } from '@vue/shared';
+import { hasOwn } from '@vue/shared';
 import { isClient } from '@vueuse/core';
 import { cacheStringFunction } from './logic';
+import { capitalize } from './string';
 import { isNumber, isString, isNumeric } from './types';
 
-export function getWindow(e?: Node | UIEvent | null): Window {
+export function getWindow(e?: Node | UIEvent | null): Window & typeof globalThis {
   const candidateNode = e as Node | undefined | null;
   if (candidateNode?.ownerDocument?.defaultView) {
     return candidateNode.ownerDocument.defaultView.window;
@@ -54,26 +55,50 @@ export function addUnit(value?: string | number, defaultUnit = 'px') {
 }
 
 export function isHTMLElement(e: any): e is HTMLElement {
-  if (typeof HTMLElement === 'undefined') return false;
-  return !!e && e instanceof HTMLElement;
+  const window = getWindow(e);
+  if (typeof window.HTMLElement === 'undefined') return false;
+  return !!e && e instanceof window.HTMLElement;
 }
 
 export function isElement(e: any): e is Element {
-  if (typeof Element === 'undefined') return false;
-  return !!e && e instanceof Element;
+  const window = getWindow(e);
+  if (typeof window.Element === 'undefined') return false;
+  return !!e && e instanceof window.Element;
 }
 
-export function remove(...children: Element[]): void {
-  children.forEach((child) => {
-    if (!child) return;
+const _remove = (
+  () => typeof Element.prototype.remove === 'function'
+    ? (el: Node) => isElement(el) && el.remove()
+    : (el: Node) => el.parentNode?.removeChild(el)
+)();
 
-    if (child.remove) {
-      child.remove();
-    } else if (child.parentNode) {
-      child.parentNode.removeChild(child);
-    }
-  });
+export function remove(...children: (Node | undefined | null)[]): void {
+  for (const child of children) {
+    if (!child) continue;
+    _remove(child);
+  }
 }
+
+const _after = (targetEl: Element, node: Node) => {
+  const parentNode = targetEl.parentNode;
+  if (parentNode == null) return;
+
+  if (parentNode.lastChild === targetEl) {
+    parentNode.appendChild(node);
+  } else {
+    parentNode.insertBefore(node, targetEl.nextSibling);
+  }
+};
+
+export const after = (
+  () => typeof Element.prototype.after === 'function'
+    ? (targetEl: Element, ...children: Node[]) => targetEl.after(...children)
+    : (targetEl: Element, ...children: Node[]) => {
+        for (const child of children) {
+          _after(targetEl, child);
+        }
+      }
+)();
 
 let scrollbarSize: { width: number; height: number } | undefined;
 

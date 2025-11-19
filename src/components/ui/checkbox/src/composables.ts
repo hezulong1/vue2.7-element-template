@@ -1,10 +1,14 @@
-import type { InjectionKey } from 'vue';
 import type { CheckboxGroupContext, CheckboxValue } from './typings';
+import { inject, provide } from 'vue';
 
-import { inject } from 'vue';
+const checkboxGroupContextKey = Symbol('checkboxGroupContext');
 
-export const checkboxGroupContextKey = 'elCheckboxGroupContextKey' as unknown as InjectionKey<CheckboxGroupContext>;
+export function provideCheckboxGroup<T extends CheckboxValue>(context: CheckboxGroupContext<T>) {
+  provide(checkboxGroupContextKey, context);
+}
 
-export function useCheckboxGroup<T extends CheckboxValue = CheckboxValue>() {
-  return inject(checkboxGroupContextKey, undefined) as unknown as CheckboxGroupContext<T>;
+export function useCheckboxGroup<T extends CheckboxValue>(): CheckboxGroupContext<T> | undefined;
+export function useCheckboxGroup<T extends CheckboxValue>(fallback: CheckboxGroupContext<T>): CheckboxGroupContext<T>;
+export function useCheckboxGroup<T extends CheckboxValue>(fallback?: CheckboxGroupContext<T>) {
+  return inject(checkboxGroupContextKey, fallback);
 }
