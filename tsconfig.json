@@ -41,7 +41,6 @@
   // Vue(Official)@3.0.0
   "vueCompilerOptions": {
     "target": "auto",
-    "plugins": ["@vue-macros/volar/define-options"],
     // https://github.com/vuejs/language-tools/issues/1969
     // https://github.com/vuejs/language-tools/issues/1821
     "experimentalModelPropName": {

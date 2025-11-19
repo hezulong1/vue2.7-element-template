@@ -3,11 +3,11 @@
 
 <br>
 
-基于 Vue2.7 + ElementUI 的模板
+Vue2.7 模板
 
 ## 特征
 
 * 内置魔改版的 [ElementUI](./ElementUI.md)
-* 支持 IE10+ 以及现代浏览器
+* 支持 IE11 以及现代浏览器
 * 支持 Vue-Setup 语法
 * 支持 defineOptions 语法

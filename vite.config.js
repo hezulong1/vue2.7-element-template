@@ -21,11 +21,10 @@ export default defineConfig(({ mode }) => {
     base: isDev ? '/' : './',
     plugins: [
       Vue(),
+      // 编码规则: https://github.com/vuejs/jsx-vue2/blob/dev/packages/babel-plugin-transform-vue-jsx/README.md
       VueJsx(),
       VueDefineOptions(),
-      VueLegacy({
-        targets: '>0.3%, Chrome>=58, IE>=10',
-      }),
+      VueLegacy(),
     ],
     resolve: {
       alias: {
@@ -35,7 +34,7 @@ export default defineConfig(({ mode }) => {
     },
     build: {
       emptyOutDir: true,
-      cssTarget: 'chrome58',
+      cssTarget: ['defaults', 'chrome>=66', 'ie>=11'],
       minify: false,
       rollupOptions: {
         output: {
