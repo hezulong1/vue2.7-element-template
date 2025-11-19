@@ -5,7 +5,7 @@ import type { ElFormContext, ElFormItemContext } from './typings';
 
 import { computed, inject } from 'vue';
 import { toValue } from '@vueuse/core';
-import { useRawProp } from '@/composables/useRawProp';
+import { useRawProp } from '@/composables/use-prop';
 
 export const formContextKey = 'elFormContextKey' as unknown as InjectionKey<ElFormContext>;
 export const formItemContextKey = 'elFormItemContextKey' as unknown as InjectionKey<ElFormItemContext>;

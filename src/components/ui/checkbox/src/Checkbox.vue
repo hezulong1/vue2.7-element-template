@@ -36,8 +36,8 @@ import type { CheckboxValue } from './typings';
 import { computed, onMounted, ref, watch, watchEffect } from 'vue';
 import { isDefined } from '@vueuse/core';
 import { useSizeProp } from '@/components/base/ConfigProvider';
-import { useId } from '@/composables/useId';
-import { useRawProp } from '@/composables/useRawProp';
+import { useId } from '@/composables/use-id';
+import { useRawProp } from '@/composables/use-prop';
 import { useFormDisabled, useFormItem, useFormSize } from '../../form';
 import { useCheckboxGroup } from './composables';
 

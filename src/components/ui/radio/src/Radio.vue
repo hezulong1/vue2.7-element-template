@@ -29,7 +29,7 @@ import type { RadioValue } from './typings';
 import { computed, ref, watchEffect } from 'vue';
 import { isDefined } from '@vueuse/core';
 import { useSizeProp } from '@/components/base/ConfigProvider';
-import { useId } from '@/composables/useId';
+import { useId } from '@/composables/use-id';
 import { useFormDisabled, useFormSize } from '../../form';
 import { useRadioGroup } from './composables';
 

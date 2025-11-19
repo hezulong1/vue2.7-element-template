@@ -10,7 +10,7 @@ import type { RadioValue } from './typings';
 
 import { computed, nextTick, watch } from 'vue';
 import { useSizeProp } from '@/components/base/ConfigProvider';
-import { useId } from '@/composables/useId';
+import { useId } from '@/composables/use-id';
 import { useFormItem } from '../../form';
 import { provideRadioGroup } from './composables';
 

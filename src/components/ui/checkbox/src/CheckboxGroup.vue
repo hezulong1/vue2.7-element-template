@@ -11,7 +11,7 @@ import type { CheckboxValue } from './typings';
 import { computed, nextTick, watch } from 'vue';
 import { isDefined } from '@vueuse/core';
 import { useSizeProp } from '@/components/base/ConfigProvider';
-import { useId } from '@/composables/useId';
+import { useId } from '@/composables/use-id';
 import { useFormItem } from '../../form';
 import { provideCheckboxGroup } from './composables';
 
