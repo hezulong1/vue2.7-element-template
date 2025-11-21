@@ -2,7 +2,8 @@
 /// <reference types="unplugin-vue-define-options/macros-global" />
 
 interface ImportMetaEnv {
-
+  VITE_DEFAULT_LANGUAGE: string;
+  VITE_DEFAULT_THEME: 'auto' | 'light' | 'dark';
 }
 
 interface ImportMeta {
