@@ -55,9 +55,9 @@ export function addUnit(value?: string | number, defaultUnit = 'px') {
 }
 
 export function isNode(e: any): e is Node {
-  const window = getWindow(e);
-  const Node = window.Node;
-  return isObject(e) && isFunction(Node) && e instanceof Node;
+  // TODO: 或许并不需要这方面的判断
+  if (!isClient) return false;
+  return isObject(e) && (e instanceof Node || e instanceof getWindow(e as Node).Node);
 }
 
 const ELEMENT_NODE: typeof Node.ELEMENT_NODE = 1;
@@ -72,8 +72,11 @@ export function isElement(e: any): e is Element {
 }
 
 export function isHTMLElement(e: any): e is HTMLElement {
-  const window = getWindow(e);
-  return isElement(e) && e instanceof window.HTMLElement;
+  return isElement(e) && (e instanceof HTMLElement || e instanceof getWindow(e as Node).HTMLElement);
+}
+
+export function isSVGElement(e: any): e is SVGElement {
+  return isElement(e) && (e instanceof SVGElement || e instanceof getWindow(e as Node).SVGElement);
 }
 
 const _remove = (
