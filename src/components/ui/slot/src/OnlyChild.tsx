@@ -1,4 +1,5 @@
 import { defineComponent } from 'vue';
+import { isUndefinedOrNull } from '@/utils/types';
 import { cloneVNode, filterEmptyVNode } from '@/utils/vue/vnode';
 import { useForwardRefSetter } from './composables';
 import { createDirective } from './utils';
@@ -27,7 +28,7 @@ export default defineComponent({
       }
 
       const on = Object.keys(listeners).length > 0 ? listeners : undefined;
-      const isSvgOrText = firstLegitNode.tag === 'svg' || (firstLegitNode.tag == null && firstLegitNode.text);
+      const isSvgOrText = firstLegitNode.tag === 'svg' || (isUndefinedOrNull(firstLegitNode.tag) && firstLegitNode.text);
 
       // 确保是 HTML 元素，不然指令会失效
       const vnode = isSvgOrText ? <span class="el-only-child">{firstLegitNode}</span> : firstLegitNode;

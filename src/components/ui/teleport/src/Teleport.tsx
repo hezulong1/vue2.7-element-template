@@ -6,6 +6,7 @@
 
 import type { PropType } from 'vue';
 import { defineComponent, getCurrentInstance, onMounted, onUnmounted, onUpdated } from 'vue';
+import * as domUtils from '@/utils/dom';
 import { OnlyChild as ElOnlyChild } from '../../slot';
 
 interface InternalState {
@@ -31,7 +32,7 @@ export default defineComponent({
       teleported: false,
       lastTo: '',
       parentEl: null,
-      rootEl: void 0,
+      rootEl: undefined,
       dumbEl: document.createComment(' el-teleport '),
     };
 
@@ -47,7 +48,7 @@ export default defineComponent({
 
       if (!state.parentEl) return;
       state.rootEl && state.parentEl.insertBefore(state.rootEl, state.dumbEl);
-      state.dumbEl.parentNode?.removeChild(state.dumbEl);
+      domUtils.remove(state.dumbEl);
     };
 
     const teleport = () => {
@@ -81,9 +82,8 @@ export default defineComponent({
     });
 
     onUnmounted(() => {
-      state.dumbEl.parentNode?.removeChild(state.dumbEl);
-      state.rootEl?.parentNode?.removeChild(state.rootEl);
-      state.rootEl = void 0;
+      domUtils.remove(state.dumbEl, state.rootEl);
+      state.rootEl = undefined;
       state.parentEl = null;
     });
 

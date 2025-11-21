@@ -2,7 +2,7 @@ import { hasOwn } from '@vue/shared';
 import { isClient } from '@vueuse/core';
 import { cacheStringFunction } from './logic';
 import { capitalize } from './string';
-import { isNumber, isString, isNumeric } from './types';
+import { isNumber, isNumeric, isObject } from './types';
 
 export function getWindow(e?: Node | UIEvent | null): Window & typeof globalThis {
   const candidateNode = e as Node | undefined | null;
@@ -45,7 +45,7 @@ export function addUnit(value?: string | number, defaultUnit = 'px') {
 
   if (isNumber(value) || isNumeric(value)) {
     return `${value}${defaultUnit}`;
-  } else if (isString(value)) {
+  } else if (typeof value === 'string') {
     return value;
   }
 
@@ -54,10 +54,14 @@ export function addUnit(value?: string | number, defaultUnit = 'px') {
   }
 }
 
+export function isDOMNode(e: any): e is Node {
+  return isObject(e) && typeof e.nodeType !== 'undefined';
+}
+
+const ELEMENT_NODE: typeof Node.ELEMENT_NODE = 1;
+
 export function isHTMLElement(e: any): e is HTMLElement {
-  const window = getWindow(e);
-  if (typeof window.HTMLElement === 'undefined') return false;
-  return !!e && e instanceof window.HTMLElement;
+  return isObject(e) && e.nodeType === ELEMENT_NODE && typeof e.nodeName === 'string';
 }
 
 export function isElement(e: any): e is Element {
