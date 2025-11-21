@@ -2,7 +2,7 @@ import { hasOwn } from '@vue/shared';
 import { isClient } from '@vueuse/core';
 import { cacheStringFunction } from './logic';
 import { capitalize } from './string';
-import { isNumber, isNumeric, isObject } from './types';
+import { isBoolean, isFunction, isNumber, isNumeric, isObject } from './types';
 
 export function getWindow(e?: Node | UIEvent | null): Window & typeof globalThis {
   const candidateNode = e as Node | undefined | null;
@@ -54,25 +54,31 @@ export function addUnit(value?: string | number, defaultUnit = 'px') {
   }
 }
 
-export function isDOMNode(e: any): e is Node {
-  return isObject(e) && typeof e.nodeType !== 'undefined';
+export function isNode(e: any): e is Node {
+  const window = getWindow(e);
+  const Node = window.Node;
+  return isObject(e) && isFunction(Node) && e instanceof Node;
 }
 
 const ELEMENT_NODE: typeof Node.ELEMENT_NODE = 1;
+const COMMENT_NODE: typeof Node.COMMENT_NODE = 8;
 
-export function isHTMLElement(e: any): e is HTMLElement {
-  return isObject(e) && e.nodeType === ELEMENT_NODE && typeof e.nodeName === 'string';
+export function isComment(e: any): e is Comment {
+  return isNode(e) && e.nodeType === COMMENT_NODE && e.nodeName === '#comment';
 }
 
 export function isElement(e: any): e is Element {
+  return isNode(e) && e.nodeType === ELEMENT_NODE && typeof e.nodeName === 'string';
+}
+
+export function isHTMLElement(e: any): e is HTMLElement {
   const window = getWindow(e);
-  if (typeof window.Element === 'undefined') return false;
-  return !!e && e instanceof window.Element;
+  return isElement(e) && e instanceof window.HTMLElement;
 }
 
 const _remove = (
-  () => typeof Element.prototype.remove === 'function'
-    ? (el: Node) => isElement(el) && el.remove()
+  () => isFunction(Element.prototype.remove) && isFunction(CharacterData.prototype.remove)
+    ? (el: Node) => (el as any).remove?.()
     : (el: Node) => el.parentNode?.removeChild(el)
 )();
 
@@ -85,7 +91,7 @@ export function remove(...children: (Node | undefined | null)[]): void {
 
 const _after = (targetEl: Element, node: Node) => {
   const parentNode = targetEl.parentNode;
-  if (parentNode == null) return;
+  if (!parentNode) return;
 
   if (parentNode.lastChild === targetEl) {
     parentNode.appendChild(node);
@@ -115,12 +121,12 @@ export function getBrowserScrollbarSize(options?: boolean | GetBrowserScrollbarS
   let forceUpdate: boolean | undefined;
   let testContainer: HTMLElement | undefined;
 
-  if (typeof options === 'boolean') {
+  if (isBoolean(options)) {
     forceUpdate = options;
   } else if (options) {
     testContainer = options.testContainer;
     // 如果未配置 forceUpdate，则根据 testContainer 是否存在来判断强制更新
-    forceUpdate = typeof options.forceUpdate === 'boolean' ? options.forceUpdate : !!testContainer;
+    forceUpdate = isBoolean(options.forceUpdate) ? options.forceUpdate : !!testContainer;
   }
 
   if (typeof scrollbarSize !== 'undefined' && !forceUpdate) return scrollbarSize;
