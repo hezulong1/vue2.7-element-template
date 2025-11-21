@@ -3,11 +3,7 @@ export { default as PopperContent } from './src/PopperContent.vue';
 export { default as PopperTrigger } from './src/PopperTrigger.vue';
 
 export * from './src/props';
-
-export {
-  createPopperRoot,
-  type CreatePopperRootOptions,
-} from './src/composables';
+export * from './src/utils';
 
 export type {
   Measurable,
