@@ -1,6 +1,6 @@
-import type { FunctionalComponentOptions } from 'vue';
+import { defineComponent } from 'vue';
 
-export const Loading = {
+export const Loading = defineComponent({
   functional: true,
   render() {
     return (
@@ -9,9 +9,9 @@ export const Loading = {
       </svg>
     );
   },
-} satisfies FunctionalComponentOptions;
+});
 
-export const Close = {
+export const Close = defineComponent({
   functional: true,
   render() {
     return (
@@ -20,4 +20,4 @@ export const Close = {
       </svg>
     );
   },
-} satisfies FunctionalComponentOptions;
+});
