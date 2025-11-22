@@ -1,4 +1,5 @@
 // code from https://github.com/ai/nanoid
+// TODO: IE11
 
 declare const msCrypto: typeof crypto;
 

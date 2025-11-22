@@ -6,7 +6,6 @@ export * from './src/props';
 export * from './src/utils';
 
 export type {
-  Measurable,
   PopperEffect,
   PopperContentInstance,
   PopperTriggerInstance,

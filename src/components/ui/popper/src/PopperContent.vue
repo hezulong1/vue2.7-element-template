@@ -1,24 +1,24 @@
 <template>
-  <div
-    ref="contentRef"
+  <ElFocusTrap
+    :ref="setContentRef"
     v-bind="contentAttrs"
     :style="contentStyle"
     :class="contentClass"
     tabindex="-1"
-    @mouseenter="(e) => $emit('mouseenter', e)"
-    @mouseleave="(e) => $emit('mouseleave', e)"
+    :active="trapped"
+    @mouseenter.native="onMouseEnter"
+    @mouseleave.native="onMouseLeave"
   >
-    <ElFocusTrap :active="trapped">
-      <slot />
-    </ElFocusTrap>
-  </div>
+    <slot />
+  </ElFocusTrap>
 </template>
 
 <script setup lang="ts">
 import type { CSSProperties, WatchStopHandle } from 'vue';
+import type { MaybeRef } from '@vueuse/core';
 
 import { computed, inject, onBeforeUnmount, onMounted, provide, ref, unref, watch } from 'vue';
-import { noop } from '@vueuse/core';
+import { noop, unrefElement } from '@vueuse/core';
 import { isElement } from '@/utils/dom';
 import { isNumber, isUndefinedOrNull } from '@/utils/types';
 import { usePopper } from '@/composables/use-popper';
@@ -32,7 +32,7 @@ defineOptions({
   name: 'ElPopperContent',
 });
 
-defineEmits(['mouseenter', 'mouseleave']);
+const emit = defineEmits(['mouseenter', 'mouseleave']);
 
 const props = defineProps(popperContentProps);
 
@@ -45,6 +45,15 @@ if (!popperRoot) {
 }
 
 const { contentRef, role } = popperRoot;
+const setContentRef = (forwardRef: MaybeRef<HTMLElement | null>) => {
+  contentRef.value = unrefElement(forwardRef) as HTMLElement | null;
+};
+const onMouseEnter = (e: MouseEvent) => {
+  emit('mouseenter', e);
+};
+const onMouseLeave = (e: MouseEvent) => {
+  emit('mouseleave', e);
+};
 
 const trapped = ref(false);
 const arrowRef = ref<HTMLElement | null>(null);
@@ -102,12 +111,19 @@ onMounted(() => {
 const { nextZIndex } = useZIndex();
 const contentZIndex = ref(isNumber(props.zIndex) ? props.zIndex : nextZIndex());
 
-const contentAttrs = computed(() => popper.attributes.value.popper);
+const contentAttrs = computed(() =>
+  // Vue2 会忽略值为 `false` 的属性
+  Object.fromEntries(
+    Object.entries(popper.attributes.value.popper || {})
+      .filter(([key, value]) => !isUndefinedOrNull(value))
+      .map(([key, value]) => [key, value.toString()]),
+  ),
+);
 const contentClass = computed(() => {
   const classNames = ['el-popper'];
 
-  if (props.pure) classNames.push('el-popper--pure');
-  if (props.effect) classNames.push(`el-popper--${props.effect}`);
+  if (props.pure) classNames.push('is-pure');
+  if (props.effect) classNames.push(`is-${props.effect}`);
   if (props.popperClass) classNames.push(props.popperClass);
 
   return classNames;

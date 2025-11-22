@@ -1,6 +1,6 @@
 import type { ExtractPropTypes, PropType, StyleValue } from 'vue';
-import type { Options, Placement, PositioningStrategy } from '@popperjs/core';
-import type { Measurable, PopperEffect } from './typings';
+import type { Options, Placement, PositioningStrategy, VirtualElement } from '@popperjs/core';
+import type { PopperEffect } from './typings';
 
 import { placements } from '@popperjs/core';
 
@@ -117,7 +117,7 @@ type EventHandler<T extends Event = Event, R = void> = (e: T) => R;
 
 export const popperTriggerProps = {
   /** @description Indicates the reference element to which the popper is attached */
-  virtualRef: Object as PropType<Measurable>,
+  virtualRef: Object as PropType<VirtualElement>,
   /** @description Indicates whether virtual triggering is enabled */
   virtualTriggering: Boolean,
   onMouseenter: Function as PropType<EventHandler>,

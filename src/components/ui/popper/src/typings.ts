@@ -1,16 +1,12 @@
 import type { CSSProperties, ComputedRef, Ref } from 'vue';
-import type { Instance } from '@popperjs/core';
-
-export interface Measurable {
-  getBoundingClientRect: () => DOMRect;
-}
+import type { Instance, VirtualElement } from '@popperjs/core';
 
 export type PopperEffect = 'light' | 'dark';
 
 export interface PopperRootContext {
-  triggerRef: Ref<Measurable | null>;
+  triggerRef: Ref<VirtualElement | null>;
   contentRef: Ref<HTMLElement | null>;
-  referenceRef: Ref<Measurable | null>;
+  referenceRef: Ref<VirtualElement | null>;
   popperInstanceRef: Ref<Instance | undefined>;
   role: ComputedRef<string>;
 }
@@ -21,12 +17,12 @@ export interface PopperContentContext {
 }
 
 export interface PopperContentInstance {
-  popperContentRef: Ref<HTMLElement | null>;
-  popperInstanceRef: ComputedRef<Instance | undefined>;
-  contentStyle: ComputedRef<CSSProperties[]>;
+  popperContentRef: HTMLElement | null;
+  popperInstanceRef: Instance | undefined;
+  contentStyle: CSSProperties[];
   updatePopper: (shouldUpdateZIndex?: boolean) => void;
 }
 
 export interface PopperTriggerInstance {
-  triggerRef: Ref<Measurable | null>;
+  triggerRef: VirtualElement | null;
 }

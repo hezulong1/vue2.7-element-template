@@ -81,7 +81,7 @@ export function isSVGElement(e: any): e is SVGElement {
 
 const _remove = (
   () => isFunction(Element.prototype.remove) && isFunction(CharacterData.prototype.remove)
-    ? (el: Node) => (el as any).remove?.()
+    ? (el: Node) => (el as Element).remove?.()
     : (el: Node) => el.parentNode?.removeChild(el)
 )();
 
