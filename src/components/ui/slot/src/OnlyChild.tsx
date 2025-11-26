@@ -1,6 +1,8 @@
+import type { ExtraProps } from '@/utils/vdom';
+
 import { defineComponent } from 'vue';
-import { isUndefinedOrNull } from '@/utils/types';
-import { cloneVNode, filterEmptyVNode } from '@/utils/vue/vnode';
+import { cloneVNode, filterEmptyVNode } from '@/utils/vdom';
+import { warn } from '@/utils/debug';
 import { useForwardRefSetter } from './composables';
 import { createDirective } from './utils';
 
@@ -15,24 +17,28 @@ export default defineComponent({
       const { slots, attrs, listeners } = context;
       if (!slots.default) return null;
 
+      // TODO: 为了提示语使用 filterEmptyVNode，值不值？
       const vnodes = filterEmptyVNode(slots.default());
       const firstLegitNode = vnodes[0];
 
       if (!firstLegitNode) {
-        console.warn('[only-child]', 'no valid child node found.');
+        warn('<el-only-child> no valid child node found.');
         return null;
       }
 
       if (vnodes.length > 1) {
-        console.warn('[only-child]', 'requires exact only one valid child.');
+        warn('<el-only-child> requires exact only one valid child.');
       }
 
-      const on = Object.keys(listeners).length > 0 ? listeners : undefined;
-      const isSvgOrText = firstLegitNode.tag === 'svg' || (isUndefinedOrNull(firstLegitNode.tag) && firstLegitNode.text);
+      const extraProps: ExtraProps = {};
+      if (directives) extraProps.directives = directives;
+      if (Object.keys(listeners).length > 0) extraProps.on = { ...listeners };
+      if (Object.keys(attrs).length > 0) extraProps.attrs = { ...attrs };
 
-      // 确保是 HTML 元素，不然指令会失效
+      const isSvgOrText = firstLegitNode.tag === 'svg' || (firstLegitNode.tag == null && firstLegitNode.text);
+      // 指令无法作用在文本节点
       const vnode = isSvgOrText ? <span class="el-only-child">{firstLegitNode}</span> : firstLegitNode;
-      const cloned = cloneVNode(vnode, { attrs, on, directives });
+      const cloned = cloneVNode(vnode, extraProps);
 
       return cloned;
     };

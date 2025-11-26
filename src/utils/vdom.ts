@@ -1,22 +1,49 @@
-import type { VNode, VNodeData } from 'vue';
-import { isObject, hasOwn, normalizeStyle, normalizeClass } from '@vue/shared';
-import { isNotEmptyArray } from '../types';
+// Inspired by:
+// https://github.com/vuejs/vue/blob/main/src/core/vdom/helpers/is-async-placeholder.ts
+// https://github.com/vuejs/vue/blob/main/src/core/vdom/helpers/get-first-component-child.ts
+// https://github.com/vuejs/vue/blob/main/src/core/vdom/helpers/normalize-children.ts
+// https://github.com/vuejs/vue/blob/main/src/core/vdom/vnode.ts
+// https://github.com/vuejs/vue/blob/main/src/platforms/web/runtime/components/transition.ts
+// https://github.com/vueComponent/ant-design-vue/blob/1.x/components/_util/props-util.js
+// https://github.com/vueComponent/ant-design-vue/blob/1.x/components/_util/vnode.js
 
-// take from /core/vdom/helpers/is-async-placeholder
-export function isAsyncPlaceholder(node: VNode): boolean {
-  return node.isComment && (<any>node).asyncFactory;
+// Vue 中组件可分为“注释(Comment)”、“文本(Text)”、“原生(Native)”和“自定义(Custom)”，
+// 引用方式分为‘同步(resolveComponent)’或‘异步(resolveAsyncComponent)’。
+// 所有的方法均未考虑异步引用，若需要，参考 https://github.com/vuejs/vue/blob/main/src/core/vdom/helpers/get-first-component-child.ts 完善细节。
+
+import type { VNode, VNodeData } from 'vue';
+import type { Prettify } from '@vue/shared';
+
+import { isObject, hasOwn, normalizeStyle, normalizeClass } from '@vue/shared';
+import { isNotEmptyArray, isNotEmptyObject, isNotEmptyString } from './types';
+
+export function isVNode(value: unknown): value is VNode {
+  return isObject(value) && hasOwn(value, 'componentOptions');
 }
 
-export function isVNode(value: any): value is VNode {
-  return isObject(value) && (hasOwn(value, 'componentOptions') || isAsyncPlaceholder(value as VNode));
+/**
+ * 判断是否为合法的 VNode，不包括“注释(Comment)”和“文本(Text)”
+ */
+export function isValidVNode(value: unknown): value is VNode {
+  return isVNode(value) && !!value.tag;
 }
 
 export function isEmptyVNode(vnode: VNode): boolean {
-  return !(vnode.tag || (vnode.text && vnode.text.trim() !== ''));
+  return !(vnode.tag || (vnode.isComment !== true && isNotEmptyString(vnode.text)));
 }
 
-export function filterEmptyVNode(children: VNode[] = []) {
-  return children.filter(vnode => !isEmptyVNode(vnode));
+export function filterEmptyVNode(vnodes?: VNode[] | null): VNode[] {
+  return vnodes ? vnodes.filter(x => !isEmptyVNode(x)) : [];
+}
+
+export function getFirstLegitVNode(nodes?: VNode[] | null): VNode | undefined {
+  if (!nodes) return;
+
+  for (const vnode of nodes) {
+    if (!isEmptyVNode(vnode)) {
+      return vnode;
+    }
+  }
 }
 
 function _cloneVNode(vnode: VNode): VNode {
@@ -71,13 +98,14 @@ function _deepCloneVNode(vnode: VNode): VNode {
   return cloned;
 }
 
-type ExtraProps = Omit<VNodeData, 'staticClass' | 'staticStyle' | 'slot' | 'tag' | 'hook' | 'inlineTemplate'> & {
+export type ExtraProps = Prettify<
+Omit<VNodeData, 'refInFor' | 'staticClass' | 'staticStyle' | 'slot' | 'tag' | 'hook' | 'transition' | 'inlineTemplate' | 'show' | 'keepAlive'> & {
   children?: VNode[] | undefined;
-};
+}>;
 
 export function cloneVNode(vnode: VNode, extraProps?: ExtraProps | null, deep?: boolean) {
   const node = deep ? _deepCloneVNode(vnode) : _cloneVNode(vnode);
-  if (!extraProps) return node;
+  if (!isNotEmptyObject(extraProps)) return node;
 
   const data = typeof node.data === 'undefined' ? {} : node.data;
 

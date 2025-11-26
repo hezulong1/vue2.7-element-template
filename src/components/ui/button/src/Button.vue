@@ -1,9 +1,10 @@
 <template>
   <button
-    :disabled="buttonDisabled || loading"
-    :autofocus="autofocus"
-    :type="nativeType"
     :class="buttonClasses"
+    :type="nativeType"
+    :autofocus="autofocus"
+    :disabled="buttonDisabled"
+    :aria-disabled="`${buttonDisabled}`"
     @click="handleClick"
   >
     <span v-if="loading" class="el-icon el-icon-loading el-icon--left">
@@ -59,8 +60,9 @@ const slots = useSlots();
 
 const { form: elForm } = useFormItem();
 
+const _disabled = useFormDisabled();
 const buttonSize = useFormSize();
-const buttonDisabled = useFormDisabled();
+const buttonDisabled = computed(() => !!(_disabled.value || props.loading));
 
 const buttonClasses = computed(() => {
   const type = props.type ? 'el-button--' + props.type : '';
@@ -89,7 +91,7 @@ const buttonClasses = computed(() => {
     type,
     size,
     {
-      'is-disabled': buttonDisabled.value,
+      'is-disabled': _disabled.value,
       'is-loading': props.loading,
       'is-plain': plain,
       'is-square': props.square || square,
@@ -102,7 +104,7 @@ const buttonClasses = computed(() => {
 });
 
 function handleClick(evt: MouseEvent) {
-  if (buttonDisabled.value || props.loading) {
+  if (buttonDisabled.value) {
     evt.stopPropagation();
     return;
   }

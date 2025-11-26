@@ -2,7 +2,7 @@ import type { PropType } from 'vue';
 
 import Vue, { defineComponent, getCurrentInstance, onBeforeUnmount, onMounted, onUnmounted, onUpdated } from 'vue';
 import * as domUtils from '@/utils/dom';
-import ElOnlyChild from './OnlyChild';
+import { getFirstLegitVNode } from '@/utils/vdom';
 
 export default defineComponent({
   name: 'ElRenderApp',
@@ -76,11 +76,7 @@ export default defineComponent({
       update,
     });
 
-    return () => (
-      <ElOnlyChild>
-        { slots.default?.() }
-      </ElOnlyChild>
-    );
+    return () => getFirstLegitVNode(slots.default?.());
   },
 });
 

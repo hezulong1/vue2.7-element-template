@@ -2,12 +2,12 @@
 // Blog: https://juejin.cn/post/7363579190971482162
 
 // 1. 修复无法兼容 Vue.mixin 的问题
-// 2. 新增校验插槽中是否只有一个根节点([Vue warn]: Multiple root nodes returned from render function. Render function should return a single root node.)
+// 2. 多个节点时, 只取第一个有效节点([Vue warn]: Multiple root nodes returned from render function. Render function should return a single root node.)
 
 import type { PropType } from 'vue';
 import { defineComponent, getCurrentInstance, onMounted, onUnmounted, onUpdated } from 'vue';
 import * as domUtils from '@/utils/dom';
-import { OnlyChild as ElOnlyChild } from '../../slot';
+import { getFirstLegitVNode } from '@/utils/vdom';
 
 interface InternalState {
   teleported: boolean;
@@ -87,10 +87,6 @@ export default defineComponent({
       state.parentEl = null;
     });
 
-    return () => (
-      <ElOnlyChild>
-        { slots.default?.() }
-      </ElOnlyChild>
-    );
+    return () => getFirstLegitVNode(slots.default?.());
   },
 });

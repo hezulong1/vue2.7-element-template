@@ -3,7 +3,7 @@ import { customAlphabet } from './nanoid';
 
 const nanoid = customAlphabet('scrollbar', 5);
 
-export const supportCustomizeScrollbar = (() => {
+export const supportsCustomizeScrollbar = (() => {
   if (!isClient) return false;
 
   const id = nanoid();
@@ -35,7 +35,7 @@ export const supportCustomizeScrollbar = (() => {
   return supportWekbkit || supportStandard;
 })();
 
-export const supportPassive = (() => {
+export const supportsPassive = (() => {
   // https://developer.mozilla.org/zh-CN/docs/Web/API/EventTarget/addEventListener#option_%E6%94%AF%E6%8C%81%E7%9A%84%E5%AE%89%E5%85%A8%E6%A3%80%E6%B5%8B
   if (!isClient) return false;
 
@@ -44,7 +44,7 @@ export const supportPassive = (() => {
   try {
     const options = {
       get passive() {
-      // 该函数会在浏览器尝试访问 passive 值时被调用。
+        // 该函数会在浏览器尝试访问 passive 值时被调用。
         passiveSupported = true;
         return false;
       },
