@@ -18,21 +18,21 @@ export const supportsCustomizeScrollbar = (() => {
   document.head.appendChild(style);
 
   const scrollbarWidth = el.offsetWidth - el.clientWidth;
-  const supportWekbkit = scrollbarWidth === 10;
+  const webkitSupported = scrollbarWidth === 10;
 
-  let supportStandard = false;
+  let standardSupported = false;
 
   if (typeof CSS !== 'undefined') {
-    supportStandard = CSS.supports('scrollbar-width', 'none');
+    standardSupported = CSS.supports('scrollbar-width', 'none');
   } else {
     el.style.cssText += 'scrollbar-width:none;';
-    supportStandard = el.offsetWidth === el.clientWidth;
+    standardSupported = el.offsetWidth === el.clientWidth;
   }
 
   document.body.removeChild(el);
   document.head.removeChild(style);
 
-  return supportWekbkit || supportStandard;
+  return webkitSupported || standardSupported;
 })();
 
 export const supportsPassive = (() => {
