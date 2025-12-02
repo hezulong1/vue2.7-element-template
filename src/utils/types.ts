@@ -8,7 +8,7 @@ export const isUndefined = (val: unknown): val is undefined => val === void 0;
 export const isUndefinedOrNull = (val: unknown): val is undefined | null => isUndefined(val) || val === null;
 export const isDefined = <T>(val: T | undefined | null): val is T => !isUndefinedOrNull(val);
 export const isBoolean = (val: unknown): val is boolean => val === true || val === false;
-export const isNumber = (val: unknown): val is number => typeof val === 'number' && Number.isNaN(val);
+export const isNumber = (val: unknown): val is number => typeof val === 'number' && !Number.isNaN(val);
 export const isNumeric = (val: string): boolean => typeof val === 'string' ? !Number.isNaN(Number(val)) : false;
 
 export function isNotEmptyString(val: unknown): val is string {
