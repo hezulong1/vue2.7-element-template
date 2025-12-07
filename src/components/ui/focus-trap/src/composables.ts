@@ -42,10 +42,10 @@ export function useFocusTrap(opts: UseFocusTrapProps = {}) {
 
   const lastFocusedElement: Element | null = isClient ? document.activeElement : null;
 
-  function isCurrentActive(): boolean {
+  const isCurrentActive = () => {
     const currentActiveId = stack[stack.length - 1];
     return currentActiveId === id.value;
-  }
+  };
 
   function handleDocumentKeydown(e: KeyboardEvent): void {
     if (e.code === 'Escape') {
@@ -55,6 +55,13 @@ export function useFocusTrap(opts: UseFocusTrapProps = {}) {
     }
   }
 
+  const detachDocumentKeydown = () => {
+    document.removeEventListener('keydown', handleDocumentKeydown, false);
+    if (state.activated) {
+      deactivate();
+    }
+  };
+
   onMounted(() => {
     watch(
       activeRef,
@@ -63,10 +70,7 @@ export function useFocusTrap(opts: UseFocusTrapProps = {}) {
           activate();
           document.addEventListener('keydown', handleDocumentKeydown, false);
         } else {
-          document.removeEventListener('keydown', handleDocumentKeydown, false);
-          if (state.activated) {
-            deactivate();
-          }
+          detachDocumentKeydown();
         }
       },
       {
@@ -75,9 +79,39 @@ export function useFocusTrap(opts: UseFocusTrapProps = {}) {
     );
   });
 
+  const cleanups: VoidFunction[] = [
+    useEventListener(startRef, 'focus', (e) => {
+      if (state.ignoreInternalFocusChange) return;
+
+      const mainEl = getMainEl();
+      if (!mainEl) return;
+
+      if (isElement(e.relatedTarget) && mainEl.contains(e.relatedTarget)) {
+      // if it comes from inner, focus last
+        resetFocusTo('last');
+      } else {
+      // otherwise focus first
+        resetFocusTo('first');
+      }
+    }),
+
+    useEventListener(endRef, 'focus', (e) => {
+      if (state.ignoreInternalFocusChange) return;
+      if (!e.relatedTarget && e.relatedTarget === startRef.value) {
+      // if it comes from first, focus last
+        resetFocusTo('last');
+      } else {
+      // otherwise focus first
+        resetFocusTo('first');
+      }
+    }),
+
+    detachDocumentKeydown,
+  ];
+
   onBeforeUnmount(() => {
-    document.removeEventListener('keydown', handleDocumentKeydown, false);
-    if (state.activated) deactivate();
+    cleanups.forEach(fn => fn());
+    cleanups.length = 0;
   });
 
   function getPreciseEventTarget(event: Event): EventTarget | null {
@@ -174,32 +208,6 @@ export function useFocusTrap(opts: UseFocusTrapProps = {}) {
       }
     }
   }
-
-  useEventListener(startRef, 'focus', (e) => {
-    if (state.ignoreInternalFocusChange) return;
-
-    const mainEl = getMainEl();
-    if (!mainEl) return;
-
-    if (isElement(e.relatedTarget) && mainEl.contains(e.relatedTarget)) {
-      // if it comes from inner, focus last
-      resetFocusTo('last');
-    } else {
-      // otherwise focus first
-      resetFocusTo('first');
-    }
-  });
-
-  useEventListener(endRef, 'focus', (e) => {
-    if (state.ignoreInternalFocusChange) return;
-    if (!e.relatedTarget && e.relatedTarget === startRef.value) {
-      // if it comes from first, focus last
-      resetFocusTo('last');
-    } else {
-      // otherwise focus first
-      resetFocusTo('first');
-    }
-  });
 
   return {
     startRef,
