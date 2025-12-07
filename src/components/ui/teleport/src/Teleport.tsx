@@ -14,7 +14,7 @@ interface InternalState {
   lastTo: string | HTMLElement;
   parentEl: Node | null | undefined; // 兼容 $vnode.elm 和 element.insertBefore 类型
   rootEl: Node | undefined; // 兼容 $vnode.elm
-  dumbEl: Node;
+  dumbEl: Node | null;
 }
 
 export default defineComponent({
@@ -46,24 +46,26 @@ export default defineComponent({
       state.teleported = false;
       state.lastTo = '';
 
-      if (!state.parentEl) return;
+      if (!state.parentEl || !state.dumbEl) return;
       state.rootEl && state.parentEl.insertBefore(state.rootEl, state.dumbEl);
       domUtils.remove(state.dumbEl);
     };
 
     const teleport = () => {
       if (!vm) return;
-      if (!state.rootEl || !state.parentEl) return;
-      if (!state.teleported) state.parentEl.insertBefore(state.dumbEl, state.rootEl);
-
-      vm.$vnode.elm = state.dumbEl;
-      state.teleported = true;
+      if (!state.rootEl || !state.parentEl || !state.dumbEl) return;
 
       let targetEl;
       if (props.to !== state.lastTo) targetEl = typeof props.to === 'string' ? document.querySelector(props.to) : props.to;
       if (!targetEl) return;
-      targetEl.appendChild(state.rootEl);
+
       state.lastTo = props.to;
+
+      if (!state.teleported) state.parentEl.insertBefore(state.dumbEl, state.rootEl);
+      vm.$vnode.elm = state.dumbEl;
+      state.teleported = true;
+
+      targetEl.appendChild(state.rootEl);
     };
 
     const onEnter = () => {
@@ -85,6 +87,7 @@ export default defineComponent({
       domUtils.remove(state.dumbEl, state.rootEl);
       state.rootEl = undefined;
       state.parentEl = null;
+      state.dumbEl = null;
     });
 
     return () => getFirstLegitVNode(slots.default?.());
