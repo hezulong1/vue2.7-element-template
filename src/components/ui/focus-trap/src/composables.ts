@@ -1,9 +1,9 @@
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { isClient, toValue, type MaybeRefOrGetter, useEventListener } from '@vueuse/core';
 import { createUseId } from '@/composables/use-id';
-import { isElement, isHTMLElement } from '@/utils/dom';
+import * as domUtils from '@/utils/dom';
 import { isUndefined } from '@/utils/types';
-import { resolveTo, focusFirstDescendant, focusLastDescendant } from './utils';
+import { focusFirstDescendant, focusLastDescendant } from './utils';
 
 const { useId } = createUseId();
 let stack: string[] = [];
@@ -86,7 +86,7 @@ export function useFocusTrap(opts: UseFocusTrapProps = {}) {
       const mainEl = getMainEl();
       if (!mainEl) return;
 
-      if (isElement(e.relatedTarget) && mainEl.contains(e.relatedTarget)) {
+      if (domUtils.isElement(e.relatedTarget) && mainEl.contains(e.relatedTarget)) {
       // if it comes from inner, focus last
         resetFocusTo('last');
       } else {
@@ -142,7 +142,7 @@ export function useFocusTrap(opts: UseFocusTrapProps = {}) {
 
     while (true) {
       mainEl = mainEl.nextSibling;
-      if (!mainEl || (isElement(mainEl) && mainEl.tagName === 'DIV')) break;
+      if (!mainEl || (domUtils.isElement(mainEl) && mainEl.tagName === 'DIV')) break;
     }
 
     return mainEl;
@@ -156,7 +156,7 @@ export function useFocusTrap(opts: UseFocusTrapProps = {}) {
       if (isUndefined(initialFocusToRef.value)) {
         resetFocusTo('first');
       } else {
-        resolveTo(initialFocusToRef.value)?.focus({ preventScroll: true });
+        domUtils.query<HTMLElement>(initialFocusToRef.value)?.focus({ preventScroll: true });
       }
     }
 
@@ -173,8 +173,8 @@ export function useFocusTrap(opts: UseFocusTrapProps = {}) {
     if (isCurrentActive()) return;
     const { value: finalFocusTo } = finalFocusToRef;
     if (typeof finalFocusTo !== 'undefined') {
-      resolveTo(finalFocusTo)?.focus({ preventScroll: true });
-    } else if (returnFocusOnDeactivatedRef.value && isHTMLElement(lastFocusedElement)) {
+      domUtils.query<HTMLElement>(finalFocusTo)?.focus({ preventScroll: true });
+    } else if (returnFocusOnDeactivatedRef.value && domUtils.isHTMLElement(lastFocusedElement)) {
       state.ignoreInternalFocusChange = true;
       lastFocusedElement.focus({ preventScroll: true });
       state.ignoreInternalFocusChange = false;

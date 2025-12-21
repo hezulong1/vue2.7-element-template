@@ -1,12 +1,5 @@
-export { default as PopperArrow } from './src/PopperArrow.vue';
-export { default as PopperContent } from './src/PopperContent.vue';
-export { default as PopperTrigger } from './src/PopperTrigger.vue';
+export { default as Popper } from './src/Popper.vue';
 
 export * from './src/props';
-export * from './src/utils';
-
-export type {
-  PopperEffect,
-  PopperContentInstance,
-  PopperTriggerInstance,
-} from './src/typings';
+export * from './src/typings';
+export * from './src/composables';

@@ -26,7 +26,7 @@ export default defineComponent({
       if (!vm) return;
 
       if (!teleported) {
-        let container = typeof props.to === 'string' ? document.querySelector(props.to) : props.to;
+        let container = domUtils.query(props.to);
 
         if (!container) {
           container = document.body;

@@ -1,16 +1,11 @@
-import type { ExtractPropTypes, PropType, StyleValue } from 'vue';
-import type { Options, Placement, PositioningStrategy, VirtualElement } from '@popperjs/core';
-import type { PopperEffect } from './typings';
+import type { ExtractPropTypes, PropType } from 'vue';
+import type { Placement, PositioningStrategy } from '@popperjs/core';
+import type { Prettify } from '@/utils/typingUtils';
+import type { ReferenceElement, PartialOptions } from './composables';
 
 import { placements } from '@popperjs/core';
 
-export type PartialOptions = Partial<Options>;
-
-export const popperCoreConfigProps = {
-  boundariesPadding: {
-    type: Number,
-    default: 0,
-  },
+export const basePopperProps = {
   fallbackPlacements: {
     type: Array as PropType<Placement[]>,
     default: undefined,
@@ -20,7 +15,7 @@ export const popperCoreConfigProps = {
     default: true,
   },
   /**
-   * @description offset of the Tooltip
+   * @description offset of the Popper
    * @default 12
    */
   offset: {
@@ -28,7 +23,7 @@ export const popperCoreConfigProps = {
     default: 12,
   },
   /**
-   * @description position of Tooltip
+   * @description position of Popper
    * @default 'bottom'
    */
   placement: {
@@ -51,84 +46,29 @@ export const popperCoreConfigProps = {
     validator: (v: PositioningStrategy) => ['fixed', 'absolute'].includes(v),
     default: 'absolute',
   },
-} as const;
 
-export type PopperCoreConfigProps = ExtractPropTypes<typeof popperCoreConfigProps>;
-
-// PopperContent
-// ----------------------------------------
-
-export const popperContentProps = {
-  ...popperCoreConfigProps,
+  showArrow: Boolean,
   arrowOffset: {
     type: Number,
     default: 5,
   },
-  id: String,
-  effect: {
-    type: String as PropType<PopperEffect>,
-    validator: (v: PopperEffect) => ['light', 'dark'].includes(v),
-    default: 'dark',
-  },
+  effect: String,
+  persistent: Boolean,
+  disabled: Boolean,
   visible: Boolean,
-  enterable: {
-    type: Boolean,
-    default: true,
-  },
-  pure: Boolean,
   focusOnShow: Boolean,
-  trapping: Boolean,
-  popperClass: {
-    type: [String, Array, Object] as PropType<any>,
-  },
-  popperStyle: {
-    type: [String, Array, Object] as PropType<StyleValue>,
-  },
-  referenceEl: {
-    type: Object as PropType<HTMLElement>,
-  },
-  triggerTargetEl: {
-    type: Object as PropType<HTMLElement>,
-  },
-  stopPopperMouseEvent: {
-    type: Boolean,
-    default: true,
-  },
-  virtualTriggering: Boolean,
   zIndex: Number,
+  transition: String,
+
+  referenceEl: [Element, Object] as PropType<ReferenceElement>,
   ariaLabel: String,
 } as const;
 
-export type PopperContentProps = ExtractPropTypes<typeof popperContentProps>;
+export const popperProps = {
+  ...basePopperProps,
 
-// export const popperContentEmits = {
-//   mouseenter: (evt: MouseEvent) => evt instanceof MouseEvent,
-//   mouseleave: (evt: MouseEvent) => evt instanceof MouseEvent,
-//   focus: () => true,
-//   blur: () => true,
-//   close: () => true,
-// };
-// export type PopperContentEmits = typeof popperContentEmits;
-
-// PopperTrigger
-// ----------------------------------------
-
-type EventHandler<T extends Event = Event, R = void> = (e: T) => R;
-
-export const popperTriggerProps = {
-  /** @description Indicates the reference element to which the popper is attached */
-  virtualRef: Object as PropType<VirtualElement>,
-  /** @description Indicates whether virtual triggering is enabled */
-  virtualTriggering: Boolean,
-  onMouseenter: Function as PropType<EventHandler>,
-  onMouseleave: Function as PropType<EventHandler>,
-  onClick: Function as PropType<EventHandler>,
-  onKeydown: Function as PropType<EventHandler>,
-  onFocus: Function as PropType<EventHandler>,
-  onBlur: Function as PropType<EventHandler>,
-  onContextmenu: Function as PropType<EventHandler>,
   id: String,
-  open: Boolean,
+  role: String,
 } as const;
 
-export type PopperTriggerProps = typeof popperTriggerProps;
+export type PopperProps = Prettify<ExtractPropTypes<typeof popperProps>>;

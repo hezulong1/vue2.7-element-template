@@ -1,5 +1,6 @@
-import type { ComputedRef, InjectionKey, PropOptions, PropType } from 'vue';
-import { computed, defineComponent, inject, provide } from 'vue';
+import type { InjectionKey, PropOptions, PropType } from 'vue';
+
+import { defineComponent, inject, provide, reactive, watchEffect } from 'vue';
 
 // UseSize
 // ----------------------------------------
@@ -17,11 +18,11 @@ export const useSizeProp: PropOptions<ComponentSize> = {
 // ----------------------------------------
 
 export interface ConfigProviderContext {
-  locale: ComputedRef<string>;
-  theme: ComputedRef<string>;
+  locale: string;
+  theme: string;
 }
 
-const configProviderContextKey = '$configProviderContext' as unknown as InjectionKey<ConfigProviderContext>;
+const configProviderContextKey = Symbol('configProvider') as InjectionKey<ConfigProviderContext>;
 
 export function useConfigProvider() {
   const config = inject(configProviderContextKey, undefined);
@@ -38,11 +39,17 @@ export default defineComponent({
     theme: String,
   },
   setup(props, { slots }) {
-    provide(configProviderContextKey, {
-      locale: computed(() => props.locale),
-      theme: computed(() => props.theme),
+    const context = reactive({
+      locale: '',
+      theme: '',
     });
 
+    watchEffect(() => {
+      context.locale = props.locale || import.meta.env.VITE_DEFAULT_LANGUAGE;
+      context.theme = props.theme || import.meta.env.VITE_DEFAULT_THEME;
+    });
+
+    provide(configProviderContextKey, context);
     return () => slots.default?.();
   },
 });

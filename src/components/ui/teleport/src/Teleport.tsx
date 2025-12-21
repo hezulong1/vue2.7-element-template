@@ -56,7 +56,7 @@ export default defineComponent({
       if (!state.rootEl || !state.parentEl || !state.dumbEl) return;
 
       let targetEl;
-      if (props.to !== state.lastTo) targetEl = typeof props.to === 'string' ? document.querySelector(props.to) : props.to;
+      if (props.to !== state.lastTo) targetEl = domUtils.query(props.to);
       if (!targetEl) return;
 
       state.lastTo = props.to;

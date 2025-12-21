@@ -3,13 +3,6 @@
 import { isHTMLElement } from '@/utils/dom';
 import { isFocusable } from '@/utils/aria';
 
-export function resolveTo(selector: string | (() => HTMLElement | null)): HTMLElement | null {
-  if (typeof selector === 'string') {
-    return document.querySelector(selector);
-  }
-  return selector();
-}
-
 export function focusFirstDescendant(node: Node): boolean {
   for (let i = 0; i < node.childNodes.length; i++) {
     const child = node.childNodes[i];

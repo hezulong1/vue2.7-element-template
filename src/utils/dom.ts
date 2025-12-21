@@ -223,3 +223,23 @@ export function removeClass(el?: Element, cls?: string): void {
     el.classList.remove(clsName);
   }
 }
+
+type Selector<E, K> = E | K | null | undefined;
+export type QuerySelector<E extends Element = Element, K extends string = string> = Selector<E, K> | (() => Selector<E, K>);
+
+export function query<K extends keyof HTMLElementTagNameMap>(selector: QuerySelector<HTMLElementTagNameMap[K], K>): HTMLElementTagNameMap[K] | null;
+export function query<K extends keyof SVGElementTagNameMap>(selector: QuerySelector<SVGElementTagNameMap[K], K>): SVGElementTagNameMap[K] | null;
+export function query<E extends Element>(selector: QuerySelector<E>): E | null;
+export function query<E extends Element>(selector: QuerySelector<E>): E | null {
+  let el: E | null = null;
+
+  if (typeof selector === 'string') {
+    el = document.querySelector(selector);
+  } else if (typeof selector === 'function') {
+    el = query(selector());
+  } else {
+    el = selector || null;
+  }
+
+  return el;
+}
