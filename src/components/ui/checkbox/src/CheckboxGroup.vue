@@ -1,17 +1,16 @@
 <template>
-  <div :id="idRef" class="el-checkbox-group" role="group" aria-label="checkbox-group">
+  <div :id="id" class="el-checkbox-group" role="group" aria-label="checkbox-group">
     <slot />
   </div>
 </template>
 
 <script setup lang="ts" generic="T extends CheckboxValue">
-import type { PropType } from 'vue';
 import type { CheckboxValue } from './typings';
 
-import { computed, nextTick, watch } from 'vue';
-import { isDefined } from '@vueuse/core';
+import { computed, nextTick, watch, type PropType } from 'vue';
+import { isDefined } from '@/utils/types';
+import { nanoid } from '@/utils/nanoid';
 import { useSizeProp } from '@/components/base/ConfigProvider';
-import { useId } from '@/composables/use-id';
 import { useFormItem } from '../../form';
 import { provideCheckboxGroup } from './composables';
 
@@ -52,9 +51,7 @@ const modelValue = computed({
   },
 });
 
-const idRef = useId(props.id);
-const checkboxId = useId(undefined, idRef.value);
-const nameRef = computed(() => props.name || checkboxId.value);
+const checkboxName = nanoid(12);
 
 provideCheckboxGroup<T>({
   modelValue: computed(() => modelValue.value),
@@ -63,8 +60,7 @@ provideCheckboxGroup<T>({
   size: computed(() => props.size),
   min: computed(() => props.min),
   max: computed(() => props.max),
-  id: computed(() => idRef.value),
-  name: nameRef,
+  name: computed(() => props.name || checkboxName),
   setModelValue,
 });
 

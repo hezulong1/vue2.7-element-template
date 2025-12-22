@@ -10,7 +10,6 @@ export interface CheckboxGroupContext<T extends CheckboxValue = CheckboxValue> {
   size: ComputedRef<ComponentSize | undefined>;
   min: ComputedRef<number | undefined>;
   max: ComputedRef<number | undefined>;
-  id: ComputedRef<string>;
   name: ComputedRef<string>;
   setModelValue: (value: T, checked: boolean) => void;
 }

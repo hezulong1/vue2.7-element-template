@@ -1,10 +1,7 @@
-import type { VNode } from 'vue';
-import type { ExtraProps } from '@/utils/vdom';
-
 import { defineComponent } from 'vue';
 import { isNotEmptyObject } from '@/utils/types';
 import { warn } from '@/utils/debug';
-import { cloneVNode, filterEmptyVNode, getFirstLegitVNode } from '@/utils/vdom';
+import { cloneVNode, getFirstLegitVNode, type ExtraProps } from '@/utils/vdom';
 import { useForwardRefSetter } from './composables';
 import { createDirective } from './utils';
 
@@ -19,18 +16,7 @@ export default defineComponent({
       const { slots, attrs, listeners } = context;
       if (!slots.default) return null;
 
-      let firstLegitNode: VNode | undefined;
-
-      if (import.meta.env.DEV) {
-        const vnodes = filterEmptyVNode(slots.default());
-        firstLegitNode = vnodes[0];
-
-        if (vnodes.length > 1) {
-          warn('<el-only-child> requires exact only one valid child.');
-        }
-      } else {
-        firstLegitNode = getFirstLegitVNode(slots.default());
-      }
+      const firstLegitNode = getFirstLegitVNode(slots.default());
 
       if (!firstLegitNode) {
         warn('<el-only-child> no valid child node found.');

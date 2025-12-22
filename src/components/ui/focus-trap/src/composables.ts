@@ -1,11 +1,10 @@
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { isClient, toValue, type MaybeRefOrGetter, useEventListener } from '@vueuse/core';
-import { createUseId } from '@/composables/use-id';
+import { useId } from '@/composables/use-id';
 import * as domUtils from '@/utils/dom';
 import { isUndefined } from '@/utils/types';
 import { focusFirstDescendant, focusLastDescendant } from './utils';
 
-const { useId } = createUseId();
 let stack: string[] = [];
 
 interface InternalState {
@@ -31,7 +30,8 @@ export function useFocusTrap(opts: UseFocusTrapProps = {}) {
   const initialFocusToRef = computed(() => toValue(opts.initialFocusTo));
   const finalFocusToRef = computed(() => toValue(opts.finalFocusTo));
 
-  const id = useId(undefined, 'el-focus-trap');
+  const id = useId('el-focus-trap');
+
   const startRef = ref<HTMLElement | null>();
   const endRef = ref<HTMLElement | null>();
 

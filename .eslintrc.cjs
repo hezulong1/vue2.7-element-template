@@ -12,7 +12,7 @@ const restricted = [
 ];
 
 const dependencies = Object.keys(pkg.dependencies)
-  .filter(pattern => !['vue', 'vue-router', 'pinia', 'vuex', '@vueuse/core'].includes(pattern))
+  .filter(pattern => !['vue', 'vue-router', 'pinia', '@vueuse/core'].includes(pattern))
   .map(pattern => ({ pattern, group: 'external', position: 'after' }));
 
 module.exports = {
@@ -29,11 +29,9 @@ module.exports = {
       pathGroups: [
         { pattern: 'vue', group: 'external', position: 'before' },
         { pattern: 'vue-router', group: 'external', position: 'before' },
-        { pattern: 'vuex', group: 'external', position: 'before' },
         { pattern: 'pinia', group: 'external', position: 'before' },
         { pattern: '@vue/**', group: 'external', position: 'before' },
         { pattern: '@vueuse/**', group: 'external', position: 'before' },
-        { pattern: '@element-plus/icons-svg', group: 'external', position: 'before' },
         ...dependencies,
         { pattern: '@/**', group: 'internal', position: 'after' },
       ],

@@ -4,7 +4,7 @@ let _warn: (msg: string) => void = noop;
 
 if (import.meta.env.DEV) {
   if (typeof console !== 'undefined') {
-    _warn = (msg: string) => console.warn(`[Pro warn]:`, msg);
+    _warn = (msg: string) => console.error(`[Dev warn]:`, msg);
   }
 }
 

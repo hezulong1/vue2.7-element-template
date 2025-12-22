@@ -1,16 +1,15 @@
 <template>
-  <div :id="idRef" class="el-radio-group" role="radiogroup" aria-label="radio-group">
+  <div :id="id" class="el-radio-group" role="radiogroup" aria-label="radio-group">
     <slot />
   </div>
 </template>
 
 <script setup lang="ts" generic="T extends RadioValue">
-import type { PropType } from 'vue';
 import type { RadioValue } from './typings';
 
-import { computed, nextTick, watch } from 'vue';
+import { computed, nextTick, watch, type PropType } from 'vue';
 import { useSizeProp } from '@/components/base/ConfigProvider';
-import { useId } from '@/composables/use-id';
+import { nanoid } from '@/utils/nanoid';
 import { useFormItem } from '../../form';
 import { provideRadioGroup } from './composables';
 
@@ -49,16 +48,14 @@ const modelValue = computed({
   },
 });
 
-const idRef = useId(props.id);
-const radioId = useId(undefined, idRef.value);
-const nameRef = computed(() => props.name || radioId.value);
+const radioName = nanoid(12);
 
 provideRadioGroup<T>({
   modelValue: computed(() => modelValue.value),
   disabled: computed(() => props.disabled),
   button: computed(() => props.button),
   size: computed(() => props.size),
-  name: nameRef,
+  name: computed(() => props.name || radioName),
   setModelValue,
 });
 

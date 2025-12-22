@@ -16,6 +16,7 @@ import type { Prettify } from '@vue/shared';
 
 import { isObject, hasOwn, normalizeStyle, normalizeClass } from '@vue/shared';
 import { isNotEmptyArray, isNotEmptyObject, isNotEmptyString } from './types';
+import { warn } from './debug';
 
 export function isVNode(value: unknown): value is VNode {
   return isObject(value) && hasOwn(value, 'componentOptions');
@@ -28,19 +29,27 @@ export function isValidVNode(value: unknown): value is VNode {
   return isVNode(value) && !!value.tag;
 }
 
-export function isEmptyVNode(vnode: VNode): boolean {
-  return !(vnode.tag || (vnode.isComment !== true && isNotEmptyString(vnode.text)));
+export function isNotEmptyVNode(vnode: VNode): boolean {
+  return !!vnode.tag || (vnode.isComment !== true && isNotEmptyString(vnode.text));
 }
 
 export function filterEmptyVNode(vnodes?: VNode[] | null): VNode[] {
-  return vnodes ? vnodes.filter(x => !isEmptyVNode(x)) : [];
+  return vnodes ? vnodes.filter(x => isNotEmptyVNode(x)) : [];
 }
 
 export function getFirstLegitVNode(nodes?: VNode[] | null): VNode | undefined {
   if (!nodes) return;
 
+  if (import.meta.env.DEV) {
+    const vnodes = filterEmptyVNode(nodes);
+    if (vnodes.length > 1) {
+      warn(`requires exact only one valid child.`);
+    }
+    return vnodes[0];
+  }
+
   for (const vnode of nodes) {
-    if (!isEmptyVNode(vnode)) {
+    if (isNotEmptyVNode(vnode)) {
       return vnode;
     }
   }

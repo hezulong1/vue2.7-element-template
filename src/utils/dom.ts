@@ -2,7 +2,7 @@ import { hasOwn } from '@vue/shared';
 import { isClient } from '@vueuse/core';
 import { cacheStringFunction } from './logic';
 import { capitalize } from './string';
-import { isBoolean, isFunction, isNumber, isNumeric, isObject } from './types';
+import { isFunction, isNumber, isNumeric, isObject } from './types';
 
 export function getWindow(e?: Node | UIEvent | null): Window & typeof globalThis {
   const candidateNode = e as Node | undefined | null;
@@ -124,12 +124,12 @@ export function getBrowserScrollbarSize(options?: boolean | GetBrowserScrollbarS
   let forceUpdate: boolean | undefined;
   let testContainer: HTMLElement | undefined;
 
-  if (isBoolean(options)) {
+  if (typeof options === 'boolean') {
     forceUpdate = options;
   } else if (options) {
     testContainer = options.testContainer;
     // 如果未配置 forceUpdate，则根据 testContainer 是否存在来判断强制更新
-    forceUpdate = isBoolean(options.forceUpdate) ? options.forceUpdate : !!testContainer;
+    forceUpdate = typeof options.forceUpdate === 'boolean' ? options.forceUpdate : !!testContainer;
   }
 
   if (typeof scrollbarSize !== 'undefined' && !forceUpdate) return scrollbarSize;

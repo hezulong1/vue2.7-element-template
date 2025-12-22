@@ -1,8 +1,8 @@
 import type { ObjectDirective, VNodeDirective } from 'vue';
-import type { ForwardRefSetter } from './composables';
+import type { ForwardRefSetter } from './typings';
 
-export function createDirective<T = Element>(setForwardRef: ForwardRefSetter<T>, name = 'forward-ref') {
-  const def: ObjectDirective<T> = {
+export function createDirective(setForwardRef: ForwardRefSetter, name = 'forward-ref') {
+  const def: ObjectDirective<Element> = {
     inserted(el) {
       setForwardRef(el);
     },

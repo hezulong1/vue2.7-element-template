@@ -1,5 +1,4 @@
 // code from https://github.com/ai/nanoid
-// TODO: IE11
 
 declare const msCrypto: typeof crypto;
 
@@ -33,27 +32,14 @@ export const customRandom = (alphabet: string, defaultSize: number, getRandom: (
 
 export const customAlphabet = (alphabet: string, size = 21) => customRandom(alphabet, size | 0, random);
 
-export const nanoid = (
-  () => typeof browserCrypto !== 'undefined'
-    ? (size = 21) => {
-        let id = '';
-        let bytes = browserCrypto.getRandomValues(new Uint8Array((size |= 0)));
-        while (size--) {
-          // Using the bitwise AND operator to "cap" the value of
-          // the random byte from 255 to 63, in that way we can make sure
-          // that the value will be a valid index for the "chars" string.
-          id += urlAlphabet[bytes[size] & 63];
-        }
-        return id;
-      }
-    : (size = 21) => { // Not Secure
-        let id = '';
-        // A compact alternative for `for (var i = 0; i < step; i++)`.
-        let i = size | 0;
-        while (i--) {
-          // `| 0` is more compact and faster than `Math.floor()`.
-          id += urlAlphabet[(Math.random() * 64) | 0];
-        }
-        return id;
-      }
-)();
+export const nanoid = (size = 21) => {
+  let id = '';
+  let bytes = browserCrypto.getRandomValues(new Uint8Array((size |= 0)));
+  while (size--) {
+    // Using the bitwise AND operator to "cap" the value of
+    // the random byte from 255 to 63, in that way we can make sure
+    // that the value will be a valid index for the "chars" string.
+    id += urlAlphabet[bytes[size] & 63];
+  }
+  return id;
+};

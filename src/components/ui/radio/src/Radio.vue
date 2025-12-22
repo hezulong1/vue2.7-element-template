@@ -23,11 +23,10 @@
 </template>
 
 <script setup lang="ts" generic="T extends RadioValue">
-import type { PropType } from 'vue';
 import type { RadioValue } from './typings';
 
-import { computed, ref, watchEffect } from 'vue';
-import { isDefined } from '@vueuse/core';
+import { computed, ref, watch, watchEffect, type PropType } from 'vue';
+import { isDefined } from '@/utils/types';
 import { useSizeProp } from '@/components/base/ConfigProvider';
 import { useId } from '@/composables/use-id';
 import { useFormDisabled, useFormSize } from '../../form';
@@ -69,10 +68,15 @@ const disabledRef = useFormDisabled(radioGroup?.disabled);
 const buttonRef = computed(() => radioGroup?.button.value || props.button);
 const actualValue = computed(() => isDefined(props.value) ? props.value : props.label);
 
+const id = computed(() => props.id);
+const idRef = ref(id.value || useId().value);
 const focus = ref(false);
 const selfModel = ref(false);
-// 传入 id 优先使用，否则根据情况，是否自动生成
-const idRef = radioGroup ? ref(props.id) : useId(props.id);
+
+watch(id, (id) => {
+  if (!id) return;
+  idRef.value = id;
+});
 
 watchEffect(() => {
   selfModel.value = radioGroup

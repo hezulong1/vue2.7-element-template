@@ -29,7 +29,7 @@ export default defineConfig(({ mode }) => {
     resolve: {
       alias: {
         '@': path.resolve(__dirname, 'src'),
-        'element-ui': path.resolve(__dirname, 'src/components/ui'),
+        'element-ui': path.resolve(__dirname, 'src/components/ui/index.ts'),
       },
     },
     build: {
@@ -41,7 +41,7 @@ export default defineConfig(({ mode }) => {
           manualChunks(id) {
             if (id.includes('node_modules')) {
               return 'vendor';
-            } else if (id.includes('components/ui')) {
+            } else if (id.includes('components/ui') || id.includes('styles/ui')) {
               return 'element-ui';
             }
           },

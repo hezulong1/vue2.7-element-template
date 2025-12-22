@@ -1,29 +1,6 @@
 import { computed } from 'vue';
 import { toValue, tryOnScopeDispose, type MaybeRefOrGetter } from '@vueuse/core';
-
-export const useDelayedToggleProps = {
-  /**
-   * @description delay of appearance, in millisecond, not valid in controlled mode
-   */
-  showAfter: {
-    type: Number,
-    default: 0,
-  },
-  /**
-   * @description delay of disappear, in millisecond, not valid in controlled mode
-   */
-  hideAfter: {
-    type: Number,
-    default: 200,
-  },
-  /**
-   * @description disappear automatically, in millisecond, not valid in controlled mode
-   */
-  autoClose: {
-    type: Number,
-    default: 0,
-  },
-} as const;
+import { createTimeoutTimer } from '@/utils/async';
 
 export interface UseDelayedToggleOptions {
   open: (event?: Event) => void;
@@ -67,25 +44,4 @@ export function useDelayedToggle(opts: UseDelayedToggleOptions) {
   });
 
   return { onOpen, onClose };
-}
-
-function createTimeoutTimer() {
-  let token: ReturnType<typeof setTimeout> | null = null;
-
-  const cancel = () => {
-    if (token !== null) {
-      clearTimeout(token);
-      token = null;
-    }
-  };
-
-  const cancelAndSet = (runner: () => void, timeout: number) => {
-    cancel();
-    token = setTimeout(() => {
-      token = null;
-      runner();
-    }, timeout);
-  };
-
-  return { cancel, cancelAndSet };
 }
