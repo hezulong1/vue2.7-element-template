@@ -3,38 +3,38 @@ import { toValue, tryOnScopeDispose, type MaybeRefOrGetter } from '@vueuse/core'
 import { createTimeoutTimer } from '@/utils/async';
 
 export interface UseDelayedToggleOptions {
-  open: (event?: Event) => void;
-  close: (event?: Event) => void;
-  showAfter?: MaybeRefOrGetter<number | undefined>;
-  hideAfter?: MaybeRefOrGetter<number | undefined>;
-  autoClose?: MaybeRefOrGetter<number | undefined>;
+  onOpen: (event?: Event) => void;
+  onClose: (event?: Event) => void;
+  openDelay?: MaybeRefOrGetter<number | undefined>;
+  closeDelay?: MaybeRefOrGetter<number | undefined>;
+  autoCloseDelay?: MaybeRefOrGetter<number | undefined>;
 }
 
 export function useDelayedToggle(opts: UseDelayedToggleOptions) {
-  const showAfterRef = computed(() => toValue(opts.showAfter) ?? 0);
-  const hideAfterRef = computed(() => toValue(opts.hideAfter) ?? 0);
-  const autoCloseRef = computed(() => toValue(opts.autoClose) ?? 0);
+  const openDelay = computed(() => toValue(opts.openDelay) ?? 0);
+  const closeDelay = computed(() => toValue(opts.closeDelay) ?? 0);
+  const autoCloseDelay = computed(() => toValue(opts.autoCloseDelay) ?? 0);
 
   const autoCloseTimeout = createTimeoutTimer();
   const openOrCloseTimeout = createTimeoutTimer();
 
-  const onOpen = (event?: Event, timeout = showAfterRef.value) => {
+  const open = (event?: Event, timeout = openDelay.value) => {
     openOrCloseTimeout.cancelAndSet(() => {
-      opts.open(event);
+      opts.onOpen(event);
 
-      const { value: autoClose } = autoCloseRef;
+      const { value: autoClose } = autoCloseDelay;
       if (autoClose > 0) {
         autoCloseTimeout.cancelAndSet(() => {
-          opts.close(event);
+          opts.onClose(event);
         }, autoClose);
       }
     }, timeout);
   };
 
-  const onClose = (event?: Event, timeout = hideAfterRef.value) => {
+  const close = (event?: Event, timeout = closeDelay.value) => {
     autoCloseTimeout.cancel();
     openOrCloseTimeout.cancelAndSet(() => {
-      opts.close(event);
+      opts.onClose(event);
     }, timeout);
   };
 
@@ -43,5 +43,5 @@ export function useDelayedToggle(opts: UseDelayedToggleOptions) {
     openOrCloseTimeout.cancel();
   });
 
-  return { onOpen, onClose };
+  return { open, close };
 }
