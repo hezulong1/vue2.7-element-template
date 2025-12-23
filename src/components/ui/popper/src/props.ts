@@ -54,13 +54,9 @@ export const basePopperProps = {
   },
   effect: String,
   persistent: Boolean,
-  disabled: Boolean,
-  visible: Boolean,
   focusOnShow: Boolean,
   zIndex: Number,
   transition: String,
-
-  referenceEl: [Element, Object] as PropType<ReferenceElement>,
   ariaLabel: String,
 } as const;
 
@@ -69,6 +65,8 @@ export const popperProps = {
 
   id: String,
   role: String,
+  visible: Boolean,
+  referenceEl: [Element, Object] as PropType<ReferenceElement>,
 } as const;
 
 export type PopperProps = Prettify<ExtractPropTypes<typeof popperProps>>;

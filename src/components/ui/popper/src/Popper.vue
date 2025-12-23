@@ -1,6 +1,6 @@
 <template>
   <ElFocusTrap
-    v-if="shouldRender || !ariaHidden"
+    v-if="shouldRender"
     v-bind="contentAttrs"
     ref="focusTrapRef"
     :class="['el-popper', effect ? `is-${effect}` : undefined, transitionName]"
@@ -11,7 +11,7 @@
   >
     <transition :name="transitionName" :appear="!persistent" v-on="transitionHooks">
       <div
-        v-show="shouldShow"
+        v-show="visible"
         :id="id"
         class="el-popper__inner"
         :role="role"
@@ -72,8 +72,7 @@ if (formItemContext) {
 
 const trapped = ref(false);
 const ariaHidden = ref(true);
-const shouldRender = computed(() => props.persistent ? true : props.visible);
-const shouldShow = computed(() => props.disabled ? false : props.visible);
+const shouldRender = computed(() => (props.persistent ? true : props.visible) || !ariaHidden.value);
 
 const focusTrapRef = ref<ComponentPublicInstance>();
 const referenceElRef = computed(() => props.referenceEl);
