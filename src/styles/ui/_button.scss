@@ -9,7 +9,7 @@
   justify-content: center;
 
   border: 1px solid transparent;
-  border-radius: $--button-border-radius;
+  border-radius: $--border-radius-base;
 
   line-height: 1;
   vertical-align: middle;
@@ -121,8 +121,7 @@
       }
     }
 
-    &.is-disabled,
-    &.is-loading {
+    &.is-disabled {
       background-color: transparent !important;
       border-color: transparent !important;
     }

@@ -1,0 +1,12 @@
+.el-popper {
+  position: absolute;
+  z-index: 2000;
+
+  &__inner {
+    visibility: visible;
+    opacity: 1;
+    // 创建层叠文上下文
+    transform: translate3d(0, 0, 0);
+    transition-property: transform, opacity, visibility;
+  }
+}

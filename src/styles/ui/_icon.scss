@@ -1,12 +1,10 @@
-@import '../mixins/mixins';
-
-.#{$namespace}-icon-loading {
+.el-icon-loading {
   animation: rotating 2s linear infinite;
 }
-.#{$namespace}-icon--right {
+.el-icon--right {
   margin-left: 4px;
 }
-.#{$namespace}-icon--left {
+.el-icon--left {
   margin-right: 4px;
 }
 
@@ -16,7 +14,7 @@
   }
 }
 
-@include b(icon) {
+.el-icon {
   display: inline-flex;
   justify-content: center;
   align-items: center;
@@ -29,7 +27,7 @@
   fill: currentColor;
   font-size: inherit;
 
-  @include when(loading) {
+  &.is-loading {
     animation: rotating 2s linear infinite;
   }
 

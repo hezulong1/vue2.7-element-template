@@ -1,0 +1,112 @@
+@import '../mixins/mixins';
+
+$popper-placements: (
+  'top': 'bottom',
+  'bottom': 'top',
+  'left': 'right',
+  'right': 'left',
+);
+
+.el-tooltip {
+  .el-popper__inner {
+    border-radius: $--border-radius-base;
+    padding: 5px 11px;
+    font-size: 12px;
+    line-height: 20px;
+    min-width: 10px;
+    overflow-wrap: break-word;
+    word-break: normal;
+  }
+
+  &.is-dark .el-popper__inner {
+    color: $--fill-blank;
+    background: $--color-text-primary;
+    border: 1px solid $--color-text-primary;
+
+    > .el-popper__arrow:before {
+      border: 1px solid $--color-text-primary;
+      background: $--color-text-primary;
+      right: 0;
+    }
+  }
+
+  &.is-light > .el-popper__inner {
+    background: $--fill-blank;
+    border: 1px solid $--border-color-light;
+
+    > .el-popper__arrow:before {
+      border: 1px solid $--border-color-light;
+      background: $--fill-blank;
+      right: 0;
+    }
+  }
+
+  &.is-pure > .el-popper__inner {
+    padding: 0;
+  }
+
+  .el-popper__arrow {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    z-index: -1;
+
+    &:before {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      z-index: -1;
+      content: ' ';
+      transform: rotate(45deg);
+      background: $--color-text-primary;
+      box-sizing: border-box;
+    }
+  }
+
+  @each $placement, $opposite in $popper-placements {
+    &[data-popper-placement^='#{$placement}'] > .el-popper__inner > .el-popper__arrow {
+      #{$opposite}: -5px;
+
+      &::before {
+        @if $placement == top {
+          border-bottom-right-radius: 2px;
+        }
+        @if $placement == bottom {
+          border-top-left-radius: 2px;
+        }
+        @if $placement == left {
+          border-top-right-radius: 2px;
+        }
+        @if $placement == right {
+          border-bottom-left-radius: 2px;
+        }
+      }
+    }
+  }
+
+  @each $placement, $adjacency in ('top': 'left', 'bottom': 'right', 'left': 'bottom', 'right': 'top') {
+    &[data-popper-placement^='#{$placement}'] > .el-popper__inner > .el-popper__arrow:before {
+      border-#{$placement}-color: transparent !important;
+      border-#{$adjacency}-color: transparent !important;
+    }
+  }
+}
+
+.tooltip-scale {
+
+  &-enter-active, &-leave-active {
+    transition-duration: 300ms;
+    transition-timing-function: cubic-bezier(0.23, 1, 0.32, 1);
+  }
+
+  &-enter, &-leave-active {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+
+  @each $placement, $opposite in $popper-placements {
+    &[data-popper-placement^='#{$placement}'] > .el-popper__inner {
+      transform-origin: #{$opposite};
+    }
+  }
+}

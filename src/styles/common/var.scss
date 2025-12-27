@@ -525,9 +525,10 @@ $--popover-title-font-size: 16px !default;
 /// color||Color|0
 $--popover-title-font-color: $--color-text-primary !default;
 
-/* Tooltip
--------------------------- */
-/// color|1|Color|0
+// Tooltip
+// ----------------------------------------
+
+
 $--tooltip-fill: $--color-text-primary !default;
 /// color|1|Color|0
 $--tooltip-color: $--color-white !default;
@@ -653,15 +654,9 @@ $--loading-spinner-size: 42px !default;
 $--loading-fullscreen-spinner-size: 50px !default;
 
 // Scrollbar
-// $--scrollbar-background-color: rgba($--color-text-secondary, .3) !default;
-// $--scrollbar-hover-background-color: rgba($--color-text-secondary, .5) !default;
-
 $--scrollbar-size: 8px;
 $--scrollbar-gap: 2px;
-$--scrollbar-background-color: $--color-text-secondary;
-$--scrollbar-opacity: 0.3;
-$--scrollbar-hover-opacity: 0.5;
-$--scrollbar-active-opacity: 0.7;
+$--scrollbar-color: $--color-text-secondary;
 
 // Carousel
 /// fontSize||Font|1
