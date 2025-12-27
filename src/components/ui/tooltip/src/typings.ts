@@ -20,10 +20,10 @@ export interface TooltipRootContext {
   onOpen: (e?: Event) => void;
   onClose: (e?: Event) => void;
   onToggle: (e: Event) => void;
-  onShow: () => void;
-  onHide: () => void;
-  onBeforeShow: () => void;
-  onBeforeHide: () => void;
+  onShow: VoidFunction;
+  onHide: VoidFunction;
+  onBeforeShow: VoidFunction;
+  onBeforeHide: VoidFunction;
 }
 
 export interface TooltipContentInstance {

@@ -107,7 +107,7 @@ export const getSibling = (
 };
 
 export const focusElement = (
-  el?: HTMLElement | { focus: () => void } | null,
+  el?: HTMLElement | { focus: VoidFunction } | null,
   options?: FocusOptions,
 ) => {
   if (!el || !el.focus) return;

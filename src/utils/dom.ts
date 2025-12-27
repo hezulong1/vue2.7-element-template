@@ -113,61 +113,33 @@ export const after = (
       }
 )();
 
-let scrollbarSize: { width: number; height: number } | undefined;
+let scrollBarWidth: number | undefined;
 
-export interface GetBrowserScrollbarSizeOptions {
-  forceUpdate?: boolean;
-  testContainer?: HTMLElement;
-}
-
-export function getBrowserScrollbarSize(options?: boolean | GetBrowserScrollbarSizeOptions) {
-  let forceUpdate: boolean | undefined;
-  let testContainer: HTMLElement | undefined;
-
-  if (typeof options === 'boolean') {
-    forceUpdate = options;
-  } else if (options) {
-    testContainer = options.testContainer;
-    // 如果未配置 forceUpdate，则根据 testContainer 是否存在来判断强制更新
-    forceUpdate = typeof options.forceUpdate === 'boolean' ? options.forceUpdate : !!testContainer;
-  }
-
-  if (typeof scrollbarSize !== 'undefined' && !forceUpdate) return scrollbarSize;
-  if (!isClient) {
-    scrollbarSize = { width: 0, height: 0 };
-    return scrollbarSize;
-  }
-
-  if (!testContainer) {
-    testContainer = document.body;
-  }
+// 假设滚动条宽高一致（可使用 CSS 设置宽高），若不一致，需要按照实际情况处理代码逻辑
+// 可以查看项目的 git 记录参考解决
+export function getScrollbarWidth() {
+  if (!isClient) return 0;
+  if (typeof scrollBarWidth !== 'undefined') return scrollBarWidth;
 
   const outer = document.createElement('div');
   outer.style.visibility = 'hidden';
   outer.style.width = '100px';
   outer.style.position = 'absolute';
   outer.style.top = '-9999px';
-  testContainer.appendChild(outer);
+  document.body.appendChild(outer);
 
   const widthNoScroll = outer.offsetWidth;
-  const heightNoScroll = outer.offsetHeight;
   outer.style.overflow = 'scroll';
-  // @ts-expect-error 支持 IE11
-  outer.style.msOverflowStyle = 'scrollbar';
 
   const inner = document.createElement('div');
   inner.style.width = '100%';
   outer.appendChild(inner);
 
   const widthWithScroll = inner.offsetWidth;
-  const heightWithScroll = inner.offsetHeight;
   remove(outer);
+  scrollBarWidth = widthNoScroll - widthWithScroll;
 
-  const width = widthNoScroll - widthWithScroll;
-  const height = heightNoScroll - heightWithScroll;
-  scrollbarSize = { width, height };
-
-  return scrollbarSize;
+  return scrollBarWidth;
 }
 
 export function openNewWindow(url: string, title: string, width: number, height: number): void {
