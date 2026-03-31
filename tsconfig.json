@@ -38,7 +38,8 @@
     "strict": true,
     "useUnknownInCatchVariables": false
   },
-  // Vue(Official)@3.0.0
+  // Vue(Official)
+  // https://github.com/vuejs/language-tools/wiki/Vue-2-Compat-Guides
   "vueCompilerOptions": {
     "target": "auto",
     // https://github.com/vuejs/language-tools/issues/1969
@@ -54,7 +55,9 @@
       },
       "checked": {
         "ElRadio": true,
-        "ElCheckbox": true
+        "ElCheckbox": true,
+        "Radio": true,
+        "Checkbox": true
       }
     }
   },
