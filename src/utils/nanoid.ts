@@ -1,8 +1,6 @@
 // code from https://github.com/ai/nanoid
 
-declare const msCrypto: typeof crypto;
-
-const browserCrypto = crypto || msCrypto;
+const browserCrypto: typeof crypto = window.crypto || (window as any).msCrypto;
 
 // This alphabet uses `A-Za-z0-9_-` symbols.
 // The order of characters is optimized for better gzip and brotli compression.
