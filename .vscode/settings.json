@@ -1,4 +1,19 @@
 {
+  "eslint.useFlatConfig": false,
+  "eslint.probe": [
+    "javascript",
+    "javascriptreact",
+    "typescript",
+    "typescriptreact",
+    "vue",
+  ],
+  "eslint.validate": [
+    "javascript",
+    "javascriptreact",
+    "typescript",
+    "typescriptreact",
+    "vue",
+  ],
   "git.ignoreLimitWarning": true,
   // "git.branchProtection": [
   //   "main"
