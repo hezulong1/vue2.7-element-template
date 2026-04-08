@@ -32,8 +32,6 @@
       :aria-label="ariaLabel"
 
       :disabled="disabled"
-      :content="content"
-      :raw-content="rawContent"
       :enterable="enterable"
       :pure="pure"
       :virtual-triggering="virtualTriggering"
@@ -59,7 +57,7 @@ import { RenderApp as ElRenderApp } from '../../teleport';
 import ElTooltipTrigger from './Trigger.vue';
 import ElTooltipContentImpl from './ContentImpl.vue';
 
-import { tooltipProps } from './props';
+import { tooltipProps, tooltipEmit } from './props';
 import { createTooltipRoot } from './TooltipRoot';
 
 defineOptions({
@@ -67,16 +65,7 @@ defineOptions({
 });
 
 const props = defineProps(tooltipProps);
-// Vue2 中 TS 类型必须写在当前文件中，若改此处记得同步修改 TooltipRoot.tsx 中的 Emit 声明
-const emit = defineEmits<{
-  (type: 'update:visible', value: boolean): void;
-  (type: 'before-show', e?: Event): void;
-  (type: 'before-hide', e?: Event): void;
-  (type: 'show', e?: Event): void;
-  (type: 'hide', e?: Event): void;
-  (type: 'open', e?: Event): void;
-  (type: 'close', e?: Event): void;
-}>();
+const emit = defineEmits(tooltipEmit);
 
 const {
   onOpen,
@@ -99,7 +88,7 @@ defineExpose({
   /**
    * @description update el-popper component instance
    */
-  updatePopper: (shouldUpdateZIndex = false) => contentRef.value?.updatePopper(shouldUpdateZIndex),
+  updatePopper: (shouldUpdateZIndex?: boolean) => contentRef.value?.updatePopper(shouldUpdateZIndex),
   /**
    * @description expose onOpen function to mange el-tooltip open state
    */

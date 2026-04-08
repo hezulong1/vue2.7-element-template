@@ -123,7 +123,7 @@ const contentAttrs = computed(() =>
 const transitionName = computed(() => props.transition || `el-fade-in-linear`);
 const transitionHooks = {
   'before-enter': (el: Element) => {
-    updatePopper();
+    updatePopper(true);
     emit('before-enter', el);
   },
   'after-enter': (el: Element) => {
@@ -158,7 +158,7 @@ onMounted(() => {
   );
 });
 
-function updatePopper(shouldUpdateZIndex = true) {
+function updatePopper(shouldUpdateZIndex?: boolean) {
   popper.update();
 
   if (shouldUpdateZIndex) {

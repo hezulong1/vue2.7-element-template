@@ -59,7 +59,7 @@ const props = defineProps(tooltipContentImplProps);
 
 const tooltipRoot = useTooltipRoot();
 if (!tooltipRoot) {
-  throw new ReferenceError('<el-tooltip-content> requires a TooltipRoot provider.');
+  throw new ReferenceError('<el-tooltip-content-impl> requires a TooltipRoot provider.');
 }
 
 const {
@@ -94,13 +94,6 @@ watch(
   { flush: 'sync' },
 );
 
-watch(
-  () => props.content,
-  () => {
-    popperRef.value?.updatePopper();
-  },
-);
-
 const persistentRef = computed(() => {
   // For testing, we would always want the content to be rendered
   // to the DOM, so we need to return true here.
@@ -133,20 +126,18 @@ let stopHandle: ReturnType<typeof onClickOutside>;
 watch(
   open,
   (val) => {
-    if (!val) {
-      stopHandle?.();
-    } else {
+    if (val) {
       stopHandle = onClickOutside(
         popperRef,
         () => {
           if (controlled.value) return;
           const needClose = ensureArray(trigger.value).every(item => item !== 'hover' && item !== 'focus');
-          if (needClose) {
-            onClose();
-          }
+          if (needClose) onClose();
         },
         { detectIframe: true },
       );
+    } else {
+      stopHandle?.();
     }
   },
   { flush: 'post' },

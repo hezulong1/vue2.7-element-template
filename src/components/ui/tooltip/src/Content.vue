@@ -20,8 +20,6 @@
       :aria-label="ariaLabel"
 
       :disabled="disabled"
-      :content="content"
-      :raw-content="rawContent"
       :enterable="enterable"
       :pure="pure"
       :virtual-triggering="virtualTriggering"
@@ -29,7 +27,9 @@
 
       :class="popperClass"
       :style="popperStyle"
-    />
+    >
+      <slot />
+    </ElTooltipContentImpl>
   </ElTeleport>
 </template>
 

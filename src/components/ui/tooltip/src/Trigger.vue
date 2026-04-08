@@ -43,7 +43,7 @@ provideForwardRefSetter((el) => {
   triggerEl.value = el;
 });
 
-const triggerIsNot = (type?: string) => {
+const assertTriggerTypeIsNot = (type?: string) => {
   const stop = controlled.value || props.disabled;
   if (stop) return true;
   if (typeof type === 'undefined') return false;
@@ -51,7 +51,7 @@ const triggerIsNot = (type?: string) => {
 };
 
 function handleMouseEnter(e: MouseEvent) {
-  if (triggerIsNot('hover')) return;
+  if (assertTriggerTypeIsNot('hover')) return;
   onOpen(e);
   props.focusOnTarget && e.target && nextTick(() => {
     focusElement(e.target as HTMLElement, { preventScroll: true });
@@ -59,33 +59,33 @@ function handleMouseEnter(e: MouseEvent) {
 }
 
 function handleMouseLeave(e: MouseEvent) {
-  if (triggerIsNot('hover')) return;
+  if (assertTriggerTypeIsNot('hover')) return;
   onClose(e);
 }
 
 function handleClick(e: PointerEvent) {
-  if (triggerIsNot('click')) return;
+  if (assertTriggerTypeIsNot('click')) return;
   e.button === 0 && onToggle(e);
 }
 
 function handleFocus(e: FocusEvent) {
-  if (triggerIsNot('focus')) return;
+  if (assertTriggerTypeIsNot('focus')) return;
   onOpen(e);
 }
 
 function handleBlur(e: FocusEvent) {
-  if (triggerIsNot('focus')) return;
+  if (assertTriggerTypeIsNot('focus')) return;
   onClose(e);
 }
 
 function handleContextMenu(e: Event) {
-  if (triggerIsNot('contextmenu')) return;
+  if (assertTriggerTypeIsNot('contextmenu')) return;
   e.preventDefault();
   onToggle(e);
 }
 
 function handleKeyDown(e: KeyboardEvent) {
-  if (triggerIsNot()) return;
+  if (assertTriggerTypeIsNot()) return;
   const code = getEventCode(e);
   if (props.triggerKeys.includes(code)) {
     e.preventDefault();

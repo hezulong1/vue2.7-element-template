@@ -43,17 +43,6 @@ export const tooltipContentImplProps = {
    * @description whether Tooltip is disabled
    */
   disabled: Boolean,
-  /**
-   * @description display content, can be overridden by `slot#content`
-   */
-  content: {
-    type: String,
-    default: '',
-  },
-  /**
-   * @description whether `content` is treated as HTML string
-   */
-  rawContent: Boolean,
   enterable: {
     type: Boolean,
     default: true,
@@ -93,6 +82,17 @@ export type TooltipContentProps = ExtractPropTypes<typeof tooltipContentProps>;
 export const tooltipProps = {
   ...tooltipTriggerProps,
   ...tooltipContentImplProps,
+  /**
+   * @description display content, can be overridden by `slot#content`
+   */
+  content: {
+    type: String,
+    default: '',
+  },
+  /**
+   * @description whether `content` is treated as HTML string
+   */
+  rawContent: Boolean,
   /**
    * @description How should the tooltip be triggered (to show), not valid in controlled mode
    */
@@ -143,3 +143,25 @@ export const tooltipProps = {
 } as const;
 
 export type TooltipProps = ExtractPropTypes<typeof tooltipProps>;
+
+const cb = (e?: Event) => true;
+
+export const tooltipEmit = {
+  'update:visible': (value: boolean) => true,
+  'before-show': cb,
+  'before-hide': cb,
+  show: cb,
+  hide: cb,
+  open: cb,
+  close: cb,
+};
+
+export interface TooltipEmit {
+  (type: 'update:visible', value: boolean): void;
+  (type: 'before-show', e?: Event): void;
+  (type: 'before-hide', e?: Event): void;
+  (type: 'show', e?: Event): void;
+  (type: 'hide', e?: Event): void;
+  (type: 'open', e?: Event): void;
+  (type: 'close', e?: Event): void;
+}

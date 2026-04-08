@@ -1,5 +1,4 @@
-import type { Arrayable } from '@vueuse/core';
-import type { TooltipTriggerType } from './typings';
+import type { TooltipProps, TooltipEmit } from './props';
 
 import { computed, getCurrentInstance, onBeforeMount, onDeactivated, onMounted, readonly, ref, toRef, watch } from 'vue';
 import { isClient } from '@vueuse/core';
@@ -11,25 +10,7 @@ import { hasOwn } from '@/utils/object';
 
 import { provideTooltipRoot } from './composables';
 
-export interface CreateTooltipRootOptions {
-  role?: string;
-  visible?: boolean;
-  disabled?: boolean;
-  showAfter: number;
-  hideAfter: number;
-  autoClose: number;
-  trigger: Arrayable<TooltipTriggerType>;
-}
-
-export interface CreateTooltipRootEmits {
-  (type: 'update:visible', value: boolean): void;
-  (type: 'before-show', e?: Event): void;
-  (type: 'before-hide', e?: Event): void;
-  (type: 'show', e?: Event): void;
-  (type: 'hide', e?: Event): void;
-}
-
-export function createTooltipRoot(props: CreateTooltipRootOptions, emit: CreateTooltipRootEmits) {
+export function createTooltipRoot(props: TooltipProps, emit: TooltipEmit) {
   const visibleRef = toRef(props, 'visible');
 
   const open = ref(false);
@@ -40,7 +21,7 @@ export function createTooltipRoot(props: CreateTooltipRootOptions, emit: CreateT
     const propData = vm?.$options.propsData;
     return propData ? hasOwn(propData, 'visible') : false;
   });
-  const hasUpdateHandler = computed(() => isFunction(vm?.$listeners['update:visible']));
+  const hasUpdateVisibleHandler = computed(() => isFunction(vm?.$listeners['update:visible']));
 
   const doShow = (event?: Event) => {
     if (open.value === true) return;
@@ -63,7 +44,7 @@ export function createTooltipRoot(props: CreateTooltipRootOptions, emit: CreateT
   const show = (event?: Event) => {
     if (props.disabled) return;
 
-    const shouldEmit = hasUpdateHandler.value && isClient;
+    const shouldEmit = hasUpdateVisibleHandler.value && isClient;
 
     if (shouldEmit) {
       emit('update:visible', true);
@@ -77,7 +58,7 @@ export function createTooltipRoot(props: CreateTooltipRootOptions, emit: CreateT
   const hide = (event?: Event) => {
     if (props.disabled === true || !isClient) return;
 
-    const shouldEmit = hasUpdateHandler.value && isClient;
+    const shouldEmit = hasUpdateVisibleHandler.value && isClient;
 
     if (shouldEmit) {
       emit('update:visible', false);
@@ -102,7 +83,7 @@ export function createTooltipRoot(props: CreateTooltipRootOptions, emit: CreateT
       (val: boolean | undefined) => {
         if (typeof val !== 'boolean') return;
         if (props.disabled && val) {
-          if (hasUpdateHandler.value) {
+          if (hasUpdateVisibleHandler.value) {
             emit('update:visible', false);
           }
         } else if (open.value !== val) {
@@ -123,6 +104,9 @@ export function createTooltipRoot(props: CreateTooltipRootOptions, emit: CreateT
       if (val && open.value) {
         open.value = false;
       }
+      if (!val && typeof props.visible === 'boolean') {
+        open.value = props.visible;
+      }
     },
   );
 
@@ -139,7 +123,7 @@ export function createTooltipRoot(props: CreateTooltipRootOptions, emit: CreateT
     contentEl: ref(),
     popperInstanceRef: ref(),
     role: computed(() => props.role ?? 'tooltip'),
-    controlled: computed(() => typeof visibleRef.value === 'boolean' && !hasUpdateHandler.value),
+    controlled: computed(() => typeof visibleRef.value === 'boolean' && !hasUpdateVisibleHandler.value),
     id: useId(),
     open: readonly(open),
     trigger: toRef(props, 'trigger'),

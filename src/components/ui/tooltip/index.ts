@@ -5,7 +5,17 @@ export { default as TooltipContent } from './src/Content.vue';
 export * from './src/TooltipRoot';
 export * from './src/utils';
 export { useTooltipRoot } from './src/composables';
-export { tooltipProps } from './src/props';
+export {
+  tooltipTriggerProps,
+  tooltipContentProps,
+  tooltipProps,
+  tooltipEmit,
+
+  type TooltipTriggerProps,
+  type TooltipContentProps,
+  type TooltipProps,
+  type TooltipEmit,
+} from './src/props';
 
 export type {
   TooltipEffect,
