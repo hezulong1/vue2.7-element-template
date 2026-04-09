@@ -18,6 +18,11 @@ import { isObject, hasOwn, normalizeStyle, normalizeClass } from '@vue/shared';
 import { isNotEmptyArray, isNotEmptyObject, isNotEmptyString } from './types';
 import { warn } from './debug';
 
+export {
+  normalizeStyle,
+  normalizeClass,
+};
+
 export function isVNode(value: unknown): value is VNode {
   return isObject(value) && hasOwn(value, 'componentOptions');
 }
@@ -160,6 +165,9 @@ export function cloneVNode(vnode: VNode, extraProps?: ExtraProps | null, deep?: 
   }
 
   const mergedData = Object.assign({}, data, {
+    // 移除 staticClass、staticStyle 以防止重复
+    staticClass: '',
+    staticStyle: '',
     class: mergedClass,
     style: mergedStyle,
     attrs: mergedAttrs,

@@ -3,10 +3,11 @@
     v-if="shouldRender"
     v-bind="contentAttrs"
     ref="focusTrapRef"
-    :class="['el-popper', effect ? `is-${effect}` : undefined, transitionName]"
+    :class="['el-popper', effect ? `is-${effect}` : undefined]"
     :style="[{ zIndex: contentZIndex }, popperStyle.popper]"
     :active="trapped"
     :aria-hidden="`${ariaHidden}`"
+    :data-popper-transition="transitionName"
     tabindex="-1"
   >
     <transition :name="transitionName" :appear="!persistent" v-on="transitionHooks">

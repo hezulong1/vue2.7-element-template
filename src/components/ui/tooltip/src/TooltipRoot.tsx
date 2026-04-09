@@ -1,3 +1,4 @@
+import type { Prettify } from '@/utils/typingUtils';
 import type { TooltipProps, TooltipEmit } from './props';
 
 import { computed, getCurrentInstance, onBeforeMount, onDeactivated, onMounted, readonly, ref, toRef, watch } from 'vue';
@@ -10,7 +11,12 @@ import { hasOwn } from '@/utils/object';
 
 import { provideTooltipRoot } from './composables';
 
-export function createTooltipRoot(props: TooltipProps, emit: TooltipEmit) {
+export type CreateTooltipRootOptions = Prettify<
+  Partial<Pick<TooltipProps, 'role' | 'visible' | 'disabled'>>
+  & Pick<TooltipProps, 'showAfter' | 'hideAfter' | 'autoClose' | 'trigger'>
+>;
+
+export function createTooltipRoot(props: CreateTooltipRootOptions, emit: TooltipEmit) {
   const visibleRef = toRef(props, 'visible');
 
   const open = ref(false);

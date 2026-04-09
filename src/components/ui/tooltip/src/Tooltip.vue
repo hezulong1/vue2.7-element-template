@@ -2,7 +2,6 @@
   <ElRenderApp :to="appendTo || selector" auto-update>
     <ElTooltipTrigger
       :disabled="disabled"
-      :trigger="trigger"
       :trigger-keys="triggerKeys"
       :virtual-ref="virtualRef"
       :virtual-triggering="virtualTriggering"
@@ -90,7 +89,7 @@ defineExpose({
    */
   updatePopper: (shouldUpdateZIndex?: boolean) => contentRef.value?.updatePopper(shouldUpdateZIndex),
   /**
-   * @description expose onOpen function to mange el-tooltip open state
+   * @description expose onOpen function to manage el-tooltip open state
    */
   onOpen,
   /**
