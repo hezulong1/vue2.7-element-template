@@ -30,7 +30,7 @@ export default defineComponent({
 
       const isSvgOrText = firstLegitNode.tag === 'svg' || (firstLegitNode.tag == null && firstLegitNode.text);
       // 指令无法作用在文本节点
-      const vnode = isSvgOrText ? <span class="el-only-child">{firstLegitNode}</span> : firstLegitNode;
+      const vnode = isSvgOrText ? <span class="el-only-child">{ firstLegitNode }</span> : firstLegitNode;
       const cloned = cloneVNode(vnode, extraProps);
 
       return cloned;

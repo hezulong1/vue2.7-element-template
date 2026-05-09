@@ -8,5 +8,5 @@ const enum Bracket {
 let i = 0;
 
 export function useId(prefix = 'el') {
-  return computedEager(() => Bracket.LEFT + `${prefix}-${++i}` + Bracket.RIGHT);
+  return computedEager(() => Bracket.LEFT + `${ prefix }-${ ++i }` + Bracket.RIGHT);
 }

@@ -34,10 +34,10 @@ const sidebarStyle = computed(() => {
     top,
     left: '0px',
     width,
-    height: `calc(100% - ${top})`,
+    height: `calc(100% - ${ top })`,
     maxWidth: width,
     minWidth: width,
-    flex: `0 0 ${width}`,
+    flex: `0 0 ${ width }`,
     transition: '0.2s, background',
   } as CSSProperties;
 });
@@ -48,7 +48,7 @@ const sidebarPlaceholderStyle = computed(() => {
     width,
     maxWidth: width,
     minWidth: width,
-    flex: `0 0 ${width}`,
+    flex: `0 0 ${ width }`,
     overflow: 'hidden',
     transition: '0.2s',
   } as CSSProperties;

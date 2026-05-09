@@ -12,7 +12,7 @@ export const supportsCustomizeScrollbar = (() => {
   document.body.appendChild(el);
 
   const style = document.createElement('style');
-  style.textContent = `#${id}::-webkit-scrollbar{width:10px;height:10px}`;
+  style.textContent = `#${ id }::-webkit-scrollbar{width:10px;height:10px}`;
   document.head.appendChild(style);
 
   const scrollbarWidth = el.offsetWidth - el.clientWidth;

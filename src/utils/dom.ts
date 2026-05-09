@@ -44,7 +44,7 @@ export function addUnit(value?: string | number, defaultUnit = 'px') {
   if (!value) return '';
 
   if (isNumber(value) || isNumeric(value)) {
-    return `${value}${defaultUnit}`;
+    return `${ value }${ defaultUnit }`;
   } else if (typeof value === 'string') {
     return value;
   }

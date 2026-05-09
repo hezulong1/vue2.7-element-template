@@ -122,8 +122,8 @@ const wrapStyle = computed(() => {
 
   const gutterWidth = getGutterWidth();
   if (gutterWidth) {
-    style.marginRight = `-${addUnit(gutterWidth)}`;
-    style.marginBottom = `-${addUnit(gutterWidth)}`;
+    style.marginRight = `-${ addUnit(gutterWidth) }`;
+    style.marginBottom = `-${ addUnit(gutterWidth) }`;
   }
 
   return [props.wrapStyle, style];

@@ -142,10 +142,10 @@ const checkboxKls = computed(() => {
 
   if (buttonRef.value) {
     classNames.push('el-checkbox-button', 'el-toggle-button');
-    size && classNames.push(`el-toggle-button--${size}`);
+    size && classNames.push(`el-toggle-button--${ size }`);
   } else {
     classNames.push('el-checkbox', 'el-toggle');
-    size && classNames.push(`el-toggle--${size}`);
+    size && classNames.push(`el-toggle--${ size }`);
     selfIndeterminate.value && classNames.push('is-indeterminate');
   }
 

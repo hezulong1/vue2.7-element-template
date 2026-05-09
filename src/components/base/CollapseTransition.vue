@@ -45,7 +45,7 @@ export default defineComponent({
             if (el.dataset.elExistsHeight) {
               el.style.maxHeight = el.dataset.elExistsHeight;
             } else if (el.scrollHeight !== 0) {
-              el.style.maxHeight = `${el.scrollHeight}px`;
+              el.style.maxHeight = `${ el.scrollHeight }px`;
             } else {
               el.style.maxHeight = '0';
             }
@@ -77,7 +77,7 @@ export default defineComponent({
           el.dataset.oldOverflow = el.style.overflow;
           el.dataset.oldOpacity = el.style.opacity;
 
-          el.style.maxHeight = `${el.scrollHeight}px`;
+          el.style.maxHeight = `${ el.scrollHeight }px`;
           el.style.overflow = 'hidden';
         },
 

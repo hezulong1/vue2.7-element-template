@@ -36,7 +36,7 @@ export function renderThumbStyle({ move, size, barKeys }: RenderThumbStyleOption
   const style: CSSProperties = {};
 
   style[barKeys.size] = size;
-  style[transform] = `translate${barKeys.axis}(${move}%)`;
+  style[transform] = `translate${ barKeys.axis }(${ move }%)`;
 
   return style;
 }

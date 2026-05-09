@@ -37,11 +37,11 @@ export default defineComponent({
       classNames.push('el-flex--justify-center', 'el-flex--items-center');
     } else {
       if (props.justify) {
-        classNames.push(`el-flex--justify-${props.justify}`);
+        classNames.push(`el-flex--justify-${ props.justify }`);
       }
 
       if (props.items) {
-        classNames.push(`el-flex--items-${props.items}`);
+        classNames.push(`el-flex--items-${ props.items }`);
       }
     }
 

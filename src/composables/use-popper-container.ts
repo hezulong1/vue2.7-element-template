@@ -3,7 +3,7 @@ import { isClient } from '@vueuse/core';
 
 export const usePopperContainerId = () => {
   const id = computed(() => `el-popper-container`);
-  const selector = computed(() => `#${id.value}`);
+  const selector = computed(() => `#${ id.value }`);
 
   return {
     id,
