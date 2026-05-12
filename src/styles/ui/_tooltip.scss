@@ -92,7 +92,11 @@ $popper-placements: (
   }
 }
 
-.tooltip-scale {
+// Transition for tooltip
+
+$tooltip-transition-name: tooltip-scale;
+
+.#{$tooltip-transition-name} {
 
   &-enter-active, &-leave-active {
     transition-duration: 300ms;
@@ -103,10 +107,10 @@ $popper-placements: (
     transform: scale(0.8);
     opacity: 0;
   }
+}
 
-  @each $placement, $opposite in $popper-placements {
-    &[data-popper-placement^='#{$placement}'] > .el-popper__inner {
-      transform-origin: #{$opposite};
-    }
+@each $placement, $opposite in $popper-placements {
+  [data-popper-transition='#{$tooltip-transition-name}'][data-popper-placement^='#{$placement}'] > .el-popper__inner {
+    transform-origin: #{$opposite};
   }
 }
