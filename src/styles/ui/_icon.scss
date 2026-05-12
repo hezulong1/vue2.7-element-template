@@ -1,6 +1,3 @@
-.el-icon-loading {
-  animation: rotating 2s linear infinite;
-}
 .el-icon--right {
   margin-left: 4px;
 }
@@ -13,6 +10,12 @@
     transform: rotateZ(1turn);
   }
 }
+
+/// @example
+/// - 基础: <span class="el-icon"><svg-element /></span>
+/// - 加载: <span class="el-icon is-loading"><svg-element /></span>
+/// - 在右边: <ref-element /><span class="el-icon el-icon--right"><svg-element /></span>
+/// - 在左边: <span class="el-icon el-icon--left"><svg-element /></span><ref-element />
 
 .el-icon {
   display: inline-flex;

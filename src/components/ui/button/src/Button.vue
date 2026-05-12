@@ -7,7 +7,7 @@
     :aria-disabled="`${buttonDisabled}`"
     @click="handleClick"
   >
-    <span v-if="loading" class="el-icon el-icon-loading el-icon--left">
+    <span v-if="loading" class="el-icon is-loading el-icon--left">
       <Loading />
     </span>
     <span v-if="icon && !loading" class="el-icon" :class="{ 'el-icon--left': $slots.default }">
