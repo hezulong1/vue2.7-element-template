@@ -1,7 +1,7 @@
 import { isClient } from '@vueuse/core';
 import { nanoid } from './nanoid';
 
-export const supportsCustomizeScrollbar = (() => {
+export const supportsCustomizeScrollbar = /* @__PURE__ */ (() => {
   if (!isClient) return false;
 
   const id = 's-' + nanoid();
@@ -33,7 +33,7 @@ export const supportsCustomizeScrollbar = (() => {
   return webkitSupported || standardSupported;
 })();
 
-export const supportsPassive = (() => {
+export const supportsPassive = /* @__PURE__ */ (() => {
   // https://developer.mozilla.org/zh-CN/docs/Web/API/EventTarget/addEventListener#option_%E6%94%AF%E6%8C%81%E7%9A%84%E5%AE%89%E5%85%A8%E6%A3%80%E6%B5%8B
   if (!isClient) return false;
 
