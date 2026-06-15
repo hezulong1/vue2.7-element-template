@@ -86,14 +86,14 @@ const popper = usePopper(referenceElRef, popperElRef, computed(() => {
   const userModifiers = popperOptions.modifiers || [];
 
   const modifiers = [
-    { name: 'offset', options: { offset: [0, props.offset ?? 12] } },
+    { name: 'offset', options: { offset: [0, props.offset] } },
     { name: 'preventOverflow', options: { padding: { top: 0, bottom: 0, left: 0, right: 0 } } },
     { name: 'flip', options: { padding: 5, fallbackPlacements: props.fallbackPlacements } },
     { name: 'computeStyles', options: { gpuAcceleration: props.gpuAcceleration } },
     // Seems like the `phase` and `fn` is required by Modifier type
     // But on its documentation they didn't specify that.
     // Refer to https://popper.js.org/docs/v2/modifiers/arrow/
-    { name: 'arrow', enabled: isDefined(arrowEl), options: { element: arrowEl, padding: props.arrowOffset ?? 0 } } as any,
+    { name: 'arrow', enabled: isDefined(arrowEl), options: { element: arrowEl, padding: props.arrowOffset } } as any,
     { name: 'eventListeners', enabled: !!props.visible },
     ...userModifiers,
   ];

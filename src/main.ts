@@ -1,4 +1,5 @@
 import '@/styles/index.scss';
+import '@/styles/ui/index.scss';
 
 import Vue from 'vue';
 // Setup

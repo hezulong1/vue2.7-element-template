@@ -1,1 +1,16 @@
+@use "sass:math";
+
 @import 'base';
+
+// 禁用底层滚动条
+html, body, #app {
+  overflow: hidden;
+}
+
+#app {
+  // 独立层，模拟 isolation: isolate;
+  position: relative;
+  font-size: 14px;
+  // 14 指的是 font-size
+  line-height: math.div(22, 14);
+}

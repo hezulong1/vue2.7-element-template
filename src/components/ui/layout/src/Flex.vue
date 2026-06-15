@@ -1,6 +1,6 @@
 <script lang="ts">
 import type { PropType } from 'vue';
-import type { FlexItems, FlexJustify } from './typings';
+import type { FlexItems, FlexJustify, FlexFull } from './typings';
 
 import { defineComponent } from 'vue';
 
@@ -24,6 +24,7 @@ export default defineComponent({
       type: String as PropType<FlexItems>,
       validator: (value: string) => ['start', 'end', 'center'].includes(value),
     },
+    full: [Boolean, String] as PropType<FlexFull>,
   },
   render(h, { props, data, children }) {
     const classNames = ['el-flex'];
@@ -44,6 +45,9 @@ export default defineComponent({
         classNames.push(`el-flex--items-${ props.items }`);
       }
     }
+
+    if (props.full === true || props.full === 'width') classNames.push('el-flex--full-width');
+    if (props.full === true || props.full === 'height') classNames.push('el-flex--full-height');
 
     data.class = [data.class, ...classNames];
 

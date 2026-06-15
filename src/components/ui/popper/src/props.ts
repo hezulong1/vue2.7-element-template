@@ -48,6 +48,9 @@ export const basePopperProps = {
   },
 
   showArrow: Boolean,
+  /**
+   * @default 5
+   */
   arrowOffset: {
     type: Number,
     default: 5,
