@@ -9,3 +9,6 @@ yarn.lock
 .pnpm-debug.log*
 .eslintcache
 *.local
+
+# auto-generate
+src/components/icons

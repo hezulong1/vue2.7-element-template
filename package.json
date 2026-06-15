@@ -12,7 +12,8 @@
     "lint": "eslint .",
     "lint-fix": "eslint . --fix",
     "prettier": "prettier \"**/*.{css,scss,json,md,html,yml}\"",
-    "gen-ui": "node scripts/gen-ui.js"
+    "gen-ui": "node scripts/gen-ui.js",
+    "gen-icons": "node scripts/gen-icons.js"
   },
   "dependencies": {
     "@popperjs/core": "^2.11.8",
