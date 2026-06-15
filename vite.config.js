@@ -7,6 +7,7 @@ import VueJsx from '@vitejs/plugin-vue2-jsx';
 import VueLegacy from '@vitejs/plugin-legacy';
 import VueDefineOptions from 'unplugin-vue-define-options/vite';
 import autoprefixer from 'autoprefixer';
+import { run as genIcons } from './scripts/gen-icons';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -20,6 +21,12 @@ export default defineConfig(({ mode }) => {
   return {
     base: isDev ? '/' : './',
     plugins: [
+      {
+        name: '_vite-plugin-gen-icons',
+        async configResolved() {
+          await genIcons().catch(console.error);
+        },
+      },
       Vue(),
       // 编码规则: https://github.com/vuejs/jsx-vue2/blob/dev/packages/babel-plugin-transform-vue-jsx/README.md
       VueJsx(),
@@ -30,6 +37,7 @@ export default defineConfig(({ mode }) => {
       alias: {
         '@': path.resolve(__dirname, 'src'),
         'element-ui': path.resolve(__dirname, 'src/components/ui/index.ts'),
+        'element-icons': path.resolve(__dirname, 'src/components/icons/index.ts'),
       },
     },
     build: {

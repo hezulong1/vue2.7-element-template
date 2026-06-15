@@ -7,12 +7,8 @@
     :aria-disabled="`${buttonDisabled}`"
     @click="handleClick"
   >
-    <span v-if="loading" class="el-icon is-loading el-icon--left">
-      <Loading />
-    </span>
-    <span v-if="icon && !loading" class="el-icon" :class="{ 'el-icon--left': $slots.default }">
-      <component :is="icon" />
-    </span>
+    <Icon v-if="loading" :content="Loading" loading modifier="left" />
+    <Icon v-if="!loading && icon" :content="icon" :modifier="$slots.default ? 'left' : ''" />
     <span v-if="$slots.default"><slot /></span>
   </button>
 </template>
@@ -22,9 +18,10 @@ import type { PropType, Component } from 'vue';
 import type { ButtonNativeType, ButtonType } from './typings';
 
 import { computed, useSlots } from 'vue';
-import { Loading } from '@/components/base/icons';
+import { Loading } from 'element-icons';
 import { useSizeProp } from '@/components/base/ConfigProvider';
 import { useFormItem, useFormDisabled, useFormSize } from '../../form';
+import { Icon } from '../../icon';
 
 defineOptions({
   name: 'ElButton',
