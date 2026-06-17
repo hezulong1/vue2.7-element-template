@@ -30,7 +30,6 @@
 
 <script setup lang="ts" generic="T extends Arrayable<CheckboxValue | boolean>">
 import type { Arrayable } from '@vueuse/core';
-import type { CheckboxValue } from './typings';
 
 import { computed, onMounted, ref, watch, watchEffect, type PropType } from 'vue';
 import { isDefined } from '@/utils/types';
@@ -38,7 +37,7 @@ import { useSizeProp } from '@/components/base/ConfigProvider';
 import { useId } from '@/composables/use-id';
 import { useRawProp } from '@/composables/use-prop';
 import { useFormDisabled, useFormItem, useFormSize } from '../../form';
-import { useCheckboxGroup } from './composables';
+import { useCheckboxGroup, type CheckboxValue } from './utils';
 
 defineOptions({
   name: 'ElCheckbox',
@@ -64,8 +63,8 @@ const props = defineProps({
     default: undefined,
   },
   label: {
-    type: String as PropType<string>,
-    default: undefined,
+    type: String,
+    default: '',
   },
   id: String,
   name: String,
@@ -74,7 +73,7 @@ const props = defineProps({
   indeterminate: Boolean,
   disabled: Boolean,
   button: Boolean,
-  checked: [Boolean, String, Number, Object, Array] as unknown as PropType<T>,
+  checked: null as unknown as PropType<T>,
 });
 
 const emit = defineEmits<{

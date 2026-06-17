@@ -3,8 +3,11 @@ export { default as TooltipTrigger } from './src/Trigger.vue';
 export { default as TooltipContent } from './src/Content.vue';
 
 export * from './src/TooltipRoot';
-export * from './src/utils';
-export { useTooltipRoot } from './src/composables';
+export {
+  useTooltipRoot,
+  isTriggerType,
+} from './src/utils';
+
 export {
   tooltipTriggerProps,
   tooltipContentProps,

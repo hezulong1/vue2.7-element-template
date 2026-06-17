@@ -5,13 +5,11 @@
 </template>
 
 <script setup lang="ts" generic="T extends RadioValue">
-import type { RadioValue } from './typings';
-
 import { computed, nextTick, watch, type PropType } from 'vue';
 import { useSizeProp } from '@/components/base/ConfigProvider';
 import { nanoid } from '@/utils/nanoid';
 import { useFormItem } from '../../form';
-import { provideRadioGroup } from './composables';
+import { provideRadioGroup, type RadioValue } from './utils';
 
 defineOptions({
   name: 'ElRadioGroup',

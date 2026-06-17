@@ -1,12 +1,228 @@
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
+import { isClient, toValue, type MaybeRefOrGetter, useEventListener } from '@vueuse/core';
+import { useId } from '@/composables/use-id';
+import * as domUtils from '@/utils/dom';
+import { isFocusable } from '@/utils/aria';
+import { isUndefined } from '@/utils/types';
+
+let stack: string[] = [];
+
+interface InternalState {
+  activated: boolean;
+  ignoreInternalFocusChange: boolean;
+}
+
+export interface UseFocusTrapProps {
+  disabled?: MaybeRefOrGetter<boolean | undefined>;
+  active?: MaybeRefOrGetter<boolean | undefined>;
+  autoFocus?: MaybeRefOrGetter<boolean | undefined>;
+  returnFocusOnDeactivated?: MaybeRefOrGetter<boolean | undefined>;
+  initialFocusTo?: MaybeRefOrGetter<string | undefined>;
+  finalFocusTo?: MaybeRefOrGetter<string | undefined>;
+  onEscape?: (e: KeyboardEvent) => void;
+}
+
+export function useFocusTrap(opts: UseFocusTrapProps = {}) {
+  const activeRef = computed(() => toValue(opts.active));
+  const autoFocusRef = computed(() => toValue(opts.autoFocus));
+  const disabledRef = computed(() => toValue(opts.disabled));
+  const returnFocusOnDeactivatedRef = computed(() => toValue(opts.returnFocusOnDeactivated));
+  const initialFocusToRef = computed(() => toValue(opts.initialFocusTo));
+  const finalFocusToRef = computed(() => toValue(opts.finalFocusTo));
+
+  const id = useId('el-focus-trap');
+
+  const startRef = ref<HTMLElement | null>();
+  const endRef = ref<HTMLElement | null>();
+
+  const state: InternalState = {
+    activated: false,
+    ignoreInternalFocusChange: false,
+  };
+
+  const lastFocusedElement: Element | null = isClient ? document.activeElement : null;
+
+  const isCurrentActive = () => {
+    const currentActiveId = stack[stack.length - 1];
+    return currentActiveId === id.value;
+  };
+
+  function handleDocumentKeydown(e: KeyboardEvent): void {
+    if (e.code === 'Escape') {
+      if (isCurrentActive()) {
+        opts.onEscape?.(e);
+      }
+    }
+  }
+
+  const detachDocumentKeydown = () => {
+    document.removeEventListener('keydown', handleDocumentKeydown, false);
+    if (state.activated) {
+      deactivate();
+    }
+  };
+
+  onMounted(() => {
+    watch(
+      activeRef,
+      (value) => {
+        if (value) {
+          activate();
+          document.addEventListener('keydown', handleDocumentKeydown, false);
+        } else {
+          detachDocumentKeydown();
+        }
+      },
+      {
+        immediate: true,
+      },
+    );
+  });
+
+  const cleanups: VoidFunction[] = [
+    useEventListener(startRef, 'focus', (e) => {
+      if (state.ignoreInternalFocusChange) return;
+
+      const mainEl = getMainEl();
+      if (!mainEl) return;
+
+      if (domUtils.isElement(e.relatedTarget) && mainEl.contains(e.relatedTarget)) {
+      // if it comes from inner, focus last
+        resetFocusTo('last');
+      } else {
+      // otherwise focus first
+        resetFocusTo('first');
+      }
+    }),
+
+    useEventListener(endRef, 'focus', (e) => {
+      if (state.ignoreInternalFocusChange) return;
+      if (!e.relatedTarget && e.relatedTarget === startRef.value) {
+      // if it comes from first, focus last
+        resetFocusTo('last');
+      } else {
+      // otherwise focus first
+        resetFocusTo('first');
+      }
+    }),
+
+    detachDocumentKeydown,
+  ];
+
+  onBeforeUnmount(() => {
+    cleanups.forEach(fn => fn());
+    cleanups.length = 0;
+  });
+
+  function getPreciseEventTarget(event: Event): EventTarget | null {
+    if (event.composedPath) {
+      return event.composedPath()[0] || null;
+    } else {
+      return event.target || null;
+    }
+  }
+
+  function handleDocumentFocus(e: FocusEvent): void {
+    if (state.ignoreInternalFocusChange) return;
+    if (isCurrentActive()) {
+      const mainEl = getMainEl();
+      if (mainEl == null) return;
+      if (mainEl.contains(getPreciseEventTarget(e) as Node | null)) return;
+      // I don't handle shift + tab status since it's too tricky to handle
+      // Not impossible but I need to sleep
+      resetFocusTo('first');
+    }
+  }
+
+  function getMainEl(): ChildNode | null {
+    const focusableStartEl = startRef.value;
+    if (focusableStartEl == null) return null;
+
+    let mainEl: ChildNode | null = focusableStartEl;
+
+    while (true) {
+      mainEl = mainEl.nextSibling;
+      if (!mainEl || (domUtils.isElement(mainEl) && mainEl.tagName === 'DIV')) break;
+    }
+
+    return mainEl;
+  }
+
+  function activate(): void {
+    if (disabledRef.value) return;
+
+    stack.push(id.value);
+    if (autoFocusRef.value) {
+      if (isUndefined(initialFocusToRef.value)) {
+        resetFocusTo('first');
+      } else {
+        domUtils.query<HTMLElement>(initialFocusToRef.value)?.focus({ preventScroll: true });
+      }
+    }
+
+    state.activated = true;
+    document.addEventListener('focus', handleDocumentFocus, true);
+  }
+
+  function deactivate(): void {
+    if (disabledRef.value) return;
+
+    document.removeEventListener('focus', handleDocumentFocus, true);
+    stack = stack.filter(idInStack => idInStack !== id.value);
+
+    if (isCurrentActive()) return;
+    const { value: finalFocusTo } = finalFocusToRef;
+    if (typeof finalFocusTo !== 'undefined') {
+      domUtils.query<HTMLElement>(finalFocusTo)?.focus({ preventScroll: true });
+    } else if (returnFocusOnDeactivatedRef.value && domUtils.isHTMLElement(lastFocusedElement)) {
+      state.ignoreInternalFocusChange = true;
+      lastFocusedElement.focus({ preventScroll: true });
+      state.ignoreInternalFocusChange = false;
+    }
+  }
+
+  function resetFocusTo(target: 'last' | 'first'): void {
+    if (!isCurrentActive()) return;
+    if (!activeRef.value) return;
+
+    const startEl = startRef.value;
+    const endEl = endRef.value;
+
+    if (startEl && endEl) {
+      const mainEl = getMainEl();
+      if (!mainEl || mainEl === endEl) {
+        state.ignoreInternalFocusChange = true;
+        startEl.focus({ preventScroll: true });
+        state.ignoreInternalFocusChange = false;
+        return;
+      }
+      state.ignoreInternalFocusChange = true;
+
+      const focused = target === 'first' ? focusFirstDescendant(mainEl) : focusLastDescendant(mainEl);
+
+      state.ignoreInternalFocusChange = false;
+      if (!focused) {
+        state.ignoreInternalFocusChange = true;
+        startEl.focus({ preventScroll: true });
+        state.ignoreInternalFocusChange = false;
+      }
+    }
+  }
+
+  return {
+    startRef,
+    endRef,
+  };
+}
+
+// Utils
+// ----------------------------------------
 // ref https://www.w3.org/TR/wai-aria-practices-1.1/examples/dialog-modal/js/dialog.js
 
-import { isHTMLElement } from '@/utils/dom';
-import { isFocusable } from '@/utils/aria';
-
-export function focusFirstDescendant(node: Node): boolean {
+function focusFirstDescendant(node: Node): boolean {
   for (let i = 0; i < node.childNodes.length; i++) {
     const child = node.childNodes[i];
-    if (isHTMLElement(child)) {
+    if (domUtils.isHTMLElement(child)) {
       if (attemptFocus(child) || focusFirstDescendant(child)) {
         return true;
       }
@@ -15,10 +231,10 @@ export function focusFirstDescendant(node: Node): boolean {
   return false;
 }
 
-export function focusLastDescendant(element: Node): boolean {
+function focusLastDescendant(element: Node): boolean {
   for (let i = element.childNodes.length - 1; i >= 0; i--) {
     const child = element.childNodes[i];
-    if (isHTMLElement(child)) {
+    if (domUtils.isHTMLElement(child)) {
       if (attemptFocus(child) || focusLastDescendant(child)) {
         return true;
       }

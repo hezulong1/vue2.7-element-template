@@ -15,7 +15,7 @@
 
 <script setup lang="ts">
 import type { PropType, Component } from 'vue';
-import type { ButtonNativeType, ButtonType } from './typings';
+import type { ButtonNativeType, ButtonType } from './utils';
 
 import { computed, useSlots } from 'vue';
 import { Loading } from 'element-icons';

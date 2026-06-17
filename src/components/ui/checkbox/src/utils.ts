@@ -1,5 +1,19 @@
-import type { CheckboxGroupContext, CheckboxValue } from './typings';
+import type { ComputedRef } from 'vue';
+import type { ComponentSize } from '@/components/base/ConfigProvider';
 import { inject, provide } from 'vue';
+
+export type CheckboxValue = string | number | Record<string, any>;
+
+export interface CheckboxGroupContext<T extends CheckboxValue = CheckboxValue> {
+  modelValue: ComputedRef<T[]>;
+  disabled: ComputedRef<boolean>;
+  button: ComputedRef<boolean>;
+  size: ComputedRef<ComponentSize | undefined>;
+  min: ComputedRef<number | undefined>;
+  max: ComputedRef<number | undefined>;
+  name: ComputedRef<string>;
+  setModelValue: (value: T, checked: boolean) => void;
+}
 
 const checkboxGroupContextKey = Symbol('checkboxGroupContext');
 

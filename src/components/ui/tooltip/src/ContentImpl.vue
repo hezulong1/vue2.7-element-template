@@ -47,8 +47,7 @@ import { ensureArray } from '@/utils/array';
 import { Popper as ElPopper } from '../../popper';
 
 import { tooltipContentImplProps } from './props';
-import { useTooltipRoot } from './composables';
-import { isTriggerType } from './utils';
+import { isTriggerType, useTooltipRoot } from './utils';
 
 defineOptions({
   name: 'ElTooltipContentImpl',

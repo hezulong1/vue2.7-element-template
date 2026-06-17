@@ -41,14 +41,14 @@
 
 <script setup lang="ts">
 import type { CSSProperties, PropType, StyleValue } from 'vue';
-import type { ScrollbarDirection, ScrollbarScrollEvent } from './typings';
+import type { ScrollbarDirection, ScrollbarScrollEvent } from './utils';
 
 import { computed, nextTick, onActivated, onMounted, reactive, ref, watch } from 'vue';
 import { isClient, useEventListener, useResizeObserver } from '@vueuse/core';
 import { isNumber } from '@/utils/types';
 import { addUnit, getScrollbarWidth } from '@/utils/dom';
 import { supportsCustomizeScrollbar } from '@/utils/canIUse';
-import { provideScrollbar } from './composables';
+import { provideScrollbar } from './utils';
 import Bar from './Bar.vue';
 
 defineOptions({

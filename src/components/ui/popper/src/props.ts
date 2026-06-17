@@ -1,7 +1,7 @@
 import type { ExtractPropTypes, PropType } from 'vue';
 import type { Placement, PositioningStrategy } from '@popperjs/core';
 import type { Prettify } from '@/utils/typingUtils';
-import type { ReferenceElement, PartialOptions } from './composables';
+import type { ReferenceElement, PartialOptions } from './utils';
 
 import { placements } from '@popperjs/core';
 

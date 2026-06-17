@@ -8,8 +8,7 @@ import { useId } from '@/composables/use-id';
 import { useDelayedToggle } from '@/composables/use-delayed-toggle';
 import { isFunction } from '@/utils/types';
 import { hasOwn } from '@/utils/object';
-
-import { provideTooltipRoot } from './composables';
+import { provideTooltipRoot } from './utils';
 
 export type CreateTooltipRootOptions = Prettify<
   Partial<Pick<TooltipProps, 'role' | 'visible' | 'disabled'>>

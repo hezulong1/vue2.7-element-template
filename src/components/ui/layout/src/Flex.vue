@@ -1,6 +1,6 @@
 <script lang="ts">
 import type { PropType } from 'vue';
-import type { FlexItems, FlexJustify, FlexFull } from './typings';
+import type { FlexItems, FlexJustify, FlexFull } from './utils';
 
 import { defineComponent } from 'vue';
 

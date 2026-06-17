@@ -47,7 +47,7 @@ import { formItemContextKey } from '../../form';
 import { FocusTrap as ElFocusTrap } from '../../focus-trap';
 
 import { popperProps } from './props';
-import { usePopper } from './composables';
+import { usePopper } from './utils';
 
 defineOptions({
   name: 'ElPopper',

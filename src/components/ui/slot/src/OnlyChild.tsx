@@ -2,8 +2,7 @@ import { defineComponent } from 'vue';
 import { isNotEmptyObject } from '@/utils/types';
 import { warn } from '@/utils/debug';
 import { cloneVNode, getFirstLegitVNode, type ExtraProps } from '@/utils/vdom';
-import { useForwardRefSetter } from './composables';
-import { createDirective } from './utils';
+import { createDirective, useForwardRefSetter } from './utils';
 
 export default defineComponent({
   name: 'ElOnlyChild',

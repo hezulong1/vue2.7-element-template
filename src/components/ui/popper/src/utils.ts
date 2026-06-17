@@ -1,3 +1,4 @@
+import type { ComponentPublicInstance } from 'vue';
 import type { Instance, Modifier, Options, State, VirtualElement } from '@popperjs/core';
 import type { MaybeRef } from '@vueuse/core';
 
@@ -6,6 +7,12 @@ import { toValue, unrefElement } from '@vueuse/core';
 import { createPopper } from '@popperjs/core';
 
 export type PartialOptions = Partial<Options>;
+
+export interface PopperInstance extends ComponentPublicInstance {
+  instance: Readonly<Instance | null>;
+  updatePopper: (shouldUpdateZIndex?: boolean) => void;
+  isFocusInside: (event?: FocusEvent) => boolean;
+}
 
 // HACK: 可以直接兼容 @vueuse/core 中的 MaybeElement
 export type ElementType = HTMLElement | null | undefined;

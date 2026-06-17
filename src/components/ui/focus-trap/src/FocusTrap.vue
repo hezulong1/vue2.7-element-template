@@ -20,7 +20,7 @@
 
 <script setup lang="ts">
 import { computed, toRefs } from 'vue';
-import { useFocusTrap } from './composables';
+import { useFocusTrap } from './utils';
 
 defineOptions({
   name: 'ElFocusTrap',

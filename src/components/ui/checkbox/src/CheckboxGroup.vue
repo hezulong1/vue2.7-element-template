@@ -5,14 +5,12 @@
 </template>
 
 <script setup lang="ts" generic="T extends CheckboxValue">
-import type { CheckboxValue } from './typings';
-
 import { computed, nextTick, watch, type PropType } from 'vue';
 import { isDefined } from '@/utils/types';
 import { nanoid } from '@/utils/nanoid';
 import { useSizeProp } from '@/components/base/ConfigProvider';
 import { useFormItem } from '../../form';
-import { provideCheckboxGroup } from './composables';
+import { provideCheckboxGroup, type CheckboxValue } from './utils';
 
 defineOptions({
   name: 'ElCheckboxGroup',

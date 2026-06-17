@@ -23,14 +23,12 @@
 </template>
 
 <script setup lang="ts" generic="T extends RadioValue">
-import type { RadioValue } from './typings';
-
 import { computed, ref, watch, watchEffect, type PropType } from 'vue';
 import { isDefined } from '@/utils/types';
 import { useSizeProp } from '@/components/base/ConfigProvider';
 import { useId } from '@/composables/use-id';
 import { useFormDisabled, useFormSize } from '../../form';
-import { useRadioGroup } from './composables';
+import { useRadioGroup, type RadioValue } from './utils';
 
 defineOptions({
   name: 'ElRadio',
@@ -52,7 +50,7 @@ const props = defineProps({
   id: String,
   name: String,
   size: useSizeProp,
-  checked: [Boolean, String, Number] as unknown as PropType<T>,
+  checked: null as unknown as PropType<T>,
   button: Boolean,
   disabled: Boolean,
 });

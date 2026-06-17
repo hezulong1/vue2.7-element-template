@@ -1,5 +1,9 @@
 import type { ObjectDirective, VNodeDirective } from 'vue';
-import type { ForwardRefSetter } from './typings';
+import { createContext } from '@/composables/create-context';
+
+export type ForwardRefSetter = (el: Element | null) => void;
+
+export const [provideForwardRefSetter, useForwardRefSetter] = createContext<ForwardRefSetter>('forwardRefSetter');
 
 export function createDirective(setForwardRef: ForwardRefSetter, name = 'forward-ref') {
   const def: ObjectDirective<Element> = {

@@ -17,8 +17,7 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, ref } from 'vue';
 import { isClient } from '@vueuse/core';
-import { renderThumbStyle, BAR_MAP } from './utils';
-import { useScrollbar } from './composables';
+import { renderThumbStyle, BAR_MAP, useScrollbar } from './utils';
 
 const props = defineProps({
   vertical: Boolean,

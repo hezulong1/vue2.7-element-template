@@ -11,8 +11,7 @@ import { getEventCode } from '@/utils/event';
 import { focusElement, isFocusable } from '@/utils/aria';
 import { isElement } from '@/utils/dom';
 import { OnlyChild as ElOnlyChild, provideForwardRefSetter } from '../../slot';
-import { useTooltipRoot } from './composables';
-import { isTriggerType } from './utils';
+import { isTriggerType, useTooltipRoot } from './utils';
 import { tooltipTriggerProps } from './props';
 
 defineOptions({
