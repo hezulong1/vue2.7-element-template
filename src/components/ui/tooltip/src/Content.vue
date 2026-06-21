@@ -36,7 +36,7 @@
 <script lang="ts" setup>
 import type { TooltipContentInstance } from './typings';
 
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import { usePopperContainer } from '@/composables/use-popper-container';
 import { Teleport as ElTeleport } from '../../teleport';
 import ElTooltipContentImpl from './ContentImpl.vue';
@@ -53,6 +53,7 @@ const { selector } = usePopperContainer();
 const contentRef = ref<TooltipContentInstance>();
 
 defineExpose({
+  popperRef: computed(() => contentRef.value?.popperRef),
   isFocusInsideContent: (event?: FocusEvent) => contentRef.value?.isFocusInsideContent(event),
   updatePopper: (shouldUpdateZIndex?: boolean) => contentRef.value?.updatePopper(shouldUpdateZIndex),
 });

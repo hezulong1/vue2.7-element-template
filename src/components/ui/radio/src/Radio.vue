@@ -40,11 +40,11 @@ defineOptions({
 
 const props = defineProps({
   value: {
-    type: [String, Number, Boolean] as PropType<RadioValue>,
+    type: [Boolean, String, Number] as PropType<RadioValue>,
     default: undefined,
   },
   label: {
-    type: [String, Number, Boolean] as PropType<RadioValue>,
+    type: [Boolean, String, Number] as PropType<RadioValue>,
     default: undefined,
   },
   id: String,

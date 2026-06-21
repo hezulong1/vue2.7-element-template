@@ -147,6 +147,7 @@ onBeforeUnmount(() => {
 });
 
 defineExpose({
+  popperRef,
   /**
    * @description validate current focus event is trigger inside el-popper-content
    */

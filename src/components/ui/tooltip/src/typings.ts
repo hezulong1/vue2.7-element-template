@@ -1,7 +1,7 @@
-import type { Ref, ComputedRef } from 'vue';
+import type { Ref, ComputedRef, ComponentPublicInstance } from 'vue';
 import type { Arrayable } from '@vueuse/core';
 import type { Instance } from '@popperjs/core';
-import type { ReferenceElement } from '../../popper';
+import type { PopperInstance, ReferenceElement } from '../../popper';
 
 export type TooltipEffect = 'light' | 'dark';
 export type TooltipRoleType = 'dialog' | 'grid' | 'group' | 'listbox' | 'menu' | 'navigation' | 'tooltip' | 'tree';
@@ -26,11 +26,18 @@ export interface TooltipRootContext {
   onBeforeHide: VoidFunction;
 }
 
-export interface TooltipContentInstance {
+export interface TooltipSimpleInstance extends ComponentPublicInstance {
   isFocusInsideContent: (event?: FocusEvent) => boolean;
   updatePopper: (shouldUpdateZIndex?: boolean) => void;
 }
 
-export interface TooltipInstance extends TooltipContentInstance {
+export interface TooltipContentInstance extends TooltipSimpleInstance {
+  popperRef: PopperInstance;
+}
 
+export interface TooltipInstance extends TooltipSimpleInstance {
+  contentRef: TooltipContentInstance;
+  onOpen: (event?: Event | undefined, timeout?: number) => void;
+  onClose: (event?: Event | undefined, timeout?: number) => void;
+  hide: (event?: Event | undefined) => void;
 }
