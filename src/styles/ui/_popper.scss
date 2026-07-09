@@ -10,3 +10,39 @@
     transition-property: transform, opacity, visibility;
   }
 }
+
+// Transition for popper
+
+$--transition-name: el-popper-scale;
+
+.#{$--transition-name} {
+
+  &-enter-active, &-leave-active {
+    transition-duration: 300ms;
+    transition-timing-function: cubic-bezier(0.23, 1, 0.32, 1);
+  }
+
+  &-enter, &-leave-active {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+}
+
+@each $placement, $opposite in (
+  'top': 'bottom',
+  'top-start': 'bottom left',
+  'top-end': 'bottom right',
+  'bottom': 'top',
+  'bottom-start': 'top left',
+  'bottom-end': 'top right',
+  'left': 'right',
+  'left-start': 'right top',
+  'left-end': 'right bottom',
+  'right': 'left',
+  'right-start': 'left top',
+  'right-end': 'left bottom'
+) {
+  [data-popper-transition='#{$--transition-name}'][data-popper-placement='#{$placement}'] > .el-popper__inner {
+    transform-origin: #{$opposite};
+  }
+}

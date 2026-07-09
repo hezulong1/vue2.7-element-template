@@ -1,12 +1,5 @@
 @import '../mixins/mixins';
 
-$popper-placements: (
-  'top': 'bottom',
-  'bottom': 'top',
-  'left': 'right',
-  'right': 'left',
-);
-
 .el-tooltip {
   .el-popper__inner {
     border-radius: $--border-radius-base;
@@ -63,7 +56,12 @@ $popper-placements: (
     }
   }
 
-  @each $placement, $opposite in $popper-placements {
+  @each $placement, $opposite in (
+    'top': 'bottom',
+    'bottom': 'top',
+    'left': 'right',
+    'right': 'left',
+  ) {
     &[data-popper-placement^='#{$placement}'] > .el-popper__inner > .el-popper__arrow {
       #{$opposite}: -5px;
 
@@ -84,33 +82,15 @@ $popper-placements: (
     }
   }
 
-  @each $placement, $adjacency in ('top': 'left', 'bottom': 'right', 'left': 'bottom', 'right': 'top') {
+  @each $placement, $adjacency in (
+    'top': 'left',
+    'bottom': 'right',
+    'left': 'bottom',
+    'right': 'top'
+  ) {
     &[data-popper-placement^='#{$placement}'] > .el-popper__inner > .el-popper__arrow:before {
       border-#{$placement}-color: transparent !important;
       border-#{$adjacency}-color: transparent !important;
     }
-  }
-}
-
-// Transition for tooltip
-
-$tooltip-transition-name: tooltip-scale;
-
-.#{$tooltip-transition-name} {
-
-  &-enter-active, &-leave-active {
-    transition-duration: 300ms;
-    transition-timing-function: cubic-bezier(0.23, 1, 0.32, 1);
-  }
-
-  &-enter, &-leave-active {
-    transform: scale(0.8);
-    opacity: 0;
-  }
-}
-
-@each $placement, $opposite in $popper-placements {
-  [data-popper-transition='#{$tooltip-transition-name}'][data-popper-placement^='#{$placement}'] > .el-popper__inner {
-    transform-origin: #{$opposite};
   }
 }

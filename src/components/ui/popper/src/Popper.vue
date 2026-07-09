@@ -121,7 +121,7 @@ const contentAttrs = computed(() =>
   ),
 );
 
-const transitionName = computed(() => props.transition || `el-fade-in-linear`);
+const transitionName = computed(() => props.transition || 'el-popper-scale');
 const transitionHooks = {
   'before-enter': (el: Element) => {
     updatePopper(true);
