@@ -2,7 +2,7 @@
   <ElPopper
     :id="id"
     ref="popperRef"
-    class="el-tooltip"
+    :class="['el-tooltip', pure ? `is-pure` : undefined]"
     :fallback-placements="fallbackPlacements"
     :gpu-acceleration="gpuAcceleration"
     :offset="offset"
