@@ -2,8 +2,13 @@
   <div>
     <fieldset>
       <legend>CollapseTransition</legend>
-      <el-button @click="open = !open">CollapseTransition</el-button>
-      <ElCollapseTransition>
+      <el-flex items="center">
+        <span>属性：</span>
+        <code>fade=</code><el-checkbox v-model="fade">{{ fade }}</el-checkbox>
+      </el-flex>
+      <el-button @click="open = !open">{{ open ? 'Visible' : 'Hidden' }}</el-button>
+
+      <ElCollapseTransition :fade="fade">
         <div v-show="open">
           <div class="transition-box">el-collapse-transition</div>
           <div class="transition-box">el-collapse-transition</div>
@@ -13,17 +18,19 @@
 
     <fieldset>
       <legend>Checkbox & Radio</legend>
+      <el-flex items="center">
+        <span>属性：</span>
+        <code>button =</code><el-checkbox v-model="buttonFace">{{ buttonFace }}</el-checkbox>
+      </el-flex>
+
       <el-checkbox v-model="checkAll" :indeterminate="isIndeterminate" @change="handleCheckAllChange">全选</el-checkbox>
-      <el-checkbox-group v-model="checkedCities" @change="handleCheckedCitiesChange">
+      <el-checkbox-group v-model="checkedCities" :button="buttonFace" @change="handleCheckedCitiesChange">
         <el-checkbox v-for="city in cities" :key="city" :label="city" />
       </el-checkbox-group>
-      <el-radio-group v-model="radio">
-        <el-radio value="1">备选项 A</el-radio>
-        <el-radio label="2">备选项 B</el-radio>
-      </el-radio-group>
-      <el-radio-group v-model="radio">
-        <el-radio label="1" button>备选项 C</el-radio>
-        <el-radio label="2" button>备选项 D</el-radio>
+
+      <el-radio-group v-model="radio" :button="buttonFace">
+        <el-radio value="1">在职</el-radio>
+        <el-radio label="2">离职</el-radio>
       </el-radio-group>
     </fieldset>
 
@@ -38,10 +45,15 @@
 
     <fieldset>
       <legend>Teleport</legend>
-      <button id="show-modal" @click="showModal = true"><span>Show Modal</span>   <b>1</b></button>
-
-      <button @click="disabled = !disabled">{{ disabled ? 'off' : 'on' }}</button>
-      <el-checkbox v-model="toRef" true-value="body" false-value="#target">{{ toRef }}</el-checkbox>
+      <el-flex items="center">
+        <span>属性：</span>
+        <code>disabled=</code>
+        <el-button small style="margin-right: 4px" @click="disabled = !disabled">{{ disabled }}</el-button>
+        <code>to=</code>
+        <el-radio v-model="toRef" label="body">Body</el-radio>
+        <el-radio v-model="toRef" label="#target">#target</el-radio>
+      </el-flex>
+      <el-button id="show-modal" type="primary" plain @click="showModal = true">Show Modal</el-button>
 
       <el-teleport ref="telRef" :to="toRef" :disabled="disabled">
         <Modal :show="showModal" @close="showModal = false">
@@ -68,13 +80,13 @@
     <fieldset>
       <legend>Tooltip</legend>
       <el-tooltip
-        content="<b>Hello</b>"
+        content="<b>确认删除</b>"
         raw-content
-        effect="light"
         placement="top"
+        trigger="click"
         :hide-after="100"
       >
-        <el-button>Top</el-button>
+        <el-button type="danger">Delete</el-button>
       </el-tooltip>
     </fieldset>
   </div>
@@ -86,6 +98,7 @@ import ElCollapseTransition from '@/components/base/CollapseTransition.vue';
 import Modal from './Modal.vue';
 // CollapseTransition
 const open = ref(false);
+const fade = ref(false);
 
 // Checkbox
 const cities = ['上海', '北京', '广州', '深圳'];
@@ -104,6 +117,7 @@ function handleCheckedCitiesChange(value: string[]) {
 
 // Radio
 const radio = ref('1');
+const buttonFace = ref(false);
 
 // Teleport
 const showModal = ref(false);

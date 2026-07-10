@@ -19,7 +19,9 @@ $--transition-name: el-popper-scale;
 
   &-enter-active, &-leave-active {
     transition-duration: 300ms;
-    transition-timing-function: cubic-bezier(0.23, 1, 0.32, 1);
+    // transition-timing-function: cubic-bezier(0.23, 1, 0.32, 1);
+    // transition-timing-function: cubic-bezier(0.54, 1.5, 0.38, 1.11);
+    transition-timing-function: cubic-bezier(.645,.045,.355,1);
   }
 
   &-enter, &-leave-active {
