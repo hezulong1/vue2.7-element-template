@@ -83,7 +83,7 @@
 <script lang="ts" setup>
 import { ref } from 'vue';
 import ElCollapseTransition from '@/components/base/CollapseTransition.vue';
-import Modal from '../components/Modal.vue';
+import Modal from './Modal.vue';
 // CollapseTransition
 const open = ref(false);
 
