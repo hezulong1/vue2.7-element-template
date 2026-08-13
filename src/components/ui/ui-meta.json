@@ -1,0 +1,34 @@
+{
+  "components": {
+    "button": "Button",
+    "checkbox": "Checkbox,CheckboxGroup",
+    "focus-trap": "FocusTrap",
+    "form": "Form",
+    "icon": "Icon",
+    "layout": "Flex",
+    "popper": "Popper",
+    "radio": "Radio,RadioGroup",
+    "scrollbar": "Scrollbar",
+    "slot": "OnlyChild",
+    "teleport": "Teleport,RenderApp",
+    "tooltip": "Tooltip",
+    "tree": "Tree"
+  },
+  "plugins": {
+    "message-box": {
+      "name": "MessageBox",
+      "extractors": {
+        "MessageBox": "$messageBox",
+        "MessageBox.alert": "$alert",
+        "MessageBox.prompt": "$prompt",
+        "MessageBox.confirm": "$confirm"
+      }
+    },
+    "notification": {
+      "name": "Notification",
+      "extractors": {
+        "Notification": "$notify"
+      }
+    }
+  }
+}

@@ -74,6 +74,8 @@ const props = defineProps({
   disabled: Boolean,
   button: Boolean,
   checked: null as unknown as PropType<T>,
+  // For TS
+  onClick: Function as PropType<any>,
 });
 
 const emit = defineEmits<{
