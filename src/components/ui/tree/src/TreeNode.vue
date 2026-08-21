@@ -102,7 +102,7 @@ import { CaretRight, Loading } from 'element-icons';
 import ElCollapseTransition from '@/components/base/CollapseTransition.vue';
 import { isFunction } from '@/utils/types';
 import { warn } from '@/utils/debug';
-import { normalizeClass } from '@/utils/vdom';
+import { normalizeClass } from '@/utils/vue/vdom';
 import { Checkbox as ElCheckbox } from '../../checkbox';
 import { Icon as ElIcon } from '../../icon';
 import ElTreeNodeContent from './TreeNodeContent';

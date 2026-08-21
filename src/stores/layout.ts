@@ -3,7 +3,7 @@ import { breakpointsElement, createGlobalState, useBreakpoints, useStorage } fro
 
 export const TITLEBAR_DESKTOP_HEIGHT = 56;
 export const SIDEBAR_DESKTOP_WIDTH = 256;
-export const SIDEBAR_MOBILE_WIDTH = 54;
+export const SIDEBAR_MOBILE_WIDTH = 64;
 
 export const breakpoints = useBreakpoints(breakpointsElement);
 // TODO: (Why) TS 返回值解析失败

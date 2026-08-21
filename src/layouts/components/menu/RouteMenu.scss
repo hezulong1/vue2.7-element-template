@@ -1,0 +1,152 @@
+@import '@/styles/common/var.scss';
+
+$--menu-fg: rgba(0,0,0,.65);
+$--menu-fg-hover: rgba(0,0,0,.88);
+$--menu-fg-selected: rgba(0,0,0,.95);
+$--menu-fg-disabled: rgba(0,0,0,.25);
+
+$--menu-bg-hover: rgba(0,0,0,.03);
+$--menu-bg-active: rgba(0,0,0,.15);
+$--menu-bg-selected: rgba(0,0,0,.04);
+
+$--menu-transition: cubic-bezier(0.215, 0.61, 0.355, 1);
+
+.el-route-menu {
+  position: relative;
+  // transition: width 0.3s cubic-bezier(0.2, 0, 0, 1);
+  color: $--menu-fg;
+  font-size: 14px;
+  padding: 0;
+  outline: none;
+
+  &:before, &:after {
+    content: '';
+    display: table;
+  }
+
+  &:after {
+    clear: both;
+  }
+}
+
+%menuitem {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: calc(100% - 8px);
+  height: 40px;
+  margin: 4px;
+  padding-right: 16px;
+  padding-left: 16px;
+  border-radius: 6px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: pointer;
+
+  &:hover {
+    background-color: $--menu-bg-hover;
+    color: $--menu-fg-hover;
+  }
+
+  &:active {
+    background-color: $--menu-bg-active;
+  }
+}
+
+%menuitem-disabled {
+  background-color: transparent !important;
+  color: $--menu-fg-disabled !important;
+  cursor: not-allowed !important;
+}
+
+.el-route-menu-item {
+  @extend %menuitem;
+
+  &.is-selected {
+    background-color: $--menu-bg-selected;
+    color: $--menu-fg-selected;
+  }
+
+  &.is-disabled {
+    @extend %menuitem-disabled;
+  }
+
+  &__icon {
+    margin-right: 8px;
+    transition: font-size 0.2s $--menu-transition;
+  }
+
+  > a {
+    display: flex;
+    align-items: center;
+    color: inherit;
+    cursor: inherit;
+
+    &:before {
+      content: '';
+      position: absolute;
+      top: 0; right: 0; bottom: 0; left: 0;
+      background-color: transparent;
+    }
+  }
+}
+
+.el-route-menu-sub {
+  &__title {
+    @extend %menuitem;
+    transition: border-color 0.3s, background-color 0.3s, padding 0.2s $--menu-transition;
+  }
+
+  &.is-selected > &__title {
+    color: $--menu-fg-selected;
+  }
+
+  &.is-disabled > &__title {
+    @extend %menuitem-disabled;
+  }
+
+  &__arrow {
+    position: absolute;
+    top: 50%;
+    right: 16px;
+    font-size: 12px;
+    transform: translateY(-50%);
+    color: currentColor;
+    transition: transform 0.3s cubic-bezier(0.645, 0.045, 0.355, 1), opacity 0.3s;
+  }
+
+  &__popper.el-tooltip .el-popper__inner {
+    min-width: 160px;
+    border-radius: 8px;
+    // box-shadow: 0 6px 16px 0 rgba(0,0,0,0.08),
+    //     0 3px 6px -4px rgba(0,0,0,0.12),
+    //     0 9px 28px 8px rgba(0,0,0,0.05);
+    // box-shadow: 0 1px 2px 0 rgba(0,0,0,0.03),
+    //     0 1px 6px -1px rgba(0,0,0,0.02),
+    //     0 2px 4px 0 rgba(0,0,0,0.02);
+  }
+}
+
+// Collapse
+
+.el-route-menu.el-route-menu--collapse {
+  .el-route-menu-item,
+  .el-route-menu-sub__title {
+    padding: 0;
+    justify-content: center;
+  }
+
+  .el-route-menu-item__icon {
+    margin-right: 0;
+    font-size: 16px;
+  }
+
+  .el-route-menu-item__content {
+    display: none;
+  }
+
+  .el-route-menu-sub__arrow {
+    opacity: 0;
+  }
+}

@@ -19,7 +19,7 @@ export const basePopperProps = {
    * @default 12
    */
   offset: {
-    type: Number,
+    type: [Number, Array] as PropType<number | number[]>,
     default: 12,
   },
   /**

@@ -7,7 +7,7 @@
 import type { PropType } from 'vue';
 import { defineComponent, getCurrentInstance, onMounted, onUnmounted, onUpdated } from 'vue';
 import * as domUtils from '@/utils/dom';
-import { getFirstLegitVNode } from '@/utils/vdom';
+import { getFirstLegitVNode } from '@/utils/vue/vdom';
 
 interface InternalState {
   teleported: boolean;

@@ -2,7 +2,7 @@ import type { PropType } from 'vue';
 
 import Vue, { defineComponent, getCurrentInstance, onBeforeUnmount, onMounted, onUnmounted, onUpdated } from 'vue';
 import * as domUtils from '@/utils/dom';
-import { getFirstLegitVNode } from '@/utils/vdom';
+import { getFirstLegitVNode } from '@/utils/vue/vdom';
 
 export default defineComponent({
   name: 'ElRenderApp',

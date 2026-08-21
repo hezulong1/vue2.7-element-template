@@ -86,7 +86,7 @@ const popper = usePopper(referenceElRef, popperElRef, computed(() => {
   const userModifiers = popperOptions.modifiers || [];
 
   const modifiers = [
-    { name: 'offset', options: { offset: [0, props.offset] } },
+    { name: 'offset', options: { offset: Array.isArray(props.offset) ? props.offset : [0, props.offset] } },
     { name: 'preventOverflow', options: { padding: { top: 0, bottom: 0, left: 0, right: 0 } } },
     { name: 'flip', options: { padding: 5, fallbackPlacements: props.fallbackPlacements } },
     { name: 'computeStyles', options: { gpuAcceleration: props.gpuAcceleration } },

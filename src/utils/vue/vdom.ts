@@ -15,8 +15,8 @@ import type { VNode, VNodeData } from 'vue';
 import type { Prettify } from '@vue/shared';
 
 import { isObject, hasOwn, normalizeStyle, normalizeClass } from '@vue/shared';
-import { isNotEmptyArray, isNotEmptyObject, isNotEmptyString } from './types';
-import { warn } from './debug';
+import { isNotEmptyArray, isNotEmptyObject, isNotEmptyString } from '../types';
+import { warn } from '../debug';
 
 export {
   normalizeStyle,
