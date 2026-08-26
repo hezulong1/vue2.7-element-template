@@ -262,19 +262,19 @@ $--notification-warning-icon-color: $--color-warning !default;
 /// color||Color|0
 $--notification-danger-icon-color: $--color-danger !default;
 
+
 // Input
-$--input-font-size: $--font-size-base !default;
-/// color||Color|0
-$--input-font-color: $--color-text-regular !default;
-/// height||Other|4
-$--input-height: 40px !default;
-$--input-border: $--border-base !default;
+// ----------------------------------------
+
+$--input-font-size: $--font-size-base;
+$--input-font-color: $--color-text-regular;
+$--input-height: $--component-size;
+$--input-border: $--border-base;
 $--input-border-color: $--border-color-base !default;
-/// borderRadius||Border|2
-$--input-border-radius: $--border-radius-base !default;
 $--input-border-color-hover: $--border-color-hover !default;
-/// color||Color|0
-$--input-background-color: $--color-white !default;
+$--input-border-radius: $--border-radius-base;
+
+$--input-background-color: $--color-white;
 $--input-fill-disabled: $--disabled-fill-base !default;
 $--input-color-disabled: $--font-color-disabled-base !default;
 /// color||Color|0

@@ -5,4 +5,5 @@ export {
   useFormItem,
   useFormSize,
   useFormDisabled,
+  useFormItemInputId,
 } from './src/composables';

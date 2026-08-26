@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, type CSSProperties } from 'vue';
+import { RouterLink } from 'vue-router';
 import { useLayout, isMobile } from '@/stores/layout';
 import { addUnit } from '@/utils/dom';
 
@@ -14,12 +15,12 @@ const style = computed<CSSProperties>(() => {
 
 <template>
   <el-flex class="el-pro-logo" center :style="style">
-    <a href="/">
+    <RouterLink to="/" active-class="" exact-active-class="">
       <img src="/element-logo-small.svg">
       <transition name="fade">
         <span v-show="renderText">Admin</span>
       </transition>
-    </a>
+    </RouterLink>
   </el-flex>
 </template>
 
@@ -32,15 +33,15 @@ const style = computed<CSSProperties>(() => {
   cursor: pointer;
   transition: .2s;
 
-  > a {
-    color: inherit;
-    text-decoration: none;
-  }
-
   img {
     position: absolute;
     top: 50%;
     transform: translate(-32px, calc(-50% + 3px));
+  }
+
+  .el-pro-layout--sidebar-collapsed & img {
+    left: 50%;
+    transform: translate(calc(-50% + 3px), calc(-50% + 3px));
   }
 }
 </style>

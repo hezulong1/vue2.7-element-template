@@ -4,7 +4,7 @@
     "checkbox": "Checkbox,CheckboxGroup",
     "focus-trap": "FocusTrap",
     "form": "Form",
-    "icon": "Icon",
+    "input": "Input",
     "layout": "Flex",
     "popper": "Popper",
     "radio": "Radio,RadioGroup",

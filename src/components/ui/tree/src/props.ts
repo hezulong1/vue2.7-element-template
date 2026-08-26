@@ -10,7 +10,7 @@ import type {
   TreeComponentProps,
   TreeData,
 } from './typings';
-import { iconPropType } from '@/utils/typingUtils';
+import { iconPropType } from '@/utils/vue/icon';
 
 export const treeProps = {
   data: {

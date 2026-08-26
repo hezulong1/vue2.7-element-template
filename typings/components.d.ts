@@ -15,6 +15,9 @@ interface ComponentProps {
 }
 
 declare module 'vue' {
+  // 不清楚为何这么写不支持合并到 vue 模块中，在 router.d.ts 中就可以
+  export type ClassValue = false | null | undefined | string | Record<string, any> | Array<ClassValue>;
+
   /**
    * 补充 vue 中提供的组件特性
    */

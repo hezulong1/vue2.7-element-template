@@ -15,9 +15,9 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onBeforeUnmount, ref } from 'vue';
+import { computed, inject, onBeforeUnmount, ref } from 'vue';
 import { isClient } from '@vueuse/core';
-import { renderThumbStyle, BAR_MAP, useScrollbar } from './utils';
+import { renderThumbStyle, BAR_MAP, scrollbarContextKey } from './utils';
 
 const props = defineProps({
   vertical: Boolean,
@@ -27,7 +27,7 @@ const props = defineProps({
   ratio: Number,
 });
 
-const scrollbarIns = useScrollbar();
+const scrollbarIns = inject(scrollbarContextKey);
 
 if (!scrollbarIns) {
   throw new Error('can not inject scrollbar context');

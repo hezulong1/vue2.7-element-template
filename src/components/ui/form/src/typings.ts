@@ -75,15 +75,19 @@ export interface ElFormItemContext extends ElFormItemProps {
   $el: HTMLDivElement | undefined;
   size: ComponentSize;
   elFormItemSize: ComponentSize;
+  validateMessage: string;
   validateState: ElFormItemValidateState;
   isGroup: boolean;
   labelId: string;
   inputIds: string[];
   hasLabel: boolean;
   fieldValue: any;
+  propString: string;
   addInputId: (id: string) => void;
   removeInputId: (id: string) => void;
   validate: (trigger: string, callback?: FormValidateCallback) => FormValidationResult;
   resetField(): void;
   clearValidate(): void;
+  setInitialValue: (value: any) => void;
+  getInitialValue: () => any;
 }
