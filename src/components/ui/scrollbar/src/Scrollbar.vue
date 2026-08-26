@@ -5,6 +5,7 @@
       :class="wrapClass"
       :style="wrapStyle"
       :tabindex="tabindex"
+      @scroll="handleScroll"
     >
       <component
         :is="tag"
@@ -42,7 +43,7 @@
 import type { CSSProperties, PropType, StyleValue } from 'vue';
 import type { ScrollbarDirection, ScrollbarScrollEvent } from './utils';
 
-import { computed, nextTick, onMounted, ref, watch } from 'vue';
+import { computed, nextTick, onMounted, shallowRef, watch } from 'vue';
 import { useResizeObserver, useEventListener } from '@vueuse/core';
 import { addUnit } from '@/utils/dom';
 import { useScrollable } from './utils';
@@ -93,7 +94,7 @@ const emit = defineEmits<{
   (e: 'end-reached', event: ScrollbarDirection): void;
 }>();
 
-const viewRef = ref<HTMLElement>();
+const viewRef = shallowRef<HTMLElement>();
 
 const {
   state,
