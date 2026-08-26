@@ -788,6 +788,7 @@ onMounted(() => {
 
 onBeforeUnmount(() => {
   rAFId && cAF(rAFId);
+  scrollingTimer.cancel();
 });
 
 defineExpose({
