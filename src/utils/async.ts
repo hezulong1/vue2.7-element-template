@@ -38,3 +38,15 @@ export function createIntervalTimer() {
 
   return { cancel, cancelAndSet };
 }
+
+export const rAF = (() =>
+  typeof requestAnimationFrame !== 'undefined'
+    ? (fn: VoidFunction) => requestAnimationFrame(fn)
+    : (fn: VoidFunction) => setTimeout(fn, 16)
+)();
+
+export const cAF = (() =>
+  typeof cancelAnimationFrame !== 'undefined'
+    ? (handler: number) => cancelAnimationFrame(handler)
+    : (handler: number) => clearTimeout(handler)
+)();
