@@ -48,6 +48,11 @@ $--input-clear-hover-color: $text-color-secondary;
   vertical-align: bottom;
   font-size: $font-size-base;
 
+  &.el-scrollbar {
+    height: auto;
+    overflow: auto;
+  }
+
   &__inner {
     display: block;
     resize: vertical;
@@ -67,6 +72,7 @@ $--input-clear-hover-color: $text-color-secondary;
     border-radius: $border-radius-base;
     transition: box-shadow .2s $bezier;
     border: none;
+    -ms-overflow-style: none;
 
     &.is-clearable {
       padding: 5px 12px + 14px 5px 12px - 1px;

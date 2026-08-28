@@ -104,44 +104,42 @@
     </template>
 
     <template v-else>
-      <div class="el-scrollbar">
-        <textarea
-          :id="inputId"
-          :ref="scrollable.wrapRef"
-          v-bind="$attrs"
-          :class="textareaKls"
-          :name="name"
-          :minlength="countGraphemes ? undefined : minlength"
-          :maxlength="countGraphemes ? undefined : maxlength"
-          :tabindex="tabindex"
-          :disabled="inputDisabled"
-          :readonly="readonly"
-          :autocomplete="autocomplete"
-          :autofocus="autofocus"
-          :placeholder="placeholder"
-          :form="form"
-          :rows="rows"
-          :inputmode="inputmode"
-          :style="textareaStyle"
-          :aria-label="ariaLabel"
-          @compositionstart="handleCompositionStart"
-          @compositionupdate="handleCompositionUpdate"
-          @compositionend="handleCompositionEnd"
-          @input="handleInput"
-          @focus="handleFocus"
-          @blur="handleBlur"
-          @change="handleChange"
-          @keydown="handleKeydown"
-          @scroll="handleScroll"
-        />
-        <ElScrollbarBar
-          :move="scrollable.state.moveY"
-          :size="scrollable.state.sizeHeight"
-          :ratio="scrollable.state.ratioY"
-          :always="scrolling"
-          vertical
-        />
-      </div>
+      <textarea
+        :id="inputId"
+        :ref="scrollable.wrapRef"
+        v-bind="$attrs"
+        :class="textareaKls"
+        :name="name"
+        :minlength="countGraphemes ? undefined : minlength"
+        :maxlength="countGraphemes ? undefined : maxlength"
+        :tabindex="tabindex"
+        :disabled="inputDisabled"
+        :readonly="readonly"
+        :autocomplete="autocomplete"
+        :autofocus="autofocus"
+        :placeholder="placeholder"
+        :form="form"
+        :rows="rows"
+        :inputmode="inputmode"
+        :style="textareaStyle"
+        :aria-label="ariaLabel"
+        @compositionstart="handleCompositionStart"
+        @compositionupdate="handleCompositionUpdate"
+        @compositionend="handleCompositionEnd"
+        @input="handleInput"
+        @focus="handleFocus"
+        @blur="handleBlur"
+        @change="handleChange"
+        @keydown="handleKeydown"
+        @scroll="handleScroll"
+      />
+      <ElScrollbarBar
+        :move="scrollable.state.moveY"
+        :size="scrollable.state.sizeHeight"
+        :ratio="scrollable.state.ratioY"
+        :always="scrolling"
+        vertical
+      />
 
       <span
         v-if="showClear"
@@ -379,7 +377,7 @@ const [recordCursor, setCursor] = useCursor(input);
 
 const containerKls = computed(() => {
   const { type } = props;
-  const classes = [type === 'textarea' ? 'el-textarea' : 'el-input'];
+  const classes = [type === 'textarea' ? 'el-textarea el-scrollbar' : 'el-input'];
 
   if (type === 'hidden') classes.push('el-input-hidden');
   if (inputDisabled.value) classes.push('is-disabled');
