@@ -88,8 +88,8 @@ const radioKls = computed(() => {
   const { value: size } = sizeRef;
 
   if (buttonRef.value) {
-    classNames.push('el-radio-button', 'el-toggle-button');
-    size && classNames.push(`el-toggle-button--${ size }`);
+    classNames.push('el-radio-button', 'el-toggle-button el-button el-button--default');
+    size && classNames.push(`el-button--${ size }`);
   } else {
     classNames.push('el-radio', 'el-toggle');
     size && classNames.push(`el-toggle--${ size }`);

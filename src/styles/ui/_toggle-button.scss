@@ -51,6 +51,7 @@ $--checked-bg-color: $color-primary;
     &.is-disabled {
       background-color: color.mix($color-white, $--checked-bg-color);
       border-color: color.mix($color-white, $--checked-bg-color);
+      color: $--checked-fg-color;
     }
   }
 }

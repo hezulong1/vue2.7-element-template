@@ -126,7 +126,7 @@ const telRef = ref();
 const toRef = ref('body');
 </script>
 
-<style>
+<style scoped>
   .transition-box {
     margin-bottom: 10px;
     width: 200px;

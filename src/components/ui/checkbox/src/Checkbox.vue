@@ -142,8 +142,8 @@ const checkboxKls = computed(() => {
   const { value: size } = sizeRef;
 
   if (buttonRef.value) {
-    classNames.push('el-checkbox-button', 'el-toggle-button');
-    size && classNames.push(`el-toggle-button--${ size }`);
+    classNames.push('el-checkbox-button', 'el-toggle-button el-button el-button--default');
+    size && classNames.push(`el-button--${ size }`);
   } else {
     classNames.push('el-checkbox', 'el-toggle');
     size && classNames.push(`el-toggle--${ size }`);

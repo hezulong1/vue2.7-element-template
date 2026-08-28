@@ -7,8 +7,12 @@
     :aria-disabled="`${buttonDisabled}`"
     @click="handleClick"
   >
-    <Icon v-if="loading" :content="Loading" loading modifier="left" />
-    <Icon v-if="!loading && icon" :content="icon" :modifier="$slots.default ? 'left' : ''" />
+    <span v-if="loading" class="el-icon is-loading el-icon--left">
+      <Loading />
+    </span>
+    <span v-if="icon && !loading" class="el-icon" :class="{ 'el-icon--left': $slots.default }">
+      <component :is="icon" />
+    </span>
     <span v-if="$slots.default"><slot /></span>
   </button>
 </template>
@@ -21,7 +25,6 @@ import { computed, useSlots } from 'vue';
 import { Loading } from 'element-icons';
 import { useSizeProp } from '@/components/base/ConfigProvider';
 import { useFormItem, useFormDisabled, useFormSize } from '../../form';
-import { Icon } from '../../icon';
 
 defineOptions({
   name: 'ElButton',
@@ -41,9 +44,9 @@ const props = defineProps({
   loading: Boolean,
   disabled: Boolean,
   plain: Boolean,
+  dashed: Boolean,
   autofocus: Boolean,
   square: Boolean,
-  block: Boolean,
   link: Boolean,
   text: Boolean,
   bg: Boolean,
@@ -68,6 +71,7 @@ const buttonClasses = computed(() => {
   let square = slots.default ? slots.default().length <= 0 : !!props.icon;
   let link = false;
   let plain = false;
+  let dashed = false;
   let text = false;
   let hasBg = false;
 
@@ -75,6 +79,8 @@ const buttonClasses = computed(() => {
     link = true;
   } else if (props.plain) {
     plain = true;
+  } else if (props.dashed) {
+    dashed = true;
   } else if (props.text) {
     text = true;
 
@@ -92,7 +98,7 @@ const buttonClasses = computed(() => {
       'is-loading': props.loading,
       'is-plain': plain,
       'is-square': props.square || square,
-      'is-block': props.block,
+      'is-dashed': dashed,
       'is-link': link,
       'is-text': text,
       'is-has-bg': hasBg,
