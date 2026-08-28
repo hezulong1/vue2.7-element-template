@@ -1,16 +1,20 @@
-@use "sass:math";
-
-@import 'base';
+@use 'sass:math';
+@use 'vars';
 
 // 禁用底层滚动条
 html, body, #app {
   overflow: hidden;
 }
 
-#app {
-  // 独立层，模拟 isolation: isolate;
-  position: relative;
+body {
   font-size: 14px;
-  // 14 指的是 font-size
+  color: vars.$el-text-color-regular;
   line-height: math.div(22, 14);
+}
+
+#app {
+  position: relative;
+  isolation: isolate;
+  touch-action: none;
+  overscroll-behavior: contain;
 }

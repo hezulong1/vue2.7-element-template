@@ -1,4 +1,4 @@
-@use '../mixins/visually-hidden' as mx;
+@use 'mixins/visually-hidden' as mx;
 
 .el-visually-hidden,
 .el-visually-hidden-focusable:not(:focus):not(:focus-within) {

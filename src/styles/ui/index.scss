@@ -1,4 +1,5 @@
-@import '../common/transition';
+@import 'base';
+@import 'common/transition';
 @import 'icon';
 @import 'visually-hidden';
 @import 'flex';
@@ -9,3 +10,4 @@
 @import 'popper';
 @import 'tooltip';
 @import 'tree';
+@import 'input';

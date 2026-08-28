@@ -1,4 +1,12 @@
-@use "sass:math";
+@use 'sass:math';
+@use 'sass:map';
+@use 'sass:color';
+
+
+// ----------------------------------------
+
+
+
 
 $--component-size: 32px;
 $--component-small-size: 24px;
@@ -430,12 +438,12 @@ $--toggle-button-checked-border-color: $--color-primary;
 $--toggle-button-checked-font-color: $--color-white;
 
 
-/* cascader
--------------------------- */
+// cascader
+
 $--cascader-height: 200px !default;
 
-/* Switch
--------------------------- */
+// Switch
+
 /// color||Color|0
 $--switch-on-color: $--color-primary !default;
 /// color||Color|0
@@ -450,8 +458,8 @@ $--switch-height: 20px !default;
 // height||Other|4
 $--switch-button-size: 16px !default;
 
-/* Dialog
--------------------------- */
+// Dialog
+
 $--dialog-background-color: $--color-white !default;
 $--dialog-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3) !default;
 /// fontSize||Font|1
@@ -463,8 +471,7 @@ $--dialog-font-line-height: $--font-line-height-primary !default;
 /// padding||Spacing|3
 $--dialog-padding-primary: 20px !default;
 
-/* Table
--------------------------- */
+// Table
 /// color||Color|0
 $--table-border-color: $--border-color-lighter !default;
 $--table-border: 1px solid $--table-border-color !default;
@@ -479,8 +486,7 @@ $--table-current-row-background-color: $--color-primary-light-9 !default;
 $--table-header-background-color: $--color-white !default;
 $--table-fixed-box-shadow: 0 0 10px rgba(0, 0, 0, .12) !default;
 
-/* Pagination
--------------------------- */
+// Pagination
 /// fontSize||Font|1
 $--pagination-font-size: 13px !default;
 /// color||Color|0
@@ -501,15 +507,13 @@ $--pagination-button-disabled-background-color: $--color-white !default;
 /// color||Color|0
 $--pagination-hover-color: $--color-primary !default;
 
-/* Popup
--------------------------- */
+// Popup
 /// color||Color|0
 $--popup-modal-background-color: $--color-black !default;
 /// opacity||Other|1
 $--popup-modal-opacity: 0.5 !default;
 
-/* Popover
--------------------------- */
+// Popover
 /// color||Color|0
 $--popover-background-color: $--color-white !default;
 /// fontSize||Font|1

@@ -1,3 +1,5 @@
+@use 'sass:color';
+@use 'sass:math';
 @import './config';
 
 /* BEM support Func
@@ -44,9 +46,18 @@
 }
 
 @function tint-color($color, $weight) {
-  @return mix(white, $color, $weight);
+  @return color.mix(white, $color, $weight);
 }
 
 @function shade-color($color, $weight) {
-  @return mix(black, $color, $weight);
+  @return color.mix(black, $color, $weight);
+}
+
+@function round-color($color) {
+  $r: math.round(color.red($color)); // >= 79 使用 math.round(color.channel($color, 'red'))
+  $g: math.round(color.green($color)); // >= 79 使用 math.round(color.channel($color, 'green'));
+  $b: math.round(color.blue($color)); // >= 79 使用 math.round(color.channel($color, 'blue'));
+  $a: color.alpha($color); // >= 79 使用 color.channel($color, 'alpha')
+
+  @return rgba($r, $g, $b, $a);
 }

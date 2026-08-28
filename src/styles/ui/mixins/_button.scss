@@ -1,9 +1,9 @@
-@import '../common/var';
-@import '../mixins/function';
+@use 'sass:color';
+@use 'function' as fn;
 
 @mixin button-plain($color) {
-  background-color: tint-color($color, 90%);
-  border-color: tint-color($color, 60%);
+  background-color: fn.tint-color($color, 90%);
+  border-color: fn.tint-color($color, 60%);
   color: $color;
 
   &:hover {
@@ -26,7 +26,7 @@
     &:active {
       background-color: tint-color($color, 90%);
       border-color: tint-color($color, 80%);
-      color: tint-color($color, 40%);
+      color: tint-color($color, 50%);
     }
   }
 }

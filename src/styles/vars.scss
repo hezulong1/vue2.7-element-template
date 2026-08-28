@@ -1,3 +1,8 @@
+// https://sass-lang.com/documentation/at-rules/forward/#adding-a-prefix
+//
+// $color-primary -> $el-color-primary
+@forward 'ui/common/vars' as el-*;
+
 $color-white: #fff;
 $color-black: #000;
 

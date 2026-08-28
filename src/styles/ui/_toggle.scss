@@ -1,31 +1,55 @@
-@import '../mixins/mixins';
+@use 'sass:map';
+@use 'common/vars' as *;
 
-@include b(toggle) {
-  color: $--toggle-font-color;
-  font-weight: 500;
-  font-size: $--toggle-font-size;
+$--toggle-font-size: $font-size-base;
+$--toggle-input-background-color: $fill-color-blank;
+$--toggle-input-border: 1px solid $border-color-base;
+
+$--toggle-checkbox-input-border-radius: 2px;
+$--toggle-radio-input-border-radius: 100%;
+$--toggle-hover-input-border-color: $color-primary;
+
+$--toggle-checked-font-color: $color-primary;
+$--toggle-checked-input-background-color: $color-primary;
+$--toggle-checked-input-border-color: $color-primary;
+$--toggle-checked-icon-color: $fill-color-blank;
+
+$--toggle-disabled-input-background-color: $border-color-extraLight; // checkbox: #edf2fc; radio: $--disabled-fill-base
+$--toggle-disabled-input-border-color: $disabled-border-color; // $--border-color-base;
+$--toggle-disabled-icon-color: $text-color-placeholder;
+
+$--toggle-disabled-checked-input-background-color: $border-color-extraLight; // radio: $--disabled-fill-base
+$--toggle-disabled-checked-input-border-color: $disabled-border-color; // $--border-color-base;
+$--toggle-disabled-checked-icon-color: $text-color-placeholder;
+
+$--toggle-small-font-size: $font-size-extraSmall;
+
+.el-toggle {
   position: relative;
-  cursor: pointer;
   display: inline-flex;
   align-items: center;
+  height: $component-size-base;
+  vertical-align: middle;
+  color: $text-color-regular;
+  font-weight: 500;
+  font-size: $--toggle-font-size;
   white-space: nowrap;
   user-select: none;
   outline: none;
   margin-right: 8px;
-  height: $--component-size;
-  vertical-align: middle;
+  cursor: pointer;
 
   &:last-of-type {
     margin-right: 0;
   }
 
-  @include e(inner) {
+  &__inner {
     display: inline-block;
     position: relative;
     border: $--toggle-input-border;
     box-sizing: border-box;
-    width: $--toggle-input-width;
-    height: $--toggle-input-height;
+    width: 14px;
+    height: 14px;
     background-color: $--toggle-input-background-color;
     z-index: 1;
     transition:
@@ -37,7 +61,7 @@
     }
   }
 
-  @include e(original) {
+  &__original {
     opacity: 0;
     outline: none;
     position: absolute;
@@ -51,43 +75,43 @@
     // right: 0;
     // bottom: 0;
 
-    &:focus-visible + .#{$namespace}-toggle__inner {
-      outline: 2px solid $--color-primary-light-5;
+    &:focus-visible + .el-toggle__inner {
+      outline: 2px solid map.get($colors, 'primary', 'light-5');
       outline-offset: 1px;
     }
   }
 
-  @include e(input) {
+  &__input {
     display: flex;
     position: relative;
   }
 
-  @include e(label) {
+  &__label {
     padding: 0 8px;
     font-size: inherit;
   }
 
-  @include when(focus) {
+  &.is-focus {
     &:not(.is-checked) {
-      .#{$namespace}-toggle__original:not(:focus-visible) + .#{$namespace}-toggle__inner {
+      .el-toggle__original:not(:focus-visible) + .el-toggle__inner {
         border-color: $--toggle-hover-input-border-color;
       }
     }
   }
 
-  @include when(checked) {
-    @include e(inner) {
+  &.is-checked {
+    .el-toggle__inner {
       background-color: $--toggle-checked-input-background-color;
       border-color: $--toggle-checked-input-border-color;
     }
 
-    @include e(label) {
+    .el-toggle__label {
       color: $--toggle-checked-font-color;
     }
   }
 
-  @include when(indeterminate) {
-    @include e(inner) {
+  &.is-indeterminate {
+    .el-toggle__inner {
       background-color: $--toggle-checked-input-background-color;
       border-color: $--toggle-checked-input-border-color;
 
@@ -109,16 +133,16 @@
     }
   }
 
-  @include when(disabled) {
+  &.is-disabled {
     cursor: not-allowed;
 
-    @include e(inner) {
+    .el-toggle__inner {
       background-color: $--toggle-disabled-input-background-color;
       border-color: $--toggle-disabled-input-border-color;
     }
 
-    @include e(label) {
-      color: $--disabled-color-base;
+    .el-toggle__label {
+      color: $disabled-text-color;
     }
 
     // &.is-checked {
@@ -129,7 +153,7 @@
     // }
 
     &.is-indeterminate {
-      .#{$namespace}-toggle__inner {
+      .el-toggle__inner {
         // background-color: $--toggle-disabled-checked-input-background-color;
         // border-color: $--toggle-disabled-checked-input-border-color;
 
@@ -142,8 +166,8 @@
   }
 
   @at-root {
-    .#{$namespace}-checkbox {
-      .#{$namespace}-toggle__inner {
+    .el-checkbox {
+      .el-toggle__inner {
         border-radius: $--toggle-checkbox-input-border-radius;
 
         &::after {
@@ -163,23 +187,23 @@
         }
       }
 
-      @include when(checked) {
-        @include e(inner) {
+      &.is-checked {
+        .el-toggle__inner {
           &:after {
             transform: rotate(45deg) scaleY(1);
           }
         }
       }
 
-      @include when(disabled) {
-        @include e(inner) {
+      &.is-disabled {
+        .el-toggle__inner {
           &::after {
             border-color: $--toggle-disabled-icon-color;
           }
         }
 
         // &.is-checked {
-        //   .#{$namespace}-toggle__inner {
+        //   .el-toggle__inner {
         //     &::after {
         //       border-color: $--toggle-disabled-checked-icon-color;
         //     }
@@ -188,8 +212,8 @@
       }
     }
 
-    .#{$namespace}-radio {
-      .#{$namespace}-toggle__inner {
+    .el-radio {
+      .el-toggle__inner {
         border-radius: $--toggle-radio-input-border-radius;
 
         &::after {
@@ -206,23 +230,23 @@
         }
       }
 
-      @include when(checked) {
-        @include e(inner) {
+      &.is-checked {
+        .el-toggle__inner {
           &::after {
             transform: translate(-50%, -50%) scale(1);
           }
         }
       }
 
-      @include when(disabled) {
-        @include e(inner) {
+      &.is-disabled {
+        .el-toggle__inner {
           &::after {
             background-color: $--toggle-disabled-icon-color;
           }
         }
 
         // &.is-checked {
-        //   .#{$namespace}-toggle__inner {
+        //   .el-toggle__inner {
         //     &::after {
         //       background-color: $--toggle-disabled-checked-icon-color;
         //     }
@@ -232,25 +256,25 @@
     }
   }
 
-  @include m(small) {
+  &--small {
     font-size: $--toggle-small-font-size;
-    height: $--component-small-size;
+    height: $component-size-small;
 
-    @include e(inner) {
-      height: $--toggle-small-input-height;
-      width: $--toggle-small-input-width;
+    .el-toggle__inner {
+      height: 12px;
+      width: 12px;
     }
 
-    @include when(indeterminate) {
-      @include e(inner) {
+    &.is-indeterminate {
+      .el-toggle__inner {
         &::before {
           top: 4px;
         }
       }
     }
 
-    &.#{$namespace}-checkbox {
-      @include e(inner) {
+    &.el-checkbox {
+      .el-toggle__inner {
         &::after {
           width: 2px;
           height: 6px;

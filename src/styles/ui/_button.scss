@@ -1,15 +1,158 @@
-@import '../common/var';
-@import '../mixins/button';
-@import '../mixins/mixins';
-@import '../mixins/utils';
+@use 'sass:map';
+@use 'sass:math';
+@use 'sass:color';
+@use 'common/vars' as *;
 
-@include b(button) {
+$--button-border-width: 1px;
+$--button-font-size: $font-size-base;
+$--button-padding-vertical: math.div($component-size-base - $--button-border-width * 2 - $--button-font-size, 2);
+$--button-padding-horizontal: $--button-padding-vertical + 3;
+
+$--button-small-font-size: $font-size-extraSmall; // TODO: $font-size-small
+$--button-small-padding-vertical: math.div($component-size-small - $--button-border-width * 2 - $--button-small-font-size, 2);
+$--button-small-padding-horizontal: $--button-small-padding-vertical + 3;
+
+$--button-default-background-color: $fill-color-blank;
+$--button-default-border-color: $border-color-base;
+$--button-default-font-color: $text-color-regular;
+$--button-default-disabled-background-color: $color-white;
+$--button-default-disabled-border-color: $border-color-lighter;
+$--button-default-disabled-font-color: $text-color-placeholder; // @color-text-disabled;
+$--button-default-link-color: $text-color-regular;
+$--button-default-link-hover-color: $text-color-secondary;
+$--button-default-link-active-color: $text-color-primary;
+
+@mixin button-variant($type) {
+  $--blank: $fill-color-blank;
+  $--base: map.get($colors, $type, 'base');
+  $--light-3: map.get($colors, $type, 'light-3');
+  $--light-5: map.get($colors, $type, 'light-5');
+  $--light-8: map.get($colors, $type, 'light-8');
+  $--light-9: map.get($colors, $type, 'light-9');
+  $--dark-2: map.get($colors, $type, 'dark-2');
+
+  background-color: $--base;
+  border-color: $--base;
+  color: $--blank;
+
+  &:hover {
+    background-color: $--light-3;
+    border-color: $--light-3;
+    color: $--blank;
+  }
+
+  &:active,
+  &.is-active {
+    background-color: $--dark-2;
+    border-color: $--dark-2;
+    color: $--blank;
+  }
+
+  &:focus-visible {
+    outline-color: $--light-5;
+  }
+
+  &.is-disabled {
+    &,
+    &:hover,
+    &:focus,
+    &:active {
+      background-color: $--light-5;
+      border-color: $--light-5;
+      color: $--blank;
+    }
+  }
+
+  &.is-text {
+    &,
+    &:hover,
+    &:active,
+    &.is-active {
+      color: $--base;
+    }
+
+    &.is-disabled {
+      color: $--light-5;
+    }
+  }
+
+  &.is-link {
+    color: $--base;
+
+    &:hover {
+      color: $--light-3;
+    }
+
+    &:active,
+    &.is-active {
+      color: $--dark-2;
+    }
+
+    &.is-disabled {
+      &,
+      &:hover,
+      &:focus,
+      &:active {
+        color: $--light-5;
+      }
+    }
+  }
+
+  &.is-plain, &.is-dashed {
+    background-color: $--light-9;
+    border-color: $--light-5;
+    color: $--base;
+
+    &.is-disabled {
+      &,
+      &:hover,
+      &:focus,
+      &:active {
+        background-color: $--light-9;
+        border-color: $--light-8;
+        color: $--light-5;
+      }
+    }
+  }
+
+  &.is-plain {
+    &:hover {
+      background-color: $--base;
+      border-color: $--base;
+      color: $--blank;
+    }
+
+    &:active,
+    &.is-active {
+      background-color: $--dark-2;
+      border-color: $--dark-2;
+      color: $--blank;
+    }
+  }
+
+  &.is-dashed {
+    &:hover {
+      background-color: $--light-9;
+      border-color: $--light-3;
+      color: $--base;
+    }
+
+    &:active,
+    &.is-active {
+      background-color: $--light-9;
+      border-color: $--dark-2;
+      color: $--dark-2;
+    }
+  }
+}
+
+.el-button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
 
   border: 1px solid transparent;
-  border-radius: $--border-radius-base;
+  border-radius: $border-radius-base;
 
   line-height: 1;
   vertical-align: middle;
@@ -18,7 +161,7 @@
   white-space: nowrap;
 
   appearance: none;
-  box-sizing: border-box;
+  background-color: transparent;
   outline: none;
   user-select: none;
   cursor: pointer;
@@ -26,24 +169,25 @@
   font-size: $--button-font-size;
   padding: $--button-padding-vertical $--button-padding-horizontal;
 
-  .#{$namespace}-icon:not(.#{$namespace}-icon--left) {
+  .el-icon:not(.el-icon--left) {
     font-size: 1.2em;
   }
 
-  &::-moz-focus-inner {
-    border: 0;
-  }
-
   &:focus-visible {
-    outline: 2px solid transparent;
+    outline: 2px solid map.get($colors, 'primary', 'light-5');
     outline-offset: 1px;
   }
 
-  @include when(loading) {
+  &.is-disabled {
+    cursor: not-allowed;
+  }
+
+  &.is-loading {
     position: relative;
     pointer-events: none;
 
     &:before {
+      z-index: 1;
       pointer-events: none;
       content: '';
       position: absolute;
@@ -52,130 +196,123 @@
       right: -1px;
       bottom: -1px;
       border-radius: inherit;
-      background-color: rgba(255,255,255,.35);
+      background-color: $mask-color-extraLight;
     }
   }
 
-  @include when(square) {
-    width: $--component-size;
-    height: $--component-size;
+  &.is-square {
+    width: $component-size-base;
+    height: $component-size-base;
     padding: 0;
   }
 
-  @include when(block) {
-    width: 100% !important;
+  &.is-block {
+    width: 100%;
+    flex: 1;
   }
 
-  @include m(small) {
+  &.is-dashed {
+    border-style: dashed;
+  }
+
+  &--small {
     padding: $--button-small-padding-vertical $--button-small-padding-horizontal;
     font-size: $--button-small-font-size;
 
-    @include when(square) {
-      width: $--component-small-size;
-      height: $--component-small-size;
+    &.is-square {
+      width: $component-size-small;
+      height: $component-size-small;
     }
   }
 
-  @include when(disabled) {
-    cursor: not-allowed;
-  }
-
-  @include when(link) {
+  &.is-link {
     padding: 2px;
-
-    &,
-    &:hover,
-    &:active {
-      background-color: transparent !important;
-      border-color: transparent !important;
-    }
   }
 
-  @include when(text) {
+  &.is-text {
     background-color: transparent;
     border-color: transparent;
 
     &:hover {
-      background-color: $--fill-light;
-      border-color: $--fill-light;
+      background-color: $fill-color-light;
+      border-color: $fill-color-light;
     }
 
     &:active,
     &.is-active {
-      background-color: $--fill-base;
-      border-color: $--fill-base;
+      background-color: $fill-color-base;
+      border-color: $fill-color-base;
     }
 
-    @include when(has-bg) {
-      background-color: $--fill-light;
+    &.is-has-bg {
+      background-color: $fill-color-light;
 
       &:hover {
-        background-color: $--fill-base;
-        border-color: $--fill-base;
+        background-color: $fill-color-base;
+        border-color: $fill-color-base;
       }
 
       &:active,
       &.is-active {
-        background-color: $--fill-dark;
-        border-color: $--fill-dark;
+        background-color: $fill-color-dark;
+        border-color: $fill-color-dark;
       }
     }
+  }
 
-    &.is-disabled {
-      background-color: transparent !important;
-      border-color: transparent !important;
-    }
+  &.is-link,
+  &.is-link:hover,
+  &.is-link:active,
+  &.is-text.is-disabled {
+    background-color: transparent !important;
+    border-color: transparent !important;
   }
 
   // Theme
 
-  @include m(default) {
+  &--default {
     background-color: $--button-default-background-color;
     border-color: $--button-default-border-color;
     color: $--button-default-font-color;
 
     &:hover {
-      background-color: $--color-primary-light-9;
-      border-color: $--color-primary-light-7;
-      color: $--color-primary;
+      background-color: map.get($colors, 'primary', 'light-9');
+      border-color: map.get($colors, 'primary', 'light-7');
+      color: $color-primary;
     }
 
     &:active,
     &.is-active {
-      border-color: shade-color($--color-primary, $--button-active-shade-percent);
-      color: shade-color($--color-primary, $--button-active-shade-percent);
+      border-color: map.get($colors, 'primary', 'dark-2');
+      color: map.get($colors, 'primary', 'dark-2');;
     }
 
-    &:focus-visible {
-      outline-color: $--color-primary-light-5;
-    }
-
-    @include when(disabled) {
+    &.is-disabled {
       &,
       &:hover,
       &:focus {
-        background-color: $--button-disabled-background-color;
-        border-color: $--button-disabled-border-color;
-        color: $--button-disabled-font-color;
+        background-color: $--button-default-disabled-background-color;
+        border-color: $--button-default-disabled-border-color;
+        color: $--button-default-disabled-font-color;
       }
     }
 
-    @include when(plain) {
+    &.is-plain, &.is-dashed {
       &:not(.is-disabled) {
         &:hover {
-          background-color: $--color-white;
-          border-color: $--color-primary;
+          background-color: $fill-color-blank;
+          border-color: $color-primary;
         }
 
         &:active,
         &.is-active {
-          background-color: $--color-white;
-          border-color: shade-color($--color-primary, $--button-active-shade-percent);
+          background-color: $fill-color-blank;
+          border-color: map.get($colors, 'primary', 'dark-2');
         }
       }
     }
 
-    @include when(text) {
+    &.is-text {
       &,
       &:hover,
       &:active,
@@ -183,12 +320,12 @@
         color: $--button-default-font-color;
       }
 
-      @include when(disabled) {
-        color: $--button-disabled-font-color;
+      &.is-disabled {
+        color: $--button-default-disabled-font-color;
       }
     }
 
-    @include when(link) {
+    &.is-link {
       &:not(.is-disabled) {
         &:hover {
           color: $--button-default-link-hover-color
@@ -201,39 +338,9 @@
     }
   }
 
-  @include m(primary) {
-    @include button-variant(
-      $--button-primary-font-color,
-      $--button-primary-background-color,
-      $--button-primary-border-color
-    );
-  }
-  @include m(success) {
-    @include button-variant(
-      $--button-success-font-color,
-      $--button-success-background-color,
-      $--button-success-border-color
-    );
-  }
-  @include m(warning) {
-    @include button-variant(
-      $--button-warning-font-color,
-      $--button-warning-background-color,
-      $--button-warning-border-color
-    );
-  }
-  @include m(danger) {
-    @include button-variant(
-      $--button-danger-font-color,
-      $--button-danger-background-color,
-      $--button-danger-border-color
-    );
-  }
-  @include m(info) {
-    @include button-variant(
-      $--button-info-font-color,
-      $--button-info-background-color,
-      $--button-info-border-color
-    );
+  @each $type in $types {
+    &--#{$type} {
+      @include button-variant($type);
+    }
   }
 }

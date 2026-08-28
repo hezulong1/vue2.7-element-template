@@ -1,4 +1,9 @@
-@import '../mixins/mixins';
+@use 'common/vars' as *;
+
+$--scrollbar-size: 8px;
+$--scrollbar-gap: 2px;
+$--scrollbar-color: $text-color-secondary;
+$--scrollbar-bezier: $bezier;
 
 .el-scrollbar {
   overflow: hidden;
@@ -10,7 +15,7 @@
   &:focus {
     > .el-scrollbar__bar {
       opacity: 1;
-      transition: opacity 340ms ease-out;
+      transition: opacity 340ms $--scrollbar-bezier;
     }
   }
 
@@ -35,7 +40,7 @@
     border-radius: inherit;
     background-color: $--scrollbar-color;
     opacity: 0.3;
-    transition: .3s opacity;
+    transition: 300ms opacity $--scrollbar-bezier;
 
     &:hover {
       opacity: 0.5;
@@ -53,7 +58,7 @@
     z-index: 1;
     border-radius: 64px;
     opacity: 0;
-    transition: opacity 120ms ease-out;
+    transition: opacity 120ms $--scrollbar-bezier;
 
     &.is-always {
       opacity: 1;

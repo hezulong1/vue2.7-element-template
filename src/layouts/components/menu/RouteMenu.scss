@@ -1,4 +1,4 @@
-@import '@/styles/common/var.scss';
+@use '@/styles/vars';
 
 $--menu-fg: rgba(0,0,0,.65);
 $--menu-fg-hover: rgba(0,0,0,.88);
@@ -9,7 +9,7 @@ $--menu-bg-hover: rgba(0,0,0,.03);
 $--menu-bg-active: rgba(0,0,0,.15);
 $--menu-bg-selected: rgba(0,0,0,.04);
 
-$--menu-transition: cubic-bezier(0.215, 0.61, 0.355, 1);
+$--menu-transition: vars.$el-bezier;
 
 .el-route-menu {
   position: relative;
@@ -135,6 +135,10 @@ $--menu-transition: cubic-bezier(0.215, 0.61, 0.355, 1);
   .el-route-menu-sub__title {
     padding: 0;
     justify-content: center;
+  }
+
+  .el-route-menu-sub.is-selected > .el-route-menu-sub__title {
+    background-color: $--menu-bg-selected;
   }
 
   .el-route-menu-item__icon {

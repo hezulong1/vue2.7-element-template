@@ -1,0 +1,198 @@
+@use 'sass:map';
+@use 'sass:math';
+@use 'sass:color';
+@use 'easing';
+@use '../mixins/function' as *;
+
+/*!
+ * ========================================
+ * Transition
+ * ========================================
+ */
+
+$bezier: easing.$easeInOutCubic;
+$bezier-fast: easing.$easeOutQuint;
+$bezier-ease: cubic-bezier(0.25, 0.1, 0.25, 1);
+$bezier-easeInOut: cubic-bezier(0.42, 0, 0.58, 1);
+
+/*!
+ * ========================================
+ * Color
+ * ========================================
+ */
+
+$types: ('primary', 'success', 'warning', 'danger', 'info');
+
+$colors: () !default;
+$colors: map.deep-merge(
+  (
+    'white': #ffffff,
+    'black': #000000,
+    'primary': (
+      "base": #409eff,
+    ),
+    'success': (
+      'base': #67c23a,
+    ),
+    'warning': (
+      'base': #e6a23c,
+    ),
+    'danger': (
+      'base': #f56c6c,
+    ),
+    'info': (
+      'base': #909399,
+    )
+  ),
+  $colors,
+);
+
+$color-white: map.get($colors, 'white') !default;
+$color-black: map.get($colors, 'black') !default;
+$color-primary: map.get($colors, 'primary', 'base') !default;
+$color-success: map.get($colors, 'success', 'base') !default;
+$color-warning: map.get($colors, 'warning', 'base') !default;
+$color-danger: map.get($colors, 'danger', 'base') !default;
+$color-error: map.get($colors, 'error', 'base') !default;
+$color-info: map.get($colors, 'info', 'base') !default;
+
+// https://sass-lang.com/documentation/values/maps#immutability
+// mix colors with white/black to generate light/dark level
+@mixin set-color-mix-level(
+  $type,
+  $number,
+  $mode: 'light',
+  $mix-color: $color-white
+) {
+  $colors: map.deep-merge(
+    (
+      $type: (
+        '#{$mode}-#{$number}': color.mix(
+          $mix-color,
+          map.get($colors, $type, 'base'),
+          math.percentage(math.div($number, 10))
+        ),
+      ),
+    ),
+    $colors
+  ) !global;
+}
+
+
+
+// $colors.primary.light-i
+// --el-color-primary-light-i
+// 10% 53a8ff
+// 20% 66b1ff
+// 30% 79bbff
+// 40% 8cc5ff
+// 50% a0cfff
+// 60% b3d8ff
+// 70% c6e2ff
+// 80% d9ecff
+// 90% ecf5ff
+@each $type in $types {
+  @for $i from 1 through 9 {
+    @include set-color-mix-level($type, $i, 'light', $color-white);
+  }
+}
+
+// --el-color-primary-dark-2
+@each $type in $types {
+  @include set-color-mix-level($type, 2, 'dark', $color-black);
+}
+
+// Text
+$text-color-primary: #303133 !default;
+$text-color-regular: #606266 !default;
+$text-color-secondary: #909399 !default;
+$text-color-placeholder: #a8abb2 !default; // #C0C4CC !default;
+$text-color-disabled: #c0c4cc !default;
+
+// Border
+$border-color-base: #dcdfe6 !default;
+$border-color-light: #e4e7ed !default;
+$border-color-lighter: #ebeef5 !default;
+$border-color-extraLight: #f2f6fc !default;
+$border-color-dark: #d4d7de !default;
+$border-color-darker: #cdd0d6 !default;
+
+// Background
+$fill-color-base: #f0f2f5 !default;
+$fill-color-light: #f5f7fa !default;
+$fill-color-lighter: #f8fafc !default; // 官方 #fafafa !default;
+$fill-color-extraLight: #fafcff !default;
+$fill-color-dark: #ebedf0 !default;
+$fill-color-darker: #e6e8eb !default;
+$fill-color-blank: #ffffff !default;
+
+$bg-color-base: #ffffff !default;
+$bg-color-page: #f2f3f5 !default;
+$bg-color-overlay: #ffffff !default;
+
+// Link
+$link-color: map.get($colors, 'primary', 'light-2') !default;
+$link-color-hover: $color-primary !default;
+$link-color-active: map.get($colors, 'primary', 'dark-1') !default;
+
+// Box-shadow
+$--box-shadow-base: 0 2px 4px rgba(0, 0, 0, .12), 0 0 6px rgba(0, 0, 0, .04) !default;
+$--box-shadow-dark: 0 2px 4px rgba(0, 0, 0, .12), 0 0 6px rgba(0, 0, 0, .12) !default;
+$--box-shadow-light: 0 2px 12px 0 rgba(0, 0, 0, 0.1) !default;
+
+$box-shadow-base:
+  0px 12px 32px 4px rgba(0, 0, 0, 0.04),
+  0px 8px 20px rgba(0, 0, 0, 0.08) !default;
+$box-shadow-light: 0px 0px 12px rgba(0, 0, 0, 0.12) !default;
+$box-shadow-lighter: 0px 0px 6px rgba(0, 0, 0, 0.12) !default;
+$box-shadow-dark:
+  0px 16px 48px 16px rgba(0, 0, 0, 0.08),
+  0px 12px 32px rgba(0, 0, 0, 0.12),
+  0px 8px 16px -8px rgba(0, 0, 0, 0.16) !default;
+
+// Disabled
+$disabled-bg-color: $fill-color-light !default;
+$disabled-text-color: $text-color-placeholder !default; // 与 $text-color-disabled 冲突
+$disabled-border-color: $border-color-light !default;
+
+// Overlay
+$overlay-color-base: rgba(0, 0, 0, 0.8);
+$overlay-color-light: rgba(0, 0, 0, 0.7);
+$overlay-color-lighter: rgba(0, 0, 0, 0.5);
+
+// Mask
+$mask-color-base: rgba(255, 255, 255, 0.9);
+$mask-color-extraLight: rgba(255, 255, 255, 0.3);
+
+/*!
+ * ========================================
+ * Size
+ * ========================================
+ */
+
+$component-size-base: 32px;
+$component-size-small: 24px;
+
+// Font
+$font-path: 'fonts' !default;
+$font-display: 'auto' !default;
+$font-size-extraLarge: 20px !default;
+$font-size-large: 18px !default;
+$font-size-medium: 16px !default;
+$font-size-base: 14px !default;
+$font-size-small: 13px !default;
+$font-size-extraSmall: 12px !default;
+$font-weight-primary: 500 !default;
+$font-weight-secondary: 100 !default;
+$font-line-height-primary: 24px !default;
+$font-line-height-secondary: 16px !default;
+$font-color-disabled-base: #bbb !default;
+
+// Border
+$border-radius-large: 8px;
+$border-radius-base: 4px;
+$border-radius-small: 2px;
+
+// Input
+$input-border-color: $border-color-base !default;
+$input-border-color-hover: $text-color-placeholder !default;

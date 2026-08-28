@@ -1,8 +1,8 @@
-@import '../mixins/mixins';
+@use 'common/vars' as *;
 
 .el-tooltip {
   .el-popper__inner {
-    border-radius: $--border-radius-base;
+    border-radius: $border-radius-base;
     padding: 5px 11px;
     font-size: 12px;
     line-height: 20px;
@@ -12,24 +12,24 @@
   }
 
   &.is-dark .el-popper__inner {
-    color: $--fill-blank;
-    background: $--color-text-primary;
-    border: 1px solid $--color-text-primary;
+    background: $text-color-primary;
+    border: 1px solid $text-color-primary;
+    color: $fill-color-blank;
 
     > .el-popper__arrow:before {
-      border: 1px solid $--color-text-primary;
-      background: $--color-text-primary;
+      border: 1px solid $text-color-primary;
+      background: $text-color-primary;
       right: 0;
     }
   }
 
   &.is-light > .el-popper__inner {
-    background: $--fill-blank;
-    border: 1px solid $--border-color-light;
+    background: $fill-color-blank;
+    border: 1px solid $border-color-light;
 
     > .el-popper__arrow:before {
-      border: 1px solid $--border-color-light;
-      background: $--fill-blank;
+      border: 1px solid $border-color-light;
+      background: $text-color-primary;
       right: 0;
     }
   }
@@ -51,8 +51,7 @@
       z-index: -1;
       content: ' ';
       transform: rotate(45deg);
-      background: $--color-text-primary;
-      box-sizing: border-box;
+      background: $text-color-primary;
     }
   }
 

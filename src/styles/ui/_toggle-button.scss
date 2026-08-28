@@ -1,43 +1,30 @@
-@import '../mixins/mixins';
+@use 'sass:map';
+@use 'sass:color';
+@use 'common/vars' as *;
 
-@include b(toggle-button) {
+$--bg-color: $fill-color-blank;
+$--fg-color: $color-primary;
+
+$--checked-fg-color: $fill-color-blank;
+$--checked-bg-color: $color-primary;
+
+.el-toggle-button {
   position: relative;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-
-  border: 1px solid $--button-default-border-color;
-  border-radius: $--border-radius-base;
-  background-color: $--button-default-background-color;
-
-  line-height: 1;
-  vertical-align: middle;
-  text-align: center;
-  font-weight: 500;
-  white-space: nowrap;
-  color: $--button-default-font-color;
-
-  appearance: none;
-  box-sizing: border-box;
-  outline: none;
-  user-select: none;
-  cursor: pointer;
-
-  font-size: $--button-font-size;
-  padding: $--button-padding-vertical $--button-padding-horizontal;
 
   &:hover {
-    color: $--toggle-button-hover-color;
+    background-color: $fill-color-blank;
+    border-color: $border-color-base;
+    color: $--fg-color;
   }
 
-  @include e(inner) {
+  &__inner {
     position: absolute;
     top: -1px; right: -1px; bottom: -1px; left: -1px;
     z-index: 1;
-    border-radius: $--border-radius-base;
+    border-radius: $border-radius-base;
   }
 
-  @include e(original) {
+  &__original {
     opacity: 0;
     outline: none;
     position: absolute;
@@ -46,37 +33,24 @@
     height: 0;
     z-index: -1;
 
-    &:focus-visible + .#{$namespace}-toggle-button__inner {
-      outline: 2px solid $--color-primary-light-5;
+    &:focus-visible + .el-toggle-button__inner {
+      outline: 2px solid map.get($colors, 'primary', 'light-5');
       outline-offset: 1px;
     }
   }
 
-  @include e(label) {
+  &__label {
     font-size: inherit;
   }
 
-  @include when(checked) {
-    background-color: $--toggle-button-checked-background-color;
-    border-color: $--toggle-button-checked-border-color;
-    color: $--toggle-button-checked-font-color;
-  }
+  &.is-checked {
+    background-color: $--checked-bg-color;
+    border-color: $--checked-bg-color;
+    color: $--checked-fg-color;
 
-  @include when(disabled) {
-    cursor: not-allowed;
-    background-color: $--button-disabled-background-color;
-    border-color: $--button-disabled-border-color;
-    color: $--button-disabled-font-color;
-
-    &.is-checked {
-      background-color: mix($--toggle-button-checked-background-color, $--color-white);
-      border-color: mix($--toggle-button-checked-background-color, $--color-white);
-      color: $--toggle-button-checked-font-color;
+    &.is-disabled {
+      background-color: color.mix($color-white, $--checked-bg-color);
+      border-color: color.mix($color-white, $--checked-bg-color);
     }
-  }
-
-  @include m(small) {
-    padding: $--button-small-padding-vertical $--button-small-padding-horizontal;
-    font-size: $--button-small-font-size;
   }
 }

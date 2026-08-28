@@ -1,9 +1,14 @@
-@import '../mixins/mixins';
+@use 'sass:map';
+@use 'common/vars' as *;
+
+$--tree-font-color: $text-color-regular;
+$--tree-node-hover-background-color: $fill-color-light;
+$--tree-expand-icon-color: $text-color-placeholder;
 
 .el-tree {
   position: relative;
   cursor: default;
-  background: $--color-white;
+  background: $fill-color-blank;
   color: $--tree-font-color;
 
   &__empty-block {
@@ -19,8 +24,8 @@
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
-    color: $--color-text-secondary;
-    font-size: $--font-size-base;
+    color: $text-color-secondary;
+    font-size: $font-size-base;
   }
 
   &__drop-indicator {
@@ -28,7 +33,7 @@
     left: 0;
     right: 0;
     height: 1px;
-    background-color: $--color-primary;
+    background-color: $color-primary;
   }
 }
 
@@ -48,6 +53,7 @@
     }
     & > label.el-checkbox {
       margin-right: 8px;
+      height: 100%;
     }
     &:hover {
       background-color: $--tree-node-hover-background-color;
@@ -72,8 +78,8 @@
 
   &.is-drop-inner > .el-tree-node__content {
     .el-tree-node__label {
-      background-color: $--color-primary;
-      color: #fff;
+      background-color: $color-primary;
+      color: $color-white;
     }
   }
 
@@ -95,26 +101,13 @@
     }
   }
 
-  &__label {
-    font-size: $--font-size-base;
-  }
-
   &__loading-icon {
     margin-right: 8px;
-    font-size: $--font-size-base;
+    font-size: $font-size-base;
     color: $--tree-expand-icon-color;
   }
-
-  // & > .el-tree-node__children {
-  //   overflow: hidden;
-  //   background-color: transparent;
-  // }
-
-  // &.is-expanded > .el-tree-node__children {
-  //   display: block;
-  // }
 }
 
 .el-tree--highlight-current .el-tree-node.is-current > .el-tree-node__content {
-  background-color: mix($--color-white, $--color-primary, 92%);
+  background-color: map.get($colors, 'primary', 'light-9');
 }
