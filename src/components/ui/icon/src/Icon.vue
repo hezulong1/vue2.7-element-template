@@ -15,10 +15,10 @@ const props = defineProps({
   content: Object as PropType<Component>,
   loading: Boolean,
   /**
-   * icon 位置描述符，预设 `left` 与 `right`。
+   * icon 位置描述符，预设 `left(2?)` 与 `right(2?)`。
    * 如果需要更多预设值，注意在 [icon.scss](../../../../styles/ui/_icon.scss) 补充相关样式
    */
-  modifier: String as PropType<'left' | 'right' | (string & {})>,
+  modifier: String as PropType<'left' | 'left2' | 'right' | 'right2' | (string & {})>,
 });
 
 const iconKls = computed(() => {
