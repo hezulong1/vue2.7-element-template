@@ -11,6 +11,7 @@
     "radio": "Radio,RadioGroup",
     "scrollbar": "Scrollbar",
     "slot": "OnlyChild",
+    "switch": "Switch",
     "tag": "Tag,CheckTag",
     "teleport": "Teleport,RenderApp",
     "tooltip": "Tooltip",
