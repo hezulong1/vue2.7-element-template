@@ -1,0 +1,181 @@
+@use 'sass:map';
+@use 'sass:math';
+@use 'common/vars' as *;
+
+$--tag-height: 24px;
+$--tag-padding: 10px;
+$--tag-icon-gap: 6px;
+$--tag-icon-size: 14px;
+
+$--tag-small-height: 20px;
+$--tag-small-padding: 8px;
+$--tag-small-icon-gap: 4px;
+$--tag-small-icon-size: 12px;
+
+.el-tag {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  vertical-align: middle;
+
+  height: $--tag-height;
+  padding: 0 $--tag-padding - 1;
+  line-height: 1;
+  font-size: 12px;
+
+  border-width: 1px;
+  border-style: solid;
+  border-radius: $border-radius-base;
+  white-space: nowrap;
+
+  cursor: default;
+
+  &__close {
+    flex-shrink: 0;
+
+    padding: 0;
+    background: transparent;
+    border-radius: 50%;
+    border: none;
+    outline: none;
+    overflow: hidden;
+    margin-left: $--tag-icon-gap;
+    color: inherit;
+    cursor: pointer;
+
+    &:focus-visible {
+      outline: 2px solid transparent;
+      outline-offset: 1px;
+    }
+
+    .el-icon {
+      display: flex;
+      border-radius: inherit;
+      font-size: $--tag-icon-size - 2;
+      height: $--tag-icon-size;
+      width: $--tag-icon-size;
+    }
+  }
+
+  &.is-closable {
+    padding-right: $--tag-icon-gap - 1;
+  }
+
+  &.is-round {
+    border-radius: math.div($--tag-icon-size, 2) + $--tag-icon-gap;
+  }
+
+  &--small {
+    height: $--tag-small-height;
+    padding: 0 $--tag-small-padding - 1;
+
+    .el-tag__close {
+      margin-left: $--tag-small-icon-gap;
+
+      .el-icon {
+        font-size: $--tag-small-icon-size - 2;
+        height: $--tag-small-icon-size;
+        width: $--tag-small-icon-size;
+      }
+    }
+
+    &.is-closable {
+      padding-right: $--tag-small-icon-gap - 1;
+    }
+
+    &.is-round {
+      border-radius: math.div($--tag-small-icon-size, 2) + $--tag-small-icon-gap;
+    }
+  }
+}
+
+.el-check-tag {
+  background-color: map.get($colors, 'info', 'light-9');
+  border-color: map.get($colors, 'info', 'light-9');
+  color: map.get($colors, 'info', 'base');
+  font-weight: 600;
+  transition: all 0.3s $bezier;
+
+  &:hover {
+    background-color: map.get($colors, 'info', 'light-7');
+    border-color: map.get($colors, 'info', 'light-7');
+  }
+
+  &.is-disabled {
+    cursor: not-allowed;
+  }
+}
+
+@each $type in $types {
+  $type-color: map.get($colors, $type, 'base');
+
+  .el-tag--#{$type} {
+    background-color: map.get($colors, $type, 'light-9');
+    border-color: map.get($colors, $type, 'light-8');
+    color: $type-color;
+
+    .el-tag__close {
+      &:hover {
+        background-color: $type-color;
+        color: $color-white;
+      }
+
+      &:focus-visible {
+        outline-color: map.get($colors, $type, 'light-5');
+      }
+    }
+
+    &.el-tag--plain {
+      background-color: $color-white;
+      border-color: map.get($colors, $type, 'light-5');
+    }
+
+    &.is-hit {
+      border-color: $type-color;
+    }
+
+    &.el-tag--dark {
+      background-color: $type-color;
+      border-color: $type-color;
+      color: $color-white;
+
+      .el-tag__close {
+        &:hover {
+          background-color: map.get($colors, $type, 'light-3');
+        }
+      }
+    }
+  }
+
+  .el-check-tag--#{$type} {
+
+    &.is-checked {
+      background-color: map.get($colors, $type, 'light-8');
+      border-color: map.get($colors, $type, 'light-8');
+      color: $type-color;
+
+      &:hover {
+        background-color: map.get($colors, $type, 'light-7');
+        border-color: map.get($colors, $type, 'light-7');
+      }
+
+      &.is-disabled {
+        &,
+        &:hover {
+          background-color: map.get($colors, $type, 'light-8');
+          border-color: map.get($colors, $type, 'light-8');
+          color: $disabled-text-color;
+        }
+      }
+    }
+
+    &.is-disabled {
+      &,
+      &:hover {
+        background-color: map.get($colors, $type, 'light-9');
+        border-color: map.get($colors, $type, 'light-9');
+        color: $disabled-text-color;
+      }
+    }
+  }
+}
