@@ -3,8 +3,8 @@ import type { Component, InjectionKey, PropType, Ref, StyleValue } from 'vue';
 import './RouteMenu.scss';
 
 import { computed, defineComponent, h, inject, nextTick, provide, reactive, readonly, ref, toRef, watch, watchEffect } from 'vue';
-import { useRouter } from 'vue-router/composables';
-import { createTooltipRoot, tooltipEmit, TooltipContent, TooltipTrigger } from 'element-ui';
+import { useRoute, useRouter } from 'vue-router/composables';
+import { createTooltipRoot, tooltipEmit, TooltipContent, TooltipTrigger, Scrollbar } from 'element-ui';
 import { ArrowRight } from 'element-icons';
 import ElCollapseTransition from '@/components/base/CollapseTransition.vue';
 import { isNotEmptyArray } from '@/utils/types';
@@ -226,6 +226,9 @@ const SubMenu = defineComponent({
         <span class="el-route-menu-sub__arrow el-icon" style={iconStyle.value}><ArrowRight /></span>,
       ];
 
+      const overflowPadding = 6;
+      const maxHeight = window.innerHeight - overflowPadding * 2 - /* container border */ 2;
+
       const child = rootMenu.collapse.value
         ? [
             (
@@ -255,10 +258,13 @@ const SubMenu = defineComponent({
                 teleported={isFirstLevel.value}
                 popperClass="el-route-menu-sub__popper"
                 offset={[-5, 2]}
+                popperOptions={{
+                  modifiers: [{ name: 'preventOverflow', options: { padding: overflowPadding } }],
+                }}
               >
-                <ul class="el-route-menu-sub__poper-children el-route-menu el-route-menu--submenu">
+                <Scrollbar tag="ul" maxHeight={maxHeight} viewClass="el-route-menu-sub__poper-children el-route-menu el-route-menu--submenu">
                   { slots.default?.() }
-                </ul>
+                </Scrollbar>
               </TooltipContent>
             ),
           ]
@@ -304,7 +310,6 @@ export const RouteMenu = defineComponent({
     activeIndex: [String, Number] as PropType<MenuKey>,
     collapse: Boolean,
     openedIndexPath: Array as PropType<MenuKey[]>,
-    uniqueOpen: Boolean,
   },
   emits: {
     ...tooltipEmit,
@@ -313,10 +318,11 @@ export const RouteMenu = defineComponent({
   },
   setup(props, { emit }) {
     const router = useRouter();
+    const route = useRoute();
 
-    const activeIndexRef = ref(typeof props.activeIndex !== 'undefined' ? props.activeIndex : '');
-    const activeIndexPathRef = ref(typeof props.activeIndex !== 'undefined' ? [props.activeIndex] : []);
-    const openedIndexPathRef = ref((typeof props.openedIndexPath !== 'undefined' && !props.collapse) ? props.openedIndexPath.slice(0) : []);
+    const activeIndexRef = ref(typeof props.activeIndex !== 'undefined' ? props.activeIndex : route.fullPath);
+    const activeIndexPathRef = ref([activeIndexRef.value]);
+    const openedIndexPathRef = ref(props.collapse ? [] : (typeof props.openedIndexPath !== 'undefined') ? props.openedIndexPath.slice(0) : route.fullPath.split('/'));
 
     const itemTipTrigger = ref<HTMLLIElement>();
     const itemTipContent = ref('');
@@ -332,13 +338,8 @@ export const RouteMenu = defineComponent({
     });
 
     watchEffect(() => {
-      if (props.collapse) {
-        openedIndexPathRef.value = [];
-      }
-
-      if (props.items && !props.collapse) {
-        findActiveItem(props.items);
-      }
+      if (props.collapse) openedIndexPathRef.value = [];
+      if (props.items) findActiveItem(props.items);
     }, { flush: 'post' });
 
     provide(rootMenuContextKey, {
@@ -349,7 +350,7 @@ export const RouteMenu = defineComponent({
     });
 
     function findActiveItem(rootItems: ItemType[]) {
-      const currentPath = router.currentRoute.fullPath;
+      const currentPath = route.fullPath;
 
       type Stack = Array<{ items: ItemType[]; indexPath: MenuKey[] }>;
       const stack: Stack = [{ items: rootItems, indexPath: [] }];
@@ -405,11 +406,7 @@ export const RouteMenu = defineComponent({
             index={item.index}
             disabled={item.disabled}
             on-click={() => {
-              if (!item.to) return;
-
-              const currentRoute = router.currentRoute;
-              const currentPath = currentRoute.fullPath;
-              if (item.to === currentPath) return;
+              if (!item.to || item.to === route.fullPath) return;
 
               const done = () => {
                 activeIndexRef.value = item.index;
