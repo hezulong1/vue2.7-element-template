@@ -1,5 +1,6 @@
 {
   "components": {
+    "avatar": "Avatar,AvatarGroup",
     "button": "Button",
     "checkbox": "Checkbox,CheckboxGroup",
     "focus-trap": "FocusTrap",

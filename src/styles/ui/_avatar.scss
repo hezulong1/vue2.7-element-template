@@ -1,0 +1,67 @@
+@use 'common/vars' as *;
+
+$--avatar-size: 40px;
+$--avatar-small-size: 24px;
+
+.el-avatar {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  overflow: hidden;
+  outline: none;
+  color: $fill-color-blank;
+  background: $text-color-disabled;
+  width: $--avatar-size;
+  height: $--avatar-size;
+  font-size: $font-size-base;
+
+  > img {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  &--circle {
+    border-radius: 50%;
+  }
+
+  &--square {
+    border-radius: $border-radius-base;
+  }
+
+  &--icon {
+    font-size: 18px;
+  }
+
+  &--small {
+    font-size: $font-size-extraSmall;
+    width: $--avatar-small-size;
+    height: $--avatar-small-size;
+  }
+}
+
+.el-avatar-group {
+  display: inline-flex;
+
+  .el-avatar {
+    border: 1px solid $border-color-extraLight;
+
+    &:not(:first-child) {
+      margin-left: -8px;
+    }
+  }
+
+  &__collapse-avatars {
+    padding: 4px;
+
+    .el-avatar {
+      vertical-align: top;
+
+      &:not(:first-child) {
+        margin-left: 4px;
+      }
+    }
+  }
+}
+
