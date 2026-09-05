@@ -19,6 +19,8 @@ import { computed, inject, onBeforeUnmount, ref } from 'vue';
 import { isClient } from '@vueuse/core';
 import { renderThumbStyle, BAR_MAP, scrollbarContextKey } from './utils';
 
+defineOptions({ name: 'ElScrollbarBar' });
+
 const props = defineProps({
   vertical: Boolean,
   size: String,

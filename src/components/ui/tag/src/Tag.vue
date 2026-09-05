@@ -28,9 +28,7 @@ import { Close } from 'element-icons';
 import { useSizeProp } from '@/components/base/ConfigProvider';
 import { useFormSize } from '../../form';
 
-defineOptions({
-  name: 'ElTag',
-});
+defineOptions({ name: 'ElTag' });
 
 const props = defineProps({
   /**

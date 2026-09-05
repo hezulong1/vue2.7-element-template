@@ -8,9 +8,7 @@
 import type { TagType } from './utils';
 import { computed, type PropType } from 'vue';
 
-defineOptions({
-  name: 'ElCheckTag',
-});
+defineOptions({ name: 'ElCheckTag' });
 
 const props = defineProps({
   /**

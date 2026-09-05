@@ -12,9 +12,7 @@ import { useSizeProp } from '@/components/base/ConfigProvider';
 import { useFormItem } from '../../form';
 import { provideCheckboxGroup, type CheckboxValue } from './utils';
 
-defineOptions({
-  name: 'ElCheckboxGroup',
-});
+defineOptions({ name: 'ElCheckboxGroup' });
 
 const props = defineProps({
   value: {

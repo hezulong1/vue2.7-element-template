@@ -97,9 +97,7 @@ import {
   useFormSize,
 } from '../../form';
 
-defineOptions({
-  name: 'ElSwitch',
-});
+defineOptions({ name: 'ElSwitch' });
 
 const props = defineProps({
   /**

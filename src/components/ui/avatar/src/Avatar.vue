@@ -25,9 +25,7 @@ import { addUnit } from '@/utils/dom';
 import { iconPropType } from '@/utils/vue/icon';
 import { avatarGroupContextKey } from './utils';
 
-defineOptions({
-  name: 'ElAvatar',
-});
+defineOptions({ name: 'ElAvatar' });
 
 const props = defineProps({
   /**

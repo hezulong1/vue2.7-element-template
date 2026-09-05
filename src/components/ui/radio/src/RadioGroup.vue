@@ -11,9 +11,7 @@ import { nanoid } from '@/utils/nanoid';
 import { useFormItem } from '../../form';
 import { provideRadioGroup, type RadioValue } from './utils';
 
-defineOptions({
-  name: 'ElRadioGroup',
-});
+defineOptions({ name: 'ElRadioGroup' });
 
 const props = defineProps({
   value: {

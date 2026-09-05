@@ -26,9 +26,7 @@ import { Loading } from 'element-icons';
 import { useSizeProp } from '@/components/base/ConfigProvider';
 import { useFormItem, useFormDisabled, useFormSize } from '../../form';
 
-defineOptions({
-  name: 'ElButton',
-});
+defineOptions({ name: 'ElButton' });
 
 const props = defineProps({
   type: {

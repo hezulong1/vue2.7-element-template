@@ -59,9 +59,7 @@ import ElTooltipContentImpl from './ContentImpl.vue';
 import { tooltipProps, tooltipEmit } from './props';
 import { createTooltipRoot } from './TooltipRoot';
 
-defineOptions({
-  name: 'ElTooltip',
-});
+defineOptions({ name: 'ElTooltip' });
 
 const props = defineProps(tooltipProps);
 const emit = defineEmits(tooltipEmit);

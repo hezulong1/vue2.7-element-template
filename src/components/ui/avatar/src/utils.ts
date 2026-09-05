@@ -9,4 +9,4 @@ export interface AvatarGroupContext {
   shape?: AvatarShape;
 }
 
-export const avatarGroupContextKey: InjectionKey<AvatarGroupContext> = Symbol('avatarGroupContextKey');
+export const avatarGroupContextKey: InjectionKey<AvatarGroupContext> = Symbol('avatarGroupContext');

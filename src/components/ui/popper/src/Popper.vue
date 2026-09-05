@@ -49,9 +49,7 @@ import { FocusTrap as ElFocusTrap } from '../../focus-trap';
 import { popperProps } from './props';
 import { usePopper } from './utils';
 
-defineOptions({
-  name: 'ElPopper',
-});
+defineOptions({ name: 'ElPopper' });
 
 const props = defineProps(popperProps);
 const emit = defineEmits<{

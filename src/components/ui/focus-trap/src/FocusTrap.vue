@@ -22,9 +22,7 @@
 import { computed, toRefs } from 'vue';
 import { useFocusTrap } from './utils';
 
-defineOptions({
-  name: 'ElFocusTrap',
-});
+defineOptions({ name: 'ElFocusTrap' });
 
 const props = defineProps({
   disabled: Boolean,

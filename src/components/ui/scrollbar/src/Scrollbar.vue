@@ -49,9 +49,7 @@ import { addUnit } from '@/utils/dom';
 import { useScrollable } from './utils';
 import Bar from './Bar.vue';
 
-defineOptions({
-  name: 'ElScrollbar',
-});
+defineOptions({ name: 'ElScrollbar' });
 
 const props = defineProps({
   height: {

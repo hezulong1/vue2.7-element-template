@@ -10,7 +10,7 @@
     "layout": "Flex",
     "popper": "Popper",
     "radio": "Radio,RadioGroup",
-    "scrollbar": "Scrollbar",
+    "scrollbar": "Scrollbar, ScrollbarBar",
     "slot": "OnlyChild",
     "switch": "Switch",
     "tag": "Tag,CheckTag",
