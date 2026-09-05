@@ -28,7 +28,9 @@ export default defineConfig(({ mode }) => {
         },
       },
       Vue(),
-      // 编码规则: https://github.com/vuejs/jsx-vue2/blob/dev/packages/babel-plugin-transform-vue-jsx/README.md
+      // 编码规则:
+      // https://github.com/vuejs/jsx-vue2/blob/dev/packages/babel-plugin-transform-vue-jsx/README.md
+      // https://github.com/vuejs/jsx-vue2#installation
       VueJsx(),
       VueDefineOptions(),
       VueLegacy(),
