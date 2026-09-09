@@ -1,51 +1,79 @@
 <template>
-  <div class="el-focus-trap">
-    <div
-      ref="startRef"
-      class="el-visually-hidden el-focus-trap__guard"
-      :tabindex="tabindex"
-      aria-hidden="true"
-      data-focus-guard="start"
-    />
+  <component :is="tag" ref="selfRef" class="el-focus-trap">
     <slot />
-    <div
-      ref="endRef"
-      class="el-visually-hidden el-focus-trap__guard"
-      :tabindex="tabindex"
-      aria-hidden="true"
-      data-focus-guard="end"
-    />
-  </div>
+  </component>
 </template>
 
 <script setup lang="ts">
-import { computed, toRefs } from 'vue';
+import type { ComponentPublicInstance, PropType } from 'vue';
+import { computed, ref, toRef } from 'vue';
+import { unrefElement } from '@vueuse/core';
 import { useFocusTrap } from './utils';
 
 defineOptions({ name: 'ElFocusTrap' });
 
 const props = defineProps({
-  disabled: Boolean,
-  active: Boolean,
-  initialFocusTo: String,
-  finalFocusTo: String,
-  autoFocus: {
-    type: Boolean,
-    default: true,
+  tag: {
+    type: String as PropType<keyof HTMLElementTagNameMap>,
+    default: 'div',
   },
-  returnFocusOnDeactivated: {
-    type: Boolean,
-    default: true,
+  loop: Boolean,
+  trapped: Boolean,
+  focusTrapEl: {
+    type: [Element, String, Object] as PropType<'self' | Element | ComponentPublicInstance>,
+    default: 'self',
+  },
+  focusStartEl: {
+    type: [Element, String, Object] as PropType<'first' | 'container' | Element | ComponentPublicInstance>,
+    default: 'first',
   },
 });
 
-const emit = defineEmits(['escape']);
+const emit = defineEmits<{
+  (type: 'focus-after-trapped', e: Event): void;
+  (type: 'focus-after-released', e: Event): void;
+  (type: 'focusin', e: FocusEvent): void;
+  (type: 'focusout', e: FocusEvent): void;
+  (type: 'focusout-prevented', e: CustomEvent): void;
+  (type: 'release-requested', e: Event): void;
+}>();
 
-const tabindex = computed(() => props.active ? '0' : '-1');
-const { startRef, endRef } = useFocusTrap({
-  ...toRefs(props),
-  onEscape(e) {
-    emit('escape', e);
+const _unrefElement = (el: Element | ComponentPublicInstance | null | undefined) => unrefElement(el as any);
+
+const selfRef = ref<HTMLElement>();
+
+useFocusTrap({
+  loop: toRef(props, 'loop'),
+  trapped: toRef(props, 'trapped'),
+  focusTrapEl: computed(() => {
+    const el = props.focusTrapEl;
+    if (!el) return;
+    if (el === 'self') return selfRef.value;
+    return _unrefElement(el);
+  }),
+  focusStartEl: computed(() => {
+    const el = props.focusStartEl;
+    if (!el) return;
+    if (typeof el === 'string') return el;
+    return _unrefElement(el);
+  }),
+  onFocusAfterTrapped(e) {
+    emit('focus-after-trapped', e);
+  },
+  onFocusAfterReleased(e) {
+    emit('focus-after-released', e);
+  },
+  onFocusin(e) {
+    emit('focusin', e);
+  },
+  onFocusout(e) {
+    emit('focusout', e);
+  },
+  onFocusoutPrevented(e) {
+    emit('focusout-prevented', e);
+  },
+  onReleaseRequested(e) {
+    emit('release-requested', e);
   },
 });
 </script>

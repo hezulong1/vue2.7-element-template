@@ -1,254 +1,461 @@
-import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
-import { isClient, toValue, type MaybeRefOrGetter, useEventListener } from '@vueuse/core';
-import { useId } from '@/composables/use-id';
+import type { InjectionKey, Ref } from 'vue';
+import type { MaybeRefOrGetter } from '@vueuse/core';
+
+import { ref, provide, watch, nextTick, onMounted, onBeforeUnmount, computed } from 'vue';
+import { toValue } from '@vueuse/core';
+import { useEscapeKeydown } from '@/composables/use-escape-keydown';
 import * as domUtils from '@/utils/dom';
-import { isFocusable } from '@/utils/aria';
-import { isUndefined } from '@/utils/types';
+import { getEventCode, EVENT_CODE } from '@/utils/event';
+import { focusElement } from '@/utils/aria';
 
-let stack: string[] = [];
+export interface FocusTrapContext {
+  focusTrapRef: Ref<HTMLElement | undefined>;
+  onKeydown: (e: KeyboardEvent) => void;
+}
+export const FOCUS_TRAP_CONTEXT_KEY: InjectionKey<FocusTrapContext> = Symbol('focusTrapContext');
 
-interface InternalState {
-  activated: boolean;
-  ignoreInternalFocusChange: boolean;
+export const FOCUS_AFTER_TRAPPED = 'focus-trap.focus-after-trapped';
+export const FOCUS_AFTER_RELEASED = 'focus-trap.focus-after-released';
+export const FOCUSOUT_PREVENTED = 'focus-trap.focusout-prevented';
+
+const FOCUS_AFTER_TRAPPED_OPTS: EventInit = {
+  cancelable: true,
+  bubbles: false,
+};
+
+const lastUserFocusTimestamp = ref<number>(0);
+const lastAutomatedFocusTimestamp = ref<number>(0);
+const isFocusCausedByUserEvent = () => lastUserFocusTimestamp.value > lastAutomatedFocusTimestamp.value;
+
+interface FocusLayer {
+  paused: boolean;
+  pause: () => void;
+  resume: () => void;
 }
 
+type FocusStack = FocusLayer[];
+const focusableStack = createFocusableStack();
+
 export interface UseFocusTrapProps {
-  disabled?: MaybeRefOrGetter<boolean | undefined>;
-  active?: MaybeRefOrGetter<boolean | undefined>;
-  autoFocus?: MaybeRefOrGetter<boolean | undefined>;
-  returnFocusOnDeactivated?: MaybeRefOrGetter<boolean | undefined>;
-  initialFocusTo?: MaybeRefOrGetter<string | undefined>;
-  finalFocusTo?: MaybeRefOrGetter<string | undefined>;
-  onEscape?: (e: KeyboardEvent) => void;
+  loop?: MaybeRefOrGetter<boolean | undefined>;
+  trapped?: MaybeRefOrGetter<boolean | undefined>;
+  focusTrapEl?: MaybeRefOrGetter<HTMLElement | undefined>;
+  /**
+   * @default 'first'
+   */
+  focusStartEl?: MaybeRefOrGetter<'container' | 'first' | HTMLElement | undefined>;
+
+  onFocusAfterTrapped?: (e: Event) => void;
+  onFocusAfterReleased?: (e: Event) => void;
+  onFocusin?: (e: FocusEvent) => void;
+  onFocusout?: (e: FocusEvent) => void;
+  onFocusoutPrevented?: (e: CustomEvent) => void;
+  onReleaseRequested?: (e: Event) => void;
 }
 
 export function useFocusTrap(opts: UseFocusTrapProps = {}) {
-  const activeRef = computed(() => toValue(opts.active));
-  const autoFocusRef = computed(() => toValue(opts.autoFocus));
-  const disabledRef = computed(() => toValue(opts.disabled));
-  const returnFocusOnDeactivatedRef = computed(() => toValue(opts.returnFocusOnDeactivated));
-  const initialFocusToRef = computed(() => toValue(opts.initialFocusTo));
-  const finalFocusToRef = computed(() => toValue(opts.finalFocusTo));
+  const loopRef = computed(() => toValue(opts.loop) ?? false);
+  const trappedRef = computed(() => toValue(opts.trapped) ?? false);
+  const focusTrapElRef = computed(() => toValue(opts.focusTrapEl));
+  const focusStartElRef = computed(() => toValue(opts.focusStartEl) ?? 'first');
 
-  const id = useId('el-focus-trap');
+  let lastFocusBeforeTrapped: HTMLElement | null = null;
+  let lastFocusAfterTrapped: HTMLElement | null = null;
 
-  const startRef = ref<HTMLElement | null>();
-  const endRef = ref<HTMLElement | null>();
+  const { focusReason } = useFocusReason();
+  const forwardRef = ref<HTMLElement | undefined>();
 
-  const state: InternalState = {
-    activated: false,
-    ignoreInternalFocusChange: false,
+  const focusLayer = new class implements FocusLayer {
+    private _paused = false;
+    public get paused() {
+      return this._paused;
+    }
+    public pause() {
+      this._paused = true;
+    }
+    public resume() {
+      this._paused = false;
+    }
+  }();
+
+  useEscapeKeydown((event) => {
+    if (trappedRef.value && !focusLayer.paused) {
+      opts.onReleaseRequested?.(event);
+    }
+  });
+
+  const doFocusoutPrevented = (defaultPrevent?: VoidFunction) => {
+    const event = new CustomEvent(FOCUSOUT_PREVENTED, {
+      cancelable: true,
+      bubbles: false,
+      detail: { focusReason: focusReason.value },
+    });
+
+    opts.onFocusoutPrevented?.(event);
+
+    if (!event.defaultPrevented) defaultPrevent?.();
   };
 
-  const lastFocusedElement: Element | null = isClient ? document.activeElement : null;
+  const onKeydown = (e: KeyboardEvent) => {
+    if (!loopRef.value && !trappedRef.value) return;
+    if (focusLayer.paused) return;
 
-  const isCurrentActive = () => {
-    const currentActiveId = stack[stack.length - 1];
-    return currentActiveId === id.value;
+    const { currentTarget, shiftKey } = e;
+
+    const code = getEventCode(e);
+    const isTabbing = code === EVENT_CODE.tab && !e.altKey && !e.ctrlKey && !e.metaKey;
+    const currentFocusingEl = <HTMLElement>document.activeElement;
+
+    if (!isTabbing || !currentFocusingEl) return;
+    if (!domUtils.isHTMLElement(currentTarget)) return;
+
+    const container = currentTarget;
+    const [first, last] = getEdges(container);
+
+    if (first && last) {
+      if (/* 定位到最后一个元素 */ !shiftKey && currentFocusingEl === last) {
+        doFocusoutPrevented(() => {
+          e.preventDefault();
+          if (loopRef.value) tryFocus(first, true);
+        });
+      } else if (/* 定位到第一个元素 */ shiftKey && [first, container].includes(currentFocusingEl)) {
+        doFocusoutPrevented(() => {
+          e.preventDefault();
+          if (loopRef.value) tryFocus(last, true);
+        });
+      }
+    } else {
+      if (currentFocusingEl === container) {
+        doFocusoutPrevented(() => {
+          e.preventDefault();
+        });
+      }
+    }
   };
 
-  function handleDocumentKeydown(e: KeyboardEvent): void {
-    if (e.code === 'Escape') {
-      if (isCurrentActive()) {
-        opts.onEscape?.(e);
+  provide(FOCUS_TRAP_CONTEXT_KEY, {
+    focusTrapRef: forwardRef,
+    onKeydown,
+  });
+
+  watch(focusTrapElRef, (focusTrapEl) => {
+    if (focusTrapEl) {
+      forwardRef.value = focusTrapEl;
+    }
+  }, { immediate: true });
+
+  watch([forwardRef], ([forwardRef], [oldForwardRef]) => {
+    if (forwardRef) {
+      forwardRef.addEventListener('keydown', onKeydown);
+      forwardRef.addEventListener('focusin', onFocusIn);
+      forwardRef.addEventListener('focusout', onFocusOut);
+    }
+    if (oldForwardRef) {
+      oldForwardRef.removeEventListener('keydown', onKeydown);
+      oldForwardRef.removeEventListener('focusin', onFocusIn);
+      oldForwardRef.removeEventListener('focusout', onFocusOut);
+    }
+  });
+
+  function onFocusIn(e: FocusEvent) {
+    const trapContainer = forwardRef.value;
+    if (!trapContainer) return;
+
+    const target = e.target as HTMLElement | null;
+    const relatedTarget = e.relatedTarget as HTMLElement | null;
+    const isFocusedInTrap = trapContainer.contains(target);
+
+    if (!trappedRef.value) {
+      const isPrevFocusedInTrap = relatedTarget && trapContainer.contains(relatedTarget);
+      if (!isPrevFocusedInTrap) {
+        lastFocusBeforeTrapped = relatedTarget;
+      }
+    }
+
+    if (isFocusedInTrap) opts.onFocusin?.(e);
+    if (focusLayer.paused) return;
+
+    if (trappedRef.value) {
+      if (isFocusedInTrap) {
+        lastFocusAfterTrapped = target;
+      } else {
+        tryFocus(lastFocusAfterTrapped, true);
       }
     }
   }
 
-  const detachDocumentKeydown = () => {
-    document.removeEventListener('keydown', handleDocumentKeydown, false);
-    if (state.activated) {
-      deactivate();
+  function onFocusOut(e: FocusEvent) {
+    const trapContainer = forwardRef.value;
+    if (focusLayer.paused || !trapContainer) return;
+
+    if (trappedRef.value) {
+      const relatedTarget = e.relatedTarget as HTMLElement | null;
+      if (relatedTarget != null && !trapContainer.contains(relatedTarget)) {
+        // Give embedded focus layer time to pause this layer before reclaiming focus
+        // And only reclaim focus if it should currently be trapping
+        setTimeout(() => {
+          if (!focusLayer.paused && trappedRef.value) {
+            doFocusoutPrevented(() => {
+              tryFocus(lastFocusAfterTrapped, true);
+            });
+          }
+        }, 0);
+      }
+    } else {
+      const target = e.target as HTMLElement | null;
+      const isFocusedInTrap = target && trapContainer.contains(target);
+      if (!isFocusedInTrap) opts.onFocusout?.(e);
     }
-  };
+  }
+
+  const trapOnFocus = (e: Event) => opts.onFocusAfterTrapped?.(e);
+  const releaseOnFocus = (e: Event) => opts.onFocusAfterReleased?.(e);
+
+  function startTrap() {
+    // Wait for forwardRef to resolve
+    nextTick(() => {
+      const trapContainer = forwardRef.value;
+      if (!trapContainer) return;
+
+      focusableStack.push(focusLayer);
+
+      const prevFocusedElement = trapContainer.contains(document.activeElement) ? lastFocusBeforeTrapped : <HTMLElement | null>document.activeElement;
+      lastFocusBeforeTrapped = prevFocusedElement;
+
+      if (!trapContainer.contains(prevFocusedElement)) {
+        const focusEvent = new CustomEvent(FOCUS_AFTER_TRAPPED, FOCUS_AFTER_TRAPPED_OPTS);
+
+        trapContainer.addEventListener(FOCUS_AFTER_TRAPPED, trapOnFocus);
+        trapContainer.dispatchEvent(focusEvent);
+
+        if (!focusEvent.defaultPrevented) {
+          nextTick(() => {
+            let { value: focusStartEl } = focusStartElRef;
+
+            if (typeof focusStartEl !== 'string') {
+              tryFocus(focusStartEl);
+              if (document.activeElement !== focusStartEl) {
+                focusStartEl = 'first';
+              }
+            }
+
+            if (focusStartEl === 'first') {
+              focusFirstDescendant(
+                obtainAllFocusableElements(trapContainer),
+                true,
+              );
+            }
+
+            if (document.activeElement === prevFocusedElement || focusStartEl === 'container') {
+              tryFocus(trapContainer);
+            }
+          });
+        }
+      }
+    });
+  }
+
+  function stopTrap() {
+    const trapContainer = forwardRef.value;
+    if (!trapContainer) return;
+
+    trapContainer.removeEventListener(FOCUS_AFTER_TRAPPED, trapOnFocus);
+
+    const releasedEvent = new CustomEvent(FOCUS_AFTER_RELEASED, {
+      ...FOCUS_AFTER_TRAPPED_OPTS,
+      detail: {
+        focusReason: focusReason.value,
+      },
+    });
+
+    trapContainer.addEventListener(FOCUS_AFTER_RELEASED, releaseOnFocus);
+    trapContainer.dispatchEvent(releasedEvent);
+    if (!releasedEvent.defaultPrevented) {
+      if (focusReason.value === 'keyboard' || !isFocusCausedByUserEvent() || trapContainer.contains(document.activeElement)) {
+        tryFocus(lastFocusBeforeTrapped ?? document.body);
+      }
+    }
+
+    trapContainer.removeEventListener(FOCUS_AFTER_RELEASED, releaseOnFocus);
+    focusableStack.remove(focusLayer);
+    lastFocusBeforeTrapped = null;
+    lastFocusAfterTrapped = null;
+  }
 
   onMounted(() => {
-    watch(
-      activeRef,
-      (value) => {
-        if (value) {
-          activate();
-          document.addEventListener('keydown', handleDocumentKeydown, false);
-        } else {
-          detachDocumentKeydown();
-        }
-      },
-      {
-        immediate: true,
-      },
-    );
+    if (trappedRef.value) startTrap();
+    watch(trappedRef, trapped => trapped ? startTrap() : stopTrap());
   });
-
-  const cleanups: VoidFunction[] = [
-    useEventListener(startRef, 'focus', (e) => {
-      if (state.ignoreInternalFocusChange) return;
-
-      const mainEl = getMainEl();
-      if (!mainEl) return;
-
-      if (domUtils.isElement(e.relatedTarget) && mainEl.contains(e.relatedTarget)) {
-      // if it comes from inner, focus last
-        resetFocusTo('last');
-      } else {
-      // otherwise focus first
-        resetFocusTo('first');
-      }
-    }),
-
-    useEventListener(endRef, 'focus', (e) => {
-      if (state.ignoreInternalFocusChange) return;
-      if (!e.relatedTarget && e.relatedTarget === startRef.value) {
-      // if it comes from first, focus last
-        resetFocusTo('last');
-      } else {
-      // otherwise focus first
-        resetFocusTo('first');
-      }
-    }),
-
-    detachDocumentKeydown,
-  ];
 
   onBeforeUnmount(() => {
-    cleanups.forEach(fn => fn());
-    cleanups.length = 0;
+    if (trappedRef.value) stopTrap();
+
+    if (forwardRef.value) {
+      forwardRef.value.removeEventListener('keydown', onKeydown);
+      forwardRef.value.removeEventListener('focusin', onFocusIn);
+      forwardRef.value.removeEventListener('focusout', onFocusOut);
+      forwardRef.value = undefined;
+    }
+
+    lastFocusBeforeTrapped = null;
+    lastFocusAfterTrapped = null;
   });
 
-  function getPreciseEventTarget(event: Event): EventTarget | null {
-    if (event.composedPath) {
-      return event.composedPath()[0] || null;
-    } else {
-      return event.target || null;
-    }
-  }
+  return { onKeydown };
+}
 
-  function handleDocumentFocus(e: FocusEvent): void {
-    if (state.ignoreInternalFocusChange) return;
-    if (isCurrentActive()) {
-      const mainEl = getMainEl();
-      if (mainEl == null) return;
-      if (mainEl.contains(getPreciseEventTarget(e) as Node | null)) return;
-      // I don't handle shift + tab status since it's too tricky to handle
-      // Not impossible but I need to sleep
-      resetFocusTo('first');
-    }
-  }
+// Stack
+// ----------------------------------------
 
-  function getMainEl(): ChildNode | null {
-    const focusableStartEl = startRef.value;
-    if (focusableStartEl == null) return null;
+function removeFromStack<T>(list: T[], item: T) {
+  const copy = [...list];
+  const idx = list.indexOf(item);
+  if (idx !== -1) copy.splice(idx, 1);
+  return copy;
+}
 
-    let mainEl: ChildNode | null = focusableStartEl;
+function createFocusableStack() {
+  let stack = [] as FocusStack;
 
-    while (true) {
-      mainEl = mainEl.nextSibling;
-      if (!mainEl || (domUtils.isElement(mainEl) && mainEl.tagName === 'DIV')) break;
-    }
+  const push = (layer: FocusLayer) => {
+    const currentLayer = stack[0];
 
-    return mainEl;
-  }
+    if (currentLayer && layer !== currentLayer) currentLayer.pause();
 
-  function activate(): void {
-    if (disabledRef.value) return;
+    stack = removeFromStack(stack, layer);
+    stack.unshift(layer);
+  };
 
-    stack.push(id.value);
-    if (autoFocusRef.value) {
-      if (isUndefined(initialFocusToRef.value)) {
-        resetFocusTo('first');
-      } else {
-        domUtils.query<HTMLElement>(initialFocusToRef.value)?.focus({ preventScroll: true });
-      }
-    }
-
-    state.activated = true;
-    document.addEventListener('focus', handleDocumentFocus, true);
-  }
-
-  function deactivate(): void {
-    if (disabledRef.value) return;
-
-    document.removeEventListener('focus', handleDocumentFocus, true);
-    stack = stack.filter(idInStack => idInStack !== id.value);
-
-    if (isCurrentActive()) return;
-    const { value: finalFocusTo } = finalFocusToRef;
-    if (typeof finalFocusTo !== 'undefined') {
-      domUtils.query<HTMLElement>(finalFocusTo)?.focus({ preventScroll: true });
-    } else if (returnFocusOnDeactivatedRef.value && domUtils.isHTMLElement(lastFocusedElement)) {
-      state.ignoreInternalFocusChange = true;
-      lastFocusedElement.focus({ preventScroll: true });
-      state.ignoreInternalFocusChange = false;
-    }
-  }
-
-  function resetFocusTo(target: 'last' | 'first'): void {
-    if (!isCurrentActive()) return;
-    if (!activeRef.value) return;
-
-    const startEl = startRef.value;
-    const endEl = endRef.value;
-
-    if (startEl && endEl) {
-      const mainEl = getMainEl();
-      if (!mainEl || mainEl === endEl) {
-        state.ignoreInternalFocusChange = true;
-        startEl.focus({ preventScroll: true });
-        state.ignoreInternalFocusChange = false;
-        return;
-      }
-      state.ignoreInternalFocusChange = true;
-
-      const focused = target === 'first' ? focusFirstDescendant(mainEl) : focusLastDescendant(mainEl);
-
-      state.ignoreInternalFocusChange = false;
-      if (!focused) {
-        state.ignoreInternalFocusChange = true;
-        startEl.focus({ preventScroll: true });
-        state.ignoreInternalFocusChange = false;
-      }
-    }
-  }
+  const remove = (layer: FocusLayer) => {
+    stack = removeFromStack(stack, layer);
+    stack[0]?.resume?.();
+  };
 
   return {
-    startRef,
-    endRef,
+    push,
+    remove,
   };
 }
 
-// Utils
+// Helper
 // ----------------------------------------
-// ref https://www.w3.org/TR/wai-aria-practices-1.1/examples/dialog-modal/js/dialog.js
 
-function focusFirstDescendant(node: Node): boolean {
-  for (let i = 0; i < node.childNodes.length; i++) {
-    const child = node.childNodes[i];
-    if (domUtils.isHTMLElement(child)) {
-      if (attemptFocus(child) || focusFirstDescendant(child)) {
-        return true;
-      }
-    }
+function focusFirstDescendant(elements: HTMLElement[], shouldSelect = false) {
+  const prevFocusedElement = document.activeElement;
+  for (const element of elements) {
+    tryFocus(element, shouldSelect);
+    if (document.activeElement !== prevFocusedElement) return;
   }
+}
+
+// TODO 重复
+function obtainAllFocusableElements(element: HTMLElement): HTMLElement[] {
+  const nodes: HTMLElement[] = [];
+  const walker = document.createTreeWalker(element, NodeFilter.SHOW_ELEMENT, {
+    acceptNode: (
+      node: Element & {
+        disabled: boolean;
+        hidden: boolean;
+        type: string;
+        tabIndex: number;
+      },
+    ) => {
+      const isHiddenInput = node.tagName === 'INPUT' && node.type === 'hidden';
+      if (node.disabled || node.hidden || isHiddenInput) return NodeFilter.FILTER_SKIP;
+      return node.tabIndex >= 0 || node === document.activeElement
+        ? NodeFilter.FILTER_ACCEPT
+        : NodeFilter.FILTER_SKIP;
+    },
+  });
+  while (walker.nextNode()) nodes.push(walker.currentNode as HTMLElement);
+
+  return nodes;
+}
+
+declare const process: { env: Record<string, any> };
+
+// TODO 重复 (isVisible)
+function isHidden(element: HTMLElement, container: HTMLElement) {
+  if (process.env.NODE_ENV === 'test') return false;
+  if (getComputedStyle(element).visibility === 'hidden') return true;
+
+  while (element) {
+    if (container && element === container) return false;
+    if (getComputedStyle(element).display === 'none') return true;
+    element = element.parentElement as HTMLElement;
+  }
+
   return false;
 }
 
-function focusLastDescendant(element: Node): boolean {
-  for (let i = element.childNodes.length - 1; i >= 0; i--) {
-    const child = element.childNodes[i];
-    if (domUtils.isHTMLElement(child)) {
-      if (attemptFocus(child) || focusLastDescendant(child)) {
-        return true;
-      }
-    }
+function getVisibleElement(elements: HTMLElement[], container: HTMLElement) {
+  for (const element of elements) {
+    if (!isHidden(element, container)) return element;
   }
-  return false;
 }
 
-function attemptFocus(element: HTMLElement): boolean {
-  if (!isFocusable(element)) {
-    return false;
+function getEdges(container: HTMLElement) {
+  const focusable = obtainAllFocusableElements(container);
+  const first = getVisibleElement(focusable, container);
+  const last = getVisibleElement(focusable.reverse(), container);
+  return [first, last];
+}
+
+const isSelectable = (element: any): element is HTMLInputElement & { select: () => void } =>
+  element instanceof HTMLInputElement && 'select' in element;
+
+function tryFocus(element?: HTMLElement | { focus: () => void } | null, shouldSelect?: boolean) {
+  if (!element) return;
+
+  const prevFocusedElement = document.activeElement;
+
+  focusElement(element, { preventScroll: true });
+  lastAutomatedFocusTimestamp.value = window.performance.now();
+
+  if (element !== prevFocusedElement && isSelectable(element) && shouldSelect) {
+    element.select();
   }
-  try {
-    element.focus({ preventScroll: true });
-  } catch (e) {}
-  return document.activeElement === element;
+}
+
+// FocusReason
+// ----------------------------------------
+
+let focusReasonUserCount = 0;
+
+const focusReason = ref<'pointer' | 'keyboard'>();
+
+const notifyFocusReasonPointer = () => {
+  focusReason.value = 'pointer';
+  lastUserFocusTimestamp.value = window.performance.now();
+};
+
+const notifyFocusReasonKeydown = () => {
+  focusReason.value = 'keyboard';
+  lastUserFocusTimestamp.value = window.performance.now();
+};
+
+function useFocusReason() {
+  onMounted(() => {
+    if (focusReasonUserCount === 0) {
+      document.addEventListener('mousedown', notifyFocusReasonPointer);
+      document.addEventListener('touchstart', notifyFocusReasonPointer);
+      document.addEventListener('keydown', notifyFocusReasonKeydown);
+    }
+    focusReasonUserCount++;
+  });
+
+  onBeforeUnmount(() => {
+    focusReasonUserCount--;
+    if (focusReasonUserCount <= 0) {
+      document.removeEventListener('mousedown', notifyFocusReasonPointer);
+      document.removeEventListener('touchstart', notifyFocusReasonPointer);
+      document.removeEventListener('keydown', notifyFocusReasonKeydown);
+    }
+  });
+
+  return {
+    focusReason,
+    lastUserFocusTimestamp,
+    lastAutomatedFocusTimestamp,
+  };
 }
