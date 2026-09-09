@@ -24,6 +24,7 @@
       :pure="pure"
       :virtual-triggering="virtualTriggering"
       :reference-el="referenceEl"
+      :loop="loop"
 
       :class="popperClass"
       :style="popperStyle"

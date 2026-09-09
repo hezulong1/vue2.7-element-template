@@ -22,6 +22,7 @@
     :role="role"
     :visible="shouldShow"
     :reference-el="referenceRef"
+    :loop="loop"
 
     @before-enter="onBeforeShow"
     @after-enter="onShow"
