@@ -1,4 +1,7 @@
-@import "var";
+@use "vars" as *;
+
+$--fade-linear-transition: opacity 200ms linear;
+$--md-fade-transition: transform 300ms $bezier-fast, opacity 300ms $bezier-fast;
 
 .fade-in-linear-enter-active,
 .fade-in-linear-leave-active {

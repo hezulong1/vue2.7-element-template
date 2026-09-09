@@ -4,22 +4,23 @@
 @use 'easing';
 @use '../mixins/function' as *;
 
-/*!
- * ========================================
- * Transition
- * ========================================
- */
+// Transition
+// ----------------------------------------
 
 $bezier: easing.$easeInOutCubic;
 $bezier-fast: easing.$easeOutQuint;
 $bezier-ease: cubic-bezier(0.25, 0.1, 0.25, 1);
 $bezier-easeInOut: cubic-bezier(0.42, 0, 0.58, 1);
 
-/*!
- * ========================================
- * Color
- * ========================================
- */
+$transition-all: all 300ms $bezier;
+$transition-fade: opacity 300ms $bezier-fast;
+$transition-fade-linear: opacity 200ms linear;
+$transition-fade-md: transform 300ms $bezier-fast, opacity 300ms $bezier-fast;
+$transition-border: border-color 200ms $bezier;
+$transition-color: color 200ms $bezier;
+
+// Color
+// ----------------------------------------
 
 $types: ('primary', 'success', 'warning', 'danger', 'info');
 
@@ -164,11 +165,8 @@ $overlay-color-lighter: rgba(0, 0, 0, 0.5);
 $mask-color-base: rgba(255, 255, 255, 0.9);
 $mask-color-extraLight: rgba(255, 255, 255, 0.3);
 
-/*!
- * ========================================
- * Size
- * ========================================
- */
+// Size
+// ----------------------------------------
 
 $component-size-base: 32px;
 $component-size-small: 24px;

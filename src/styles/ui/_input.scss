@@ -1,6 +1,13 @@
 @use 'sass:map';
 @use 'common/vars' as *;
-@use 'mixins/mixins' as mx;
+
+@mixin inset-input-border($color, $important: false) {
+  @if $important == true {
+    box-shadow: 0 0 0 1px $color inset !important;
+  } @else {
+    box-shadow: 0 0 0 1px $color inset;
+  }
+}
 
 @mixin inset-prepend-border($color) {
   box-shadow:
@@ -36,8 +43,8 @@
   box-shadow: 0 0 0 1px $color inset;
 }
 
-$--input-background-color: $--color-white;
-$--input-icon-color: $--color-text-placeholder;
+$--input-background-color: $color-white;
+$--input-icon-color: $text-color-placeholder; // $--color-text-placeholder;
 $--input-inner-height: $component-size-base - 2;
 $--input-clear-hover-color: $text-color-secondary;
 
@@ -68,7 +75,7 @@ $--input-clear-hover-color: $text-color-secondary;
     background-color: $fill-color-blank;
     background-image: none;
     appearance: none;
-    @include mx.inset-input-border($border-color-base);
+    @include inset-input-border($border-color-base);
     border-radius: $border-radius-base;
     transition: box-shadow .2s $bezier;
     border: none;
@@ -83,12 +90,12 @@ $--input-clear-hover-color: $text-color-secondary;
     }
 
     &:hover {
-      @include mx.inset-input-border($input-border-color-hover);
+      @include inset-input-border($input-border-color-hover);
     }
 
     &:focus {
       outline: none;
-      @include mx.inset-input-border($color-primary);
+      @include inset-input-border($color-primary);
     }
   }
 
@@ -130,7 +137,7 @@ $--input-clear-hover-color: $text-color-secondary;
 
   &.is-disabled {
     .el-textarea__inner {
-      @include mx.inset-input-border($disabled-border-color);
+      @include inset-input-border($disabled-border-color);
       background-color: $disabled-bg-color;
       color: $disabled-text-color;
       cursor: not-allowed;
@@ -216,14 +223,14 @@ $--input-clear-hover-color: $text-color-secondary;
 
     // Keep the 3D transform to avoid Chromium inset box-shadow noise.
     transform: translateZ(0);
-    @include mx.inset-input-border($input-border-color);
+    @include inset-input-border($input-border-color);
 
     &:hover {
-      @include mx.inset-input-border($input-border-color-hover);
+      @include inset-input-border($input-border-color-hover);
     }
 
     &.is-focus {
-      @include mx.inset-input-border($color-primary);
+      @include inset-input-border($color-primary);
     }
   }
 

@@ -1,16 +1,16 @@
-@import 'base';
-@import 'common/transition';
-@import 'icon';
-@import 'visually-hidden';
-@import 'flex';
-@import 'button';
-@import 'scrollbar';
-@import 'toggle'; // checkbox, radio
-@import 'toggle-button'; // checkbox-button, radio-button
-@import 'popper';
-@import 'tooltip';
-@import 'tree';
-@import 'input';
-@import 'tag';
-@import 'switch';
-@import 'avatar';
+@use 'base';
+@use 'common/transition';
+@use 'icon';
+@use 'visually-hidden';
+@use 'flex';
+@use 'button';
+@use 'scrollbar';
+@use 'toggle'; // checkbox, radio
+@use 'toggle-button'; // checkbox-button, radio-button
+@use 'popper';
+@use 'tooltip';
+@use 'tree';
+@use 'input';
+@use 'tag';
+@use 'switch';
+@use 'avatar';
