@@ -2,18 +2,27 @@
   <ElFocusTrap
     v-if="shouldRender"
     v-bind="contentAttrs"
-    ref="focusTrapRef"
+    ref="rootRef"
     :class="['el-popper', effect ? `is-${effect}` : undefined]"
     :style="[{ zIndex: contentZIndex }, popperStyle.popper]"
-    :active="trapped"
+    :loop="loop"
+    :trapped="trapped"
     :aria-hidden="`${ariaHidden}`"
     :data-popper-transition="transitionName"
     tabindex="-1"
+    :focus-start-el="focusStartRef"
+    :focus-trap-el="contentRef"
+    @focus-after-trapped="onFocusAfterTrapped"
+    @focus-after-released="onFocusAfterReleased"
+    @focusin="onFocusInTrap"
+    @focusout-prevented="onFocusoutPrevented"
+    @release-requested="onReleaseRequested"
   >
     <transition :name="transitionName" :appear="!persistent" v-on="transitionHooks">
       <div
         v-show="visible"
         :id="id"
+        ref="contentRef"
         class="el-popper__inner"
         :role="role"
         :aria-modal="role === 'dialog' ? 'true' : undefined"
@@ -34,9 +43,9 @@
 </template>
 
 <script lang="ts" setup>
-import type { CSSProperties, ComponentPublicInstance } from 'vue';
+import type { CSSProperties } from 'vue';
 
-import { computed, ref, watch, inject, onMounted, provide } from 'vue';
+import { computed, ref, watch, inject, onMounted, provide, onBeforeUnmount } from 'vue';
 import { noop } from '@vueuse/core';
 
 import { isNumber, isDefined } from '@/utils/types';
@@ -57,6 +66,9 @@ const emit = defineEmits<{
   (type: 'after-enter', el: Element): void;
   (type: 'before-leave', el: Element): void;
   (type: 'after-leave', el: Element): void;
+  (type: 'focus'): void;
+  (type: 'blur'): void;
+  (type: 'close'): void;
 }>();
 
 const formItemContext = inject(formItemContextKey, undefined);
@@ -73,12 +85,13 @@ const trapped = ref(false);
 const ariaHidden = ref(true);
 const shouldRender = computed(() => (props.persistent ? true : props.visible) || !ariaHidden.value);
 
-const focusTrapRef = ref<ComponentPublicInstance>();
+const rootRef = ref<HTMLElement>();
+const focusStartRef = ref<HTMLElement | 'first' | 'container'>();
+const contentRef = ref<HTMLElement>();
 const referenceElRef = computed(() => props.referenceEl);
-const popperElRef = computed(() => focusTrapRef.value?.$el as HTMLElement | null);
 const arrowElRef = ref<HTMLElement | null>(null);
 
-const popper = usePopper(referenceElRef, popperElRef, computed(() => {
+const popper = usePopper(referenceElRef, rootRef, computed(() => {
   const arrowEl = arrowElRef.value;
   const popperOptions = props.popperOptions || {};
   const userModifiers = popperOptions.modifiers || [];
@@ -157,6 +170,42 @@ onMounted(() => {
   );
 });
 
+onBeforeUnmount(() => {
+  focusStartRef.value = undefined;
+});
+
+function onFocusAfterTrapped() {
+  emit('focus');
+}
+
+function onFocusAfterReleased(event: Event) {
+  if ((event as CustomEvent).detail?.focusReason !== 'pointer') {
+    focusStartRef.value = 'first';
+    emit('blur');
+  }
+}
+
+function onFocusInTrap(event: FocusEvent) {
+  if (props.visible && !trapped.value) {
+    if (event.target) {
+      focusStartRef.value = event.target as typeof focusStartRef.value;
+    }
+    trapped.value = true;
+  }
+}
+
+function onFocusoutPrevented(event: CustomEvent) {
+  if (event.detail.focusReason === 'pointer') {
+    event.preventDefault();
+  }
+  trapped.value = false;
+}
+
+function onReleaseRequested() {
+  trapped.value = false;
+  emit('close');
+}
+
 function updatePopper(shouldUpdateZIndex?: boolean) {
   popper.update();
 
@@ -167,7 +216,7 @@ function updatePopper(shouldUpdateZIndex?: boolean) {
 
 function isFocusInside(event?: FocusEvent) {
   const activeElement = (event?.relatedTarget as Node) || document.activeElement;
-  return Boolean(popperElRef.value?.contains(activeElement));
+  return Boolean(contentRef.value?.contains(activeElement));
 }
 
 defineExpose({

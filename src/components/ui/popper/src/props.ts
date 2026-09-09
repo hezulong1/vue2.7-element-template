@@ -58,6 +58,7 @@ export const basePopperProps = {
   effect: String,
   persistent: Boolean,
   focusOnShow: Boolean,
+  loop: Boolean,
   zIndex: Number,
   transition: String,
   ariaLabel: String,
