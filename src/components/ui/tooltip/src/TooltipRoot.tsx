@@ -31,19 +31,13 @@ export function createTooltipRoot(props: CreateTooltipRootOptions, emit: Tooltip
   const doShow = (event?: Event) => {
     if (open.value === true) return;
     open.value = true;
-
-    if (toggleReason.value) {
-      toggleReason.value = event;
-    }
+    toggleReason.value = event;
   };
 
   const doHide = (event?: Event) => {
     if (open.value === false) return;
     open.value = false;
-
-    if (toggleReason.value) {
-      toggleReason.value = event;
-    }
+    toggleReason.value = event;
   };
 
   const show = (event?: Event) => {
