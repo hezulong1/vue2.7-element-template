@@ -1,7 +1,6 @@
 @use 'sass:map';
 @use 'sass:math';
 @use 'common/vars' as *;
-@use 'mixins/color' as *;
 
 $--dropdown-menu-index: 10;
 $--dropdown-menuItem-height: 28px;
