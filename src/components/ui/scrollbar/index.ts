@@ -1,5 +1,5 @@
 export { default as Scrollbar } from './src/Scrollbar.vue';
-export { default as ScrollbarBar } from './src/Bar.vue';
+export { default as ScrollbarBar } from './src/ScrollbarBar.vue';
 export {
   type ScrollbarScrollEvent,
   type ScrollbarDirection,

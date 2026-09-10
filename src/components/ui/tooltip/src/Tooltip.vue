@@ -54,8 +54,8 @@ import type { TooltipContentInstance } from './typings';
 import { ref } from 'vue';
 import { usePopperContainer } from '@/composables/use-popper-container';
 import { RenderApp as ElRenderApp } from '../../teleport';
-import ElTooltipTrigger from './Trigger.vue';
-import ElTooltipContentImpl from './ContentImpl.vue';
+import ElTooltipTrigger from './TooltipTrigger.vue';
+import ElTooltipContentImpl from './TooltipContentImpl.vue';
 
 import { tooltipProps, tooltipEmit } from './props';
 import { createTooltipRoot } from './TooltipRoot';

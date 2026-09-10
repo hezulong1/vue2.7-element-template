@@ -1,14 +1,14 @@
 import type { Prettify } from '@/utils/typingUtils';
 import type { TooltipProps, TooltipEmit } from './props';
 
-import { computed, getCurrentInstance, onBeforeMount, onDeactivated, onMounted, readonly, ref, toRef, watch } from 'vue';
+import { computed, getCurrentInstance, onBeforeMount, onDeactivated, onMounted, readonly, ref, toRef, watch, provide } from 'vue';
 import { isClient } from '@vueuse/core';
 
 import { useId } from '@/composables/use-id';
 import { useDelayedToggle } from '@/composables/use-delayed-toggle';
 import { isFunction } from '@/utils/types';
 import { hasOwn } from '@/utils/object';
-import { provideTooltipRoot } from './utils';
+import { TOOLTIP_ROOT_CONTEXT_KEY } from './utils';
 
 export type CreateTooltipRootOptions = Prettify<
   Partial<Pick<TooltipProps, 'role' | 'visible' | 'disabled'>>
@@ -22,12 +22,18 @@ export function createTooltipRoot(props: CreateTooltipRootOptions, emit: Tooltip
   const toggleReason = ref<Event>();
 
   const vm = getCurrentInstance()?.proxy;
-  const isControlled = computed(() => {
+  const isControlled = () => {
     const propData = vm?.$options.propsData;
     return propData ? hasOwn(propData, 'visible') : false;
-  });
-  const hasUpdateVisibleHandler = computed(() => isFunction(vm?.$listeners['update:visible']));
+  };
+  const hasVisibleHandler = computed(() => isFunction(vm?.$listeners['update:visible']));
 
+  const keyboardActions = new Set(['keydown', 'keyup', 'keypress']);
+  const isUsingKeyboard = computed(() => {
+    const type = toggleReason.value?.type;
+    if (!type) return false;
+    return keyboardActions.has(type);
+  });
   const doShow = (event?: Event) => {
     if (open.value === true) return;
     open.value = true;
@@ -43,13 +49,13 @@ export function createTooltipRoot(props: CreateTooltipRootOptions, emit: Tooltip
   const show = (event?: Event) => {
     if (props.disabled) return;
 
-    const shouldEmit = hasUpdateVisibleHandler.value && isClient;
+    const shouldEmit = hasVisibleHandler.value && isClient;
 
     if (shouldEmit) {
       emit('update:visible', true);
     }
 
-    if (!isControlled.value || !shouldEmit) {
+    if (!isControlled() || !shouldEmit) {
       doShow(event);
     }
   };
@@ -57,13 +63,13 @@ export function createTooltipRoot(props: CreateTooltipRootOptions, emit: Tooltip
   const hide = (event?: Event) => {
     if (props.disabled === true || !isClient) return;
 
-    const shouldEmit = hasUpdateVisibleHandler.value && isClient;
+    const shouldEmit = hasVisibleHandler.value && isClient;
 
     if (shouldEmit) {
       emit('update:visible', false);
     }
 
-    if (!isControlled.value || !shouldEmit) {
+    if (!isControlled() || !shouldEmit) {
       doHide(event);
     }
   };
@@ -79,10 +85,10 @@ export function createTooltipRoot(props: CreateTooltipRootOptions, emit: Tooltip
   onMounted(() => {
     watch(
       visibleRef,
-      (val: boolean | undefined) => {
+      (val) => {
         if (typeof val !== 'boolean') return;
         if (props.disabled && val) {
-          if (hasUpdateVisibleHandler.value) {
+          if (hasVisibleHandler.value) {
             emit('update:visible', false);
           }
         } else if (open.value !== val) {
@@ -117,15 +123,16 @@ export function createTooltipRoot(props: CreateTooltipRootOptions, emit: Tooltip
     toggleReason.value = undefined;
   });
 
-  provideTooltipRoot({
+  provide(TOOLTIP_ROOT_CONTEXT_KEY, {
     triggerEl: ref(),
     contentEl: ref(),
     popperInstanceRef: ref(),
     role: computed(() => props.role ?? 'tooltip'),
-    controlled: computed(() => typeof visibleRef.value === 'boolean' && !hasUpdateVisibleHandler.value),
+    controlled: computed(() => typeof visibleRef.value === 'boolean' && !hasVisibleHandler.value),
     id: useId(),
     open: readonly(open),
     trigger: toRef(props, 'trigger'),
+    isUsingKeyboard,
     onOpen,
     onClose,
     onToggle: (event?: Event) => {

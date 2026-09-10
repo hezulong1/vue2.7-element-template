@@ -5,13 +5,13 @@
 </template>
 
 <script setup lang="ts">
-import { nextTick, watch, watchEffect } from 'vue';
+import { inject, nextTick, watch, watchEffect } from 'vue';
 import { unrefElement } from '@vueuse/core';
 import { getEventCode } from '@/utils/event';
 import { focusElement, isFocusable } from '@/utils/aria';
 import { isElement } from '@/utils/dom';
 import { OnlyChild as ElOnlyChild, provideForwardRefSetter } from '../../slot';
-import { isTriggerType, useTooltipRoot } from './utils';
+import { isTriggerType, TOOLTIP_ROOT_CONTEXT_KEY } from './utils';
 import { tooltipTriggerProps } from './props';
 
 defineOptions({
@@ -21,7 +21,7 @@ defineOptions({
 
 const props = defineProps(tooltipTriggerProps);
 
-const tooltipRoot = useTooltipRoot();
+const tooltipRoot = inject(TOOLTIP_ROOT_CONTEXT_KEY, undefined);
 if (!tooltipRoot) {
   throw new ReferenceError('<el-tooltip-trigger> requires a TooltipRoot provider.');
 }
@@ -53,7 +53,7 @@ function handleMouseEnter(e: MouseEvent) {
   if (assertTriggerTypeIsNot('hover')) return;
   onOpen(e);
   props.focusOnTarget && e.target && nextTick(() => {
-    focusElement(e.target as HTMLElement, { preventScroll: true });
+    focusElement(e.target as HTMLElement, { preventScroll: true, focusVisible: false });
   });
 }
 

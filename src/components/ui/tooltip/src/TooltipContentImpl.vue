@@ -41,14 +41,14 @@
 <script lang="ts" setup>
 import type { PopperInstance } from '../../popper';
 
-import { computed, onBeforeUnmount, ref, watch } from 'vue';
+import { computed, inject, onBeforeUnmount, ref, watch } from 'vue';
 import { onClickOutside } from '@vueuse/core';
 
 import { ensureArray } from '@/utils/array';
 import { Popper as ElPopper } from '../../popper';
 
 import { tooltipContentImplProps } from './props';
-import { isTriggerType, useTooltipRoot } from './utils';
+import { isTriggerType, TOOLTIP_ROOT_CONTEXT_KEY } from './utils';
 
 defineOptions({
   name: 'ElTooltipContentImpl',
@@ -56,8 +56,7 @@ defineOptions({
 });
 
 const props = defineProps(tooltipContentImplProps);
-
-const tooltipRoot = useTooltipRoot();
+const tooltipRoot = inject(TOOLTIP_ROOT_CONTEXT_KEY, undefined);
 if (!tooltipRoot) {
   throw new ReferenceError('<el-tooltip-content-impl> requires a TooltipRoot provider.');
 }
@@ -70,6 +69,7 @@ const {
   id,
   open,
   trigger,
+  isUsingKeyboard,
   onClose,
   onOpen,
   onShow,
@@ -131,7 +131,9 @@ watch(
         popperRef,
         () => {
           if (controlled.value) return;
-          const needClose = ensureArray(trigger.value).every(item => item !== 'hover' && item !== 'focus');
+          const needClose = isUsingKeyboard.value
+            ? true
+            : ensureArray(trigger.value).every(item => item !== 'hover' && item !== 'focus');
           if (needClose) onClose();
         },
         { detectIframe: true },

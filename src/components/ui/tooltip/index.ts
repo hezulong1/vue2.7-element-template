@@ -1,10 +1,11 @@
 export { default as Tooltip } from './src/Tooltip.vue';
-export { default as TooltipTrigger } from './src/Trigger.vue';
-export { default as TooltipContent } from './src/Content.vue';
+export { default as TooltipTrigger } from './src/TooltipTrigger.vue';
+export { default as TooltipContent } from './src/TooltipContent.vue';
+export { default as TooltipContentImpl } from './src/TooltipContentImpl.vue';
 
 export * from './src/TooltipRoot';
 export {
-  useTooltipRoot,
+  TOOLTIP_ROOT_CONTEXT_KEY,
   isTriggerType,
 } from './src/utils';
 

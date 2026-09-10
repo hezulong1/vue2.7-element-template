@@ -22,14 +22,14 @@
     </div>
 
     <template v-if="!native">
-      <Bar
+      <ElScrollbarBar
         :move="state.moveY"
         :size="state.sizeHeight"
         :ratio="state.ratioY"
         :always="always"
         vertical
       />
-      <Bar
+      <ElScrollbarBar
         :move="state.moveX"
         :size="state.sizeWidth"
         :ratio="state.ratioX"
@@ -47,7 +47,7 @@ import { computed, nextTick, onMounted, shallowRef, watch } from 'vue';
 import { useResizeObserver, useEventListener } from '@vueuse/core';
 import { addUnit } from '@/utils/dom';
 import { useScrollable } from './utils';
-import Bar from './Bar.vue';
+import ElScrollbarBar from './ScrollbarBar.vue';
 
 defineOptions({ name: 'ElScrollbar' });
 

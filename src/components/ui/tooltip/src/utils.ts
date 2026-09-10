@@ -1,8 +1,8 @@
 import type { Arrayable } from '@vueuse/core';
 import type { TooltipRootContext } from './typings';
-import { createContext } from '@/composables/create-context';
+import type { InjectionKey } from 'vue';
 
-export const [provideTooltipRoot, useTooltipRoot] = createContext<TooltipRootContext>('tooltipRoot');
+export const TOOLTIP_ROOT_CONTEXT_KEY: InjectionKey<TooltipRootContext> = Symbol('tooltipRootContext');
 
 export function isTriggerType<T>(trigger: Arrayable<T>, type: T) {
   return Array.isArray(trigger) ? trigger.includes(type) : trigger === type;

@@ -17,6 +17,8 @@ export interface TooltipRootContext {
   id: Readonly<Ref<string>>;
   open: Readonly<Ref<boolean>>;
   trigger: Ref<Arrayable<TooltipTriggerType>>;
+  isUsingKeyboard: ComputedRef<boolean>;
+
   onOpen: (e?: Event) => void;
   onClose: (e?: Event) => void;
   onToggle: (e: Event) => void;
