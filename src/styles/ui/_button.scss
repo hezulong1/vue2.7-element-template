@@ -147,6 +147,8 @@ $--button-default-link-active-color: $text-color-primary;
 }
 
 .el-button {
+  position: relative;
+
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -183,7 +185,6 @@ $--button-default-link-active-color: $text-color-primary;
   }
 
   &.is-loading {
-    position: relative;
     pointer-events: none;
 
     &:before {
