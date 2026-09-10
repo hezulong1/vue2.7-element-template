@@ -15,3 +15,13 @@ declare module '*.vue' {
   var component: DefineComponent;
   export default component;
 }
+
+interface FocusOptions {
+  /**
+   * 控制是否在获得焦点时强制显示焦点指示器（如外边框）
+   * | Chrome | Edge  | Safari | Firefox | Opera | IE |
+   * | :----: | :--:  | :----: | :-----: | :---: | -  |
+   * | >=145  | >=145 | >=18.4 | >=104   | >=131 |    |
+   */
+  focusVisible?: boolean;
+}

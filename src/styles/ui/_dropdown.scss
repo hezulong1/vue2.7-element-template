@@ -1,0 +1,101 @@
+@use 'sass:map';
+@use 'sass:math';
+@use 'common/vars' as *;
+@use 'mixins/color' as *;
+
+$--dropdown-menu-index: 10;
+$--dropdown-menuItem-height: 28px;
+$--dropdown-menuItem-hover-fill: map.get($colors, 'primary', 'light-9');
+$--dropdown-menuItem-hover-color: $color-primary;
+
+.el-dropdown {
+  display: inline-flex;
+  vertical-align: top;
+
+  &.is-disabled {
+    color: $text-color-placeholder;
+    cursor: not-allowed;
+  }
+
+  &__split-button {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+
+    &:focus-visible {
+      z-index: 1;
+    }
+
+    &.el-button--default:not(.is-disabled) {
+      &:hover + .el-dropdown__caret-button:before {
+        background: map.get($colors, 'primary', 'light-7');
+      }
+
+      &:active + .el-dropdown__caret-button:before {
+        background: map.get($colors, 'primary', 'dark-2');
+      }
+    }
+  }
+
+  &__caret-button {
+    margin-left: -1px;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: -1px; bottom: -1px; left: -1px; z-index: 2;
+      width: 1px;
+    }
+
+    &:not(.el-button--default):before {
+      background: rgba($fill-color-blank, 0.5);
+    }
+  }
+}
+
+.el-dropdown__popper {
+  .el-popper__inner {
+    box-shadow: $box-shadow-light;
+  }
+
+  .el-scrollbar {
+    border-radius: inherit;
+  }
+}
+
+.el-dropdown-menu {
+  min-width: 150px;
+  padding: 6px 0;
+  outline: none;
+
+  &__item {
+    display: flex;
+    align-items: center;
+    height: $--dropdown-menuItem-height;
+    padding: 0 math.div($--dropdown-menuItem-height, 2);
+    font-size: $font-size-base;
+    color: $text-color-regular;
+
+    cursor: pointer;
+    outline: none;
+
+    &:not(.is-disabled) {
+      &:hover,
+      &:focus {
+        background-color: $--dropdown-menuItem-hover-fill;
+        color: $--dropdown-menuItem-hover-color;
+      }
+    }
+
+    &--divided {
+      margin: 6px 0;
+      border-top: 1px solid $border-color-lighter;
+    }
+
+    &.is-disabled {
+      cursor: not-allowed;
+      color: $text-color-disabled;
+    }
+  }
+}
