@@ -121,8 +121,7 @@ const wrapStyle = computed(() => {
 
   const gutterWidth = getScrollbarWidth();
   if (gutterWidth) {
-    style.marginRight = `-${ addUnit(gutterWidth) }`;
-    style.marginBottom = `-${ addUnit(gutterWidth) }`;
+    style.marginRight = style.marginBottom = addUnit(-1 * gutterWidth);
   }
 
   return [props.wrapStyle, style];
