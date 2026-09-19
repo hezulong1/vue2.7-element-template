@@ -327,7 +327,8 @@ export const RouteMenu = defineComponent({
     const itemTipTrigger = ref<HTMLLIElement>();
     const itemTipContent = ref('');
     const itemTipControl = createTooltipRoot(reactive({
-      trigger: 'hover',
+      // 使用自定义事件
+      trigger: [],
       showAfter: 500,
       hideAfter: 100,
       autoClose: 0,

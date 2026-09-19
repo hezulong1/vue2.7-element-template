@@ -24,6 +24,9 @@ export function createTooltipRoot(props: CreateTooltipRootOptions, emit: Tooltip
   const vm = getCurrentInstance()?.proxy;
   const isControlled = () => {
     const propData = vm?.$options.propsData;
+    // Plus 中 visible 是 boolean 值才算受控
+    // 这里 visible 只要在组件上配置了算受控，即包括 undefined
+    // TODO 也许需要和 Plus 保持一致
     return propData ? hasOwn(propData, 'visible') : false;
   };
   const hasVisibleHandler = computed(() => isFunction(vm?.$listeners['update:visible']));
