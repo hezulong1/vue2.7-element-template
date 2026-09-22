@@ -1,22 +1,54 @@
-import type { Prettify } from '@/utils/typingUtils';
-import type { TooltipProps, TooltipEmit } from './props';
+import type { Arrayable, MaybeRefOrGetter } from '@vueuse/core';
+import type { TooltipRoleType, TooltipTriggerType } from './typings';
+import type { TooltipEmit } from './props';
 
-import { computed, getCurrentInstance, onBeforeMount, onDeactivated, onMounted, readonly, ref, toRef, watch, provide } from 'vue';
-import { isClient } from '@vueuse/core';
-
+import { computed, getCurrentInstance, onBeforeMount, onDeactivated, onMounted, readonly, ref, watch, provide } from 'vue';
+import { isClient, toValue } from '@vueuse/core';
 import { useId } from '@/composables/use-id';
 import { useDelayedToggle } from '@/composables/use-delayed-toggle';
 import { isFunction } from '@/utils/types';
 import { hasOwn } from '@/utils/object';
 import { TOOLTIP_ROOT_CONTEXT_KEY } from './utils';
 
-export type CreateTooltipRootOptions = Prettify<
-  Partial<Pick<TooltipProps, 'role' | 'visible' | 'disabled'>>
-  & Pick<TooltipProps, 'showAfter' | 'hideAfter' | 'autoClose' | 'trigger'>
->;
+export interface CreateTooltipRootOptions {
+  /**
+   * Defaults to `'tooltip'`
+   */
+  role?: MaybeRefOrGetter<TooltipRoleType | undefined>;
+  /**
+   * Defaults to `[]`
+   */
+  trigger?: MaybeRefOrGetter<Arrayable<TooltipTriggerType> | undefined>;
+  /**
+   * Defaults to `undefined`
+   */
+  visible?: MaybeRefOrGetter<boolean | undefined>;
+  /**
+   * Defaults to `false`
+   */
+  disabled?: MaybeRefOrGetter<boolean | undefined>;
+  /**
+   * Defaults to `0`
+   */
+  showAfter?: MaybeRefOrGetter<number | undefined>;
+  /**
+   * Defaults to `0`
+   */
+  hideAfter?: MaybeRefOrGetter<number | undefined>;
+  /**
+   * Defaults to `0`
+   */
+  autoClose?: MaybeRefOrGetter<number | undefined>;
+  onUpdateVisible?: (visible: boolean) => void;
+  onBeforeShow?: (e?: Event) => void;
+  onBeforeHide?: (e?: Event) => void;
+  onShow?: (e?: Event) => void;
+  onHide?: (e?: Event) => void;
+}
 
-export function createTooltipRoot(props: CreateTooltipRootOptions, emit: TooltipEmit) {
-  const visibleRef = toRef(props, 'visible');
+export function createTooltipRoot(props: CreateTooltipRootOptions, emit?: TooltipEmit) {
+  const visibleRef = computed(() => toValue(props.visible));
+  const disabledRef = computed(() => toValue(props.disabled) ?? false);
 
   const open = ref(false);
   const toggleReason = ref<Event>();
@@ -50,12 +82,13 @@ export function createTooltipRoot(props: CreateTooltipRootOptions, emit: Tooltip
   };
 
   const show = (event?: Event) => {
-    if (props.disabled) return;
+    if (disabledRef.value) return;
 
     const shouldEmit = hasVisibleHandler.value && isClient;
 
     if (shouldEmit) {
-      emit('update:visible', true);
+      props.onUpdateVisible?.(true);
+      emit?.('update:visible', true);
     }
 
     if (!isControlled() || !shouldEmit) {
@@ -64,12 +97,13 @@ export function createTooltipRoot(props: CreateTooltipRootOptions, emit: Tooltip
   };
 
   const hide = (event?: Event) => {
-    if (props.disabled === true || !isClient) return;
+    if (disabledRef.value === true || !isClient) return;
 
     const shouldEmit = hasVisibleHandler.value && isClient;
 
     if (shouldEmit) {
-      emit('update:visible', false);
+      props.onUpdateVisible?.(false);
+      emit?.('update:visible', false);
     }
 
     if (!isControlled() || !shouldEmit) {
@@ -78,9 +112,9 @@ export function createTooltipRoot(props: CreateTooltipRootOptions, emit: Tooltip
   };
 
   const { open: onOpen, close: onClose } = useDelayedToggle({
-    openDelay: toRef(props, 'showAfter'),
-    closeDelay: toRef(props, 'hideAfter'),
-    autoCloseDelay: toRef(props, 'autoClose'),
+    openDelay: computed(() => toValue(props.showAfter)),
+    closeDelay: computed(() => toValue(props.hideAfter)),
+    autoCloseDelay: computed(() => toValue(props.autoClose)),
     onOpen: show,
     onClose: hide,
   });
@@ -90,9 +124,10 @@ export function createTooltipRoot(props: CreateTooltipRootOptions, emit: Tooltip
       visibleRef,
       (val) => {
         if (typeof val !== 'boolean') return;
-        if (props.disabled && val) {
+        if (disabledRef.value && val) {
           if (hasVisibleHandler.value) {
-            emit('update:visible', false);
+            props.onUpdateVisible?.(false);
+            emit?.('update:visible', false);
           }
         } else if (open.value !== val) {
           if (val) {
@@ -107,13 +142,13 @@ export function createTooltipRoot(props: CreateTooltipRootOptions, emit: Tooltip
   });
 
   watch(
-    toRef(props, 'disabled'),
+    disabledRef,
     (val) => {
       if (val && open.value) {
         open.value = false;
       }
-      if (!val && typeof props.visible === 'boolean') {
-        open.value = props.visible;
+      if (!val && typeof visibleRef.value === 'boolean') {
+        open.value = visibleRef.value;
       }
     },
   );
@@ -130,11 +165,11 @@ export function createTooltipRoot(props: CreateTooltipRootOptions, emit: Tooltip
     triggerEl: ref(),
     contentEl: ref(),
     popperInstanceRef: ref(),
-    role: computed(() => props.role ?? 'tooltip'),
+    role: computed(() => toValue(props.role) ?? 'tooltip'),
     controlled: computed(() => typeof visibleRef.value === 'boolean' && !hasVisibleHandler.value),
     id: useId(),
     open: readonly(open),
-    trigger: toRef(props, 'trigger'),
+    trigger: computed(() => toValue(props.trigger) ?? []),
     isUsingKeyboard,
     onOpen,
     onClose,
@@ -147,16 +182,20 @@ export function createTooltipRoot(props: CreateTooltipRootOptions, emit: Tooltip
     },
 
     onBeforeShow: () => {
-      emit('before-show', toggleReason.value);
+      props.onBeforeShow?.(toggleReason.value);
+      emit?.('before-show', toggleReason.value);
     },
     onShow: () => {
-      emit('show', toggleReason.value);
+      props.onShow?.(toggleReason.value);
+      emit?.('show', toggleReason.value);
     },
     onHide: () => {
-      emit('hide', toggleReason.value);
+      props.onHide?.(toggleReason.value);
+      emit?.('hide', toggleReason.value);
     },
     onBeforeHide: () => {
-      emit('before-hide', toggleReason.value);
+      props.onBeforeHide?.(toggleReason.value);
+      emit?.('before-hide', toggleReason.value);
     },
   });
 
