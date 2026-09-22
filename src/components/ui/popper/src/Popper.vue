@@ -43,7 +43,7 @@
 </template>
 
 <script lang="ts" setup>
-import type { CSSProperties } from 'vue';
+import type { CSSProperties, ComponentPublicInstance } from 'vue';
 
 import { computed, ref, watch, inject, onMounted, provide, onBeforeUnmount } from 'vue';
 import { noop } from '@vueuse/core';
@@ -85,13 +85,14 @@ const trapped = ref(false);
 const ariaHidden = ref(true);
 const shouldRender = computed(() => (props.persistent ? true : props.visible) || !ariaHidden.value);
 
-const rootRef = ref<HTMLElement>();
+const rootRef = ref<ComponentPublicInstance>();
 const focusStartRef = ref<HTMLElement | 'first' | 'container'>();
 const contentRef = ref<HTMLElement>();
 const referenceElRef = computed(() => props.referenceEl);
+const popperElRef = computed(() => rootRef.value?.$el as HTMLElement | null);
 const arrowElRef = ref<HTMLElement | null>(null);
 
-const popper = usePopper(referenceElRef, rootRef, computed(() => {
+const popper = usePopper(referenceElRef, popperElRef, computed(() => {
   const arrowEl = arrowElRef.value;
   const popperOptions = props.popperOptions || {};
   const userModifiers = popperOptions.modifiers || [];
@@ -216,7 +217,7 @@ function updatePopper(shouldUpdateZIndex?: boolean) {
 
 function isFocusInside(event?: FocusEvent) {
   const activeElement = (event?.relatedTarget as Node) || document.activeElement;
-  return Boolean(contentRef.value?.contains(activeElement));
+  return Boolean(popperElRef.value?.contains(activeElement));
 }
 
 defineExpose({
