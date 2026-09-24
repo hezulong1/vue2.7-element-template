@@ -1,5 +1,8 @@
 import { computed, readonly, ref, type ComputedRef } from 'vue';
 import { breakpointsElement, createGlobalState, useBreakpoints, useStorage } from '@vueuse/core';
+import { LayoutToken } from './token';
+
+const SIDEBAR_COLLAPSE_TOKEN = LayoutToken.createNsName('sidebar-collapsed');
 
 export const TITLEBAR_DESKTOP_HEIGHT = 56;
 export const SIDEBAR_DESKTOP_WIDTH = 256;
@@ -16,7 +19,7 @@ export const useLayout = createGlobalState(() => {
 
   const titlebarHeight = computed<number>(() => TITLEBAR_DESKTOP_HEIGHT);
 
-  const sidebarCollapsed = useStorage('v2et-sidebar-collapsed', false);
+  const sidebarCollapsed = useStorage(SIDEBAR_COLLAPSE_TOKEN, false);
   const sidebarWidth = computed<number>(() => sidebarCollapsed.value || isMobile.value ? SIDEBAR_MOBILE_WIDTH : SIDEBAR_DESKTOP_WIDTH);
 
   function toggleSidebar(value?: boolean) {
