@@ -1,28 +1,15 @@
-import type { InjectionKey, PropOptions, PropType } from 'vue';
+import type { InjectionKey, PropType } from 'vue';
+import type { LocaleMessages } from '@/locales';
 
-import { defineComponent, inject, provide, reactive, watchEffect } from 'vue';
-
-// UseSize
-// ----------------------------------------
-
-const componentSizes = ['', 'small'] as const;
-export type ComponentSize = typeof componentSizes[number];
-
-export const useSizeProp: PropOptions<ComponentSize> = {
-  type: String as PropType<ComponentSize>,
-  default: '',
-  validator: (value: ComponentSize) => componentSizes.includes(value),
-};
-
-// ConfigProvider
-// ----------------------------------------
+import { computed, defineComponent, inject, provide, reactive } from 'vue';
+import { defaultLocale } from '@/locales/utils';
 
 export interface ConfigProviderContext {
-  locale: string;
+  locale: LocaleMessages;
   theme: string;
 }
 
-const configProviderContextKey = Symbol('configProvider') as InjectionKey<ConfigProviderContext>;
+const configProviderContextKey: InjectionKey<ConfigProviderContext> = Symbol('configProvider');
 
 export function useConfigProvider() {
   const config = inject(configProviderContextKey, undefined);
@@ -35,18 +22,18 @@ export function useConfigProvider() {
 export default defineComponent({
   name: 'ConfigProvider',
   props: {
-    locale: String,
+    locale: Object as PropType<LocaleMessages>,
     theme: String,
   },
   setup(props, { slots }) {
-    const context = reactive({
-      locale: '',
-      theme: '',
-    });
+    const inheritContext = inject(configProviderContextKey, undefined);
 
-    watchEffect(() => {
-      context.locale = props.locale || import.meta.env.VITE_DEFAULT_LANGUAGE;
-      context.theme = props.theme || import.meta.env.VITE_DEFAULT_THEME;
+    const localeRef = computed(() => props.locale || inheritContext?.locale || defaultLocale);
+    const themeRef = computed(() => props.theme || inheritContext?.theme || import.meta.env.VITE_DEFAULT_THEME);
+
+    const context: ConfigProviderContext = reactive({
+      locale: localeRef,
+      theme: themeRef,
     });
 
     provide(configProviderContextKey, context);

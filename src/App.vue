@@ -1,5 +1,5 @@
 <template>
-  <ConfigProvider locale="zh-CN">
+  <ConfigProvider :locale="i18n.locale">
     <div id="app" data-initialized :style="appStyle">
       <router-view />
     </div>
@@ -10,6 +10,7 @@
 import { computed } from 'vue';
 import { useWindowSize } from '@vueuse/core';
 import ConfigProvider from '@/components/base/ConfigProvider';
+import { i18n } from './locales/utils';
 
 const { width, height } = useWindowSize();
 const appStyle = computed(
