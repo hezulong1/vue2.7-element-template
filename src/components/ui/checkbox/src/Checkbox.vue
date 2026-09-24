@@ -33,7 +33,7 @@ import type { Arrayable } from '@vueuse/core';
 
 import { computed, onMounted, ref, watch, watchEffect, type PropType } from 'vue';
 import { isDefined } from '@/utils/types';
-import { useSizeProp } from '@/components/base/ConfigProvider';
+import { componentSizePropType } from '@/utils/vue/size';
 import { useId } from '@/composables/use-id';
 import { useRawProp } from '@/composables/use-prop';
 import { useFormDisabled, useFormItem, useFormSize } from '../../form';
@@ -69,7 +69,7 @@ const props = defineProps({
   id: String,
   name: String,
   ariaControls: String,
-  size: useSizeProp,
+  size: componentSizePropType,
   indeterminate: Boolean,
   disabled: Boolean,
   button: Boolean,

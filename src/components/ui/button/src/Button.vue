@@ -23,7 +23,7 @@ import type { ButtonNativeType, ButtonType } from './utils';
 
 import { computed, useSlots } from 'vue';
 import { Loading } from 'element-icons';
-import { useSizeProp } from '@/components/base/ConfigProvider';
+import { componentSizePropType } from '@/utils/vue/size';
 import { useFormItem, useFormDisabled, useFormSize } from '../../form';
 
 defineOptions({ name: 'ElButton' });
@@ -33,7 +33,7 @@ const props = defineProps({
     type: String as PropType<ButtonType>,
     default: 'default',
   },
-  size: useSizeProp,
+  size: componentSizePropType,
   icon: Object as PropType<Component>,
   nativeType: {
     type: String as PropType<ButtonNativeType>,

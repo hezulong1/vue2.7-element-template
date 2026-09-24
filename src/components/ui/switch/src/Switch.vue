@@ -86,7 +86,7 @@ import { noop } from '@vueuse/core';
 import { Loading } from 'element-icons';
 
 import { isPromise } from '@/utils/types';
-import { useSizeProp } from '@/components/base/ConfigProvider';
+import { componentSizePropType } from '@/utils/vue/size';
 import { iconPropType } from '@/utils/vue/icon';
 import { warn } from '@/utils/debug';
 import { addUnit } from '@/utils/dom';
@@ -121,7 +121,7 @@ const props = defineProps({
   /**
    * @description size of Switch
    */
-  size: useSizeProp,
+  size: componentSizePropType,
   /**
    * @description width of Switch
    */

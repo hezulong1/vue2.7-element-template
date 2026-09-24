@@ -8,7 +8,7 @@
 import { computed, nextTick, watch, type PropType } from 'vue';
 import { isDefined } from '@/utils/types';
 import { nanoid } from '@/utils/nanoid';
-import { useSizeProp } from '@/components/base/ConfigProvider';
+import { componentSizePropType } from '@/utils/vue/size';
 import { useFormItem } from '../../form';
 import { provideCheckboxGroup, type CheckboxValue } from './utils';
 
@@ -25,7 +25,7 @@ const props = defineProps({
   button: Boolean,
   min: Number,
   max: Number,
-  size: useSizeProp,
+  size: componentSizePropType,
 });
 
 const emit = defineEmits<{

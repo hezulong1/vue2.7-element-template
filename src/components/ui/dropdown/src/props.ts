@@ -3,7 +3,7 @@ import type { ButtonType } from '../../button';
 import type { Arrayable } from '@vueuse/core';
 
 import { EVENT_CODE } from '@/utils/event';
-import { useSizeProp } from '@/components/base/ConfigProvider';
+import { componentSizePropType } from '@/utils/vue/size';
 import { tooltipTriggerProps, tooltipContentProps, type TooltipRoleType, type TooltipTriggerType } from '../../tooltip';
 
 export type DropdownTrigger = Arrayable<Exclude<TooltipTriggerType, 'focus'>>;
@@ -103,7 +103,7 @@ export const dropdownProps = {
   },
 
   id: String,
-  size: useSizeProp,
+  size: componentSizePropType,
   /**
    * @description whether a button group is displayed
    */

@@ -25,7 +25,7 @@
 import type { TagEffect, TagType } from './utils';
 import { computed, type PropType } from 'vue';
 import { Close } from 'element-icons';
-import { useSizeProp } from '@/components/base/ConfigProvider';
+import { componentSizePropType } from '@/utils/vue/size';
 import { useFormSize } from '../../form';
 
 defineOptions({ name: 'ElTag' });
@@ -53,7 +53,7 @@ const props = defineProps({
   /**
    * @description size of Tag
    */
-  size: useSizeProp,
+  size: componentSizePropType,
   /**
    * @description theme of Tag
    */

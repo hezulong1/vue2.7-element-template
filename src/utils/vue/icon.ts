@@ -1,4 +1,4 @@
-import type { Component, PropType } from 'vue';
+import type { Component, PropOptions } from 'vue';
 
 import {
   CircleCheck,
@@ -13,11 +13,10 @@ import {
 
 export type IconPropType = string | Component;
 
-export const iconPropType = [
-  String,
-  Object,
-  Function,
-] as PropType<string | Component>;
+export const iconPropType: PropOptions<IconPropType> = {
+  type: [String, Object, Function],
+  default: undefined,
+};
 
 export const CloseComponents = {
   Close,

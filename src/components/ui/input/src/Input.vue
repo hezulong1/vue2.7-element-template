@@ -172,9 +172,9 @@ import type { InputAutoComplete, InputType, InputAutoSize, InputResize } from '.
 import { useSlots, computed, ref, nextTick, shallowRef, watch, toRef, onBeforeUnmount, onMounted } from 'vue';
 import { isClient, noop, useResizeObserver } from '@vueuse/core';
 import { CircleClose, Hide, View } from 'element-icons';
-import { useSizeProp } from '@/components/base/ConfigProvider';
 import { isDefined, isObject, isUndefinedOrNull } from '@/utils/types';
 import { ValidateComponentsMap, iconPropType } from '@/utils/vue/icon';
+import { componentSizePropType } from '@/utils/vue/size';
 import { useComposition } from '@/composables/use-composition';
 import { useFocusController } from '@/composables/use-focus-controller';
 import { cAF, createTimeoutTimer, rAF } from '@/utils/async';
@@ -231,7 +231,7 @@ const props = defineProps({
   inputClass: null as unknown as PropType<any>,
 
   // Input
-  size: useSizeProp,
+  size: componentSizePropType,
   showPassword: Boolean,
   suffixIcon: iconPropType,
   prefixIcon: iconPropType,

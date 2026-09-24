@@ -25,7 +25,7 @@
 <script setup lang="ts" generic="T extends RadioValue">
 import { computed, ref, watch, watchEffect, type PropType } from 'vue';
 import { isDefined } from '@/utils/types';
-import { useSizeProp } from '@/components/base/ConfigProvider';
+import { componentSizePropType } from '@/utils/vue/size';
 import { useId } from '@/composables/use-id';
 import { useFormDisabled, useFormSize } from '../../form';
 import { useRadioGroup, type RadioValue } from './utils';
@@ -49,7 +49,7 @@ const props = defineProps({
   },
   id: String,
   name: String,
-  size: useSizeProp,
+  size: componentSizePropType,
   checked: null as unknown as PropType<T>,
   button: Boolean,
   disabled: Boolean,

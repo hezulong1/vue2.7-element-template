@@ -6,7 +6,7 @@
 
 <script setup lang="ts" generic="T extends RadioValue">
 import { computed, nextTick, watch, type PropType } from 'vue';
-import { useSizeProp } from '@/components/base/ConfigProvider';
+import { componentSizePropType } from '@/utils/vue/size';
 import { nanoid } from '@/utils/nanoid';
 import { useFormItem } from '../../form';
 import { provideRadioGroup, type RadioValue } from './utils';
@@ -22,7 +22,7 @@ const props = defineProps({
   name: String,
   disabled: Boolean,
   button: Boolean,
-  size: useSizeProp,
+  size: componentSizePropType,
 });
 
 const emit = defineEmits<{
