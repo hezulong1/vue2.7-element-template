@@ -7,21 +7,26 @@ import localeMap from '.';
 export const defaultLanguage = import.meta.env.VITE_DEFAULT_LANGUAGE;
 export const defaultLocale = zhHans;
 
-export const i18n = new class I18n {
+const loadedLanguages = new Map<string, LocaleMessages>([[defaultLanguage, defaultLocale]]);
+
+export interface I18n {
+  readonly lang: Language;
+  readonly locale: LocaleMessages;
+}
+
+export const i18n = new class I18n implements I18n {
   constructor(
     public lang: Language = defaultLanguage,
-    public locale: LocaleMessages = defaultLocale,
   ) { }
+  get locale() {
+    return loadedLanguages.get(this.lang)!;
+  }
 }();
-
-const loadedLanguages: string[] = [import.meta.env.VITE_DEFAULT_LANGUAGE];
 
 function setLanguage(lang: Language) {
   i18n.lang = lang;
-  if (isClient) {
-    document.documentElement.setAttribute('lang', lang);
-  }
-  return lang;
+  if (isClient) document.documentElement.setAttribute('lang', lang);
+  return i18n;
 }
 
 export async function loadLocaleMessages(lang: string) {
@@ -29,13 +34,13 @@ export async function loadLocaleMessages(lang: string) {
     return setLanguage(lang);
   }
 
-  if (loadedLanguages.includes(lang)) {
+  const locale = loadedLanguages.get(lang);
+  if (locale) {
     return setLanguage(lang as Language);
   }
 
-  const locale = await localeMap[lang]();
-  i18n.locale = locale.default;
-  loadedLanguages.push(lang);
+  const loaded = await localeMap[lang]();
+  loadedLanguages.set(lang, loaded.default);
 
   return setLanguage(lang);
 }

@@ -1,5 +1,5 @@
 export default Object.fromEntries(
-  Object.entries(import.meta.glob('./src/*.ts'))
+  Object.entries(import.meta.glob(['./src/*.ts', '!./src/zh-Hans.ts']))
     .map(([path, loadLocale]) => [path.match(/([\w-]*)\.ts$/)?.[1], loadLocale]),
 ) as Record<Language, () => Promise<{ default: LocaleMessages }>>;
 
