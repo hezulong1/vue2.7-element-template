@@ -12,6 +12,7 @@
     "popper": "Popper",
     "radio": "Radio,RadioGroup",
     "scrollbar": "Scrollbar",
+    "select": "Select,Option,OptionGroup",
     "slot": "OnlyChild",
     "switch": "Switch",
     "tag": "Tag,CheckTag",

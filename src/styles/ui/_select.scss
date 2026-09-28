@@ -1,0 +1,415 @@
+@use 'sass:map';
+@use 'sass:math';
+@use 'common/vars' as *;
+@use 'mixins/utils' as *;
+
+@mixin mixed-input-border($color) {
+  box-shadow: 0 0 0 1px $color inset;
+}
+
+$--select-item-height: 28px;
+
+.el-select {
+  display: inline-block;
+  position: relative;
+  vertical-align: middle;
+  width: 100%;
+
+  // TODO：优化，与 el-input 样式重叠
+  &__wrapper {
+    display: flex;
+    align-items: center;
+    position: relative;
+    cursor: pointer;
+    text-align: left;
+    font-size: $font-size-base;
+    padding: 1px 11px; // 4px 11px;
+    // gap: 6px;
+    min-height: $component-size-base;
+    line-height: 30px;
+    border-radius: $border-radius-base;
+    background-color: $fill-color-blank;
+    background-image: none;
+    transition: box-shadow 0.2s $bezier;
+    transform: translateZ(0);
+    @include mixed-input-border($border-color-base);
+
+    &.is-filterable {
+      cursor: text;
+    }
+
+    &.is-focused {
+      @include mixed-input-border($color-primary);
+    }
+
+    &.is-hovering:not(.is-focused) {
+      @include mixed-input-border($input-border-color-hover);
+    }
+
+    &.is-disabled {
+      cursor: not-allowed;
+      background-color: $fill-color-light;
+      color: $text-color-placeholder;
+      @include mixed-input-border($disabled-border-color);
+
+      &:hover {
+        @include mixed-input-border($disabled-border-color);
+      }
+
+      .el-select__selected-item {
+        color: $text-color-placeholder;
+      }
+
+      .el-select__caret {
+        cursor: not-allowed;
+      }
+
+      .el-tag {
+        cursor: not-allowed;
+      }
+
+      input {
+        cursor: not-allowed;
+      }
+
+      .el-select__prefix,
+      .el-select__suffix {
+        pointer-events: none;
+      }
+    }
+  }
+
+  &__prefix,
+  &__suffix {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+    flex-wrap: nowrap;
+    // gap: 6px;
+    color: $text-color-placeholder;
+
+    line-height: 30px;
+    white-space: nowrap;
+
+    &-inner {
+      pointer-events: all;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+
+  &__prefix-inner {
+    > :last-child {
+      margin-right: 8px;
+    }
+
+    > :first-child {
+      &,
+      &.el-input__icon {
+        margin-left: 0;
+      }
+    }
+  }
+
+  &__suffix-inner {
+    > :first-child {
+      margin-left: 8px;
+    }
+  }
+
+  &__caret {
+    color: $text-color-placeholder;
+    font-size: $font-size-base;
+    transition: transform 0.3s;
+    transform: rotateZ(0deg);
+    cursor: pointer;
+
+    &.is-reverse {
+      transform: rotateZ(180deg);
+    }
+  }
+
+  &__clear {
+    cursor: pointer;
+
+    &:hover {
+      color: $text-color-secondary;
+    }
+  }
+
+  &__selection {
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    flex: 1;
+    min-width: 0;
+    // gap: 6px;
+
+    &.is-near {
+      margin-left: -10px;
+      // flex-direction: row-reverse;
+      // justify-content: flex-end;
+    }
+
+    .el-tag {
+      cursor: pointer;
+      border-color: transparent;
+
+      &.el-tag--plain {
+        border-color: $border-color-lighter;
+      }
+
+      .el-tag__content {
+        min-width: 0;
+      }
+    }
+  }
+
+  &__selected-item {
+    display: flex;
+    flex-wrap: wrap;
+    user-select: none;
+
+    > .el-tag {
+      max-width: 100%;
+      margin: 3px 0 3px 4px;
+    }
+  }
+
+  &__collapse-item {
+    flex-shrink: 0;
+    max-width: 100%;
+  }
+
+  &__tags-text {
+    display: block;
+    line-height: normal;
+    @include utils-ellipsis;
+  }
+
+  &__placeholder {
+    position: absolute;
+    z-index: -1;
+    display: block;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 100%;
+    @include utils-ellipsis;
+    color: $text-color-regular;
+
+    &.is-transparent {
+      user-select: none;
+      color: $text-color-placeholder;
+    }
+  }
+
+  &__input-wrapper {
+    flex: 1;
+
+    &.is-hidden {
+      position: absolute;
+      opacity: 0;
+      z-index: -2;
+    }
+  }
+
+  &__input {
+    border: none;
+    outline: none;
+    padding: 0;
+    color: $text-color-regular;
+    font-size: inherit;
+    font-family: inherit;
+    appearance: none;
+    height: 24px;
+    width: 100%;
+    background-color: transparent;
+
+    &.is-indent {
+      margin-left: 4px;
+    }
+  }
+
+  &__input-calculator {
+    position: absolute;
+    left: 0;
+    top: 0;
+    max-width: 100%;
+    visibility: hidden;
+    white-space: pre;
+    overflow: hidden;
+  }
+
+  &--small {
+    .el-select__wrapper {
+      gap: 4px;
+      padding: 2px 8px;
+      min-height: $component-size-small;
+      line-height: 20px;
+      font-size: $font-size-extraSmall;
+    }
+
+    .el-select__selection {
+      gap: 4px;
+
+      &.is-near {
+        margin-left: -6px;
+      }
+    }
+
+    .el-select__prefix,
+    .el-select__suffix {
+      gap: 4px;
+    }
+
+    .el-select__input {
+      height: 20px;
+    }
+  }
+}
+
+// TODO：与 dropdown 样式重叠
+.el-select__popper {
+  .el-popper__inner {
+    box-shadow: $box-shadow-light;
+    // padding: 0;
+  }
+
+  .el-scrollbar {
+    &:not(.has-header) {
+      border-top-right-radius: inherit;
+      border-top-left-radius: inherit;
+    }
+
+    &:not(.has-footer) {
+      border-bottom-right-radius: inherit;
+      border-bottom-left-radius: inherit;
+    }
+  }
+}
+
+.el-select__collapseTag-popper.el-tooltip {
+  .el-popper__inner {
+    box-shadow: $box-shadow-light;
+    padding: 1px 4px 1px 0;
+  }
+}
+
+// TODO：与 dropdown 样式重叠
+.el-select-dropdown {
+  z-index: 1001;
+  border-radius: $border-radius-base;
+
+  .el-scrollbar.is-empty .el-select-dropdown__list {
+    padding: 0;
+  }
+
+  &__loading,
+  &__empty {
+    padding: 10px 0;
+    margin: 0;
+    text-align: center;
+    color: $text-color-placeholder;
+    font-size: $font-size-base;
+  }
+
+  &__wrap {
+    max-height: 274px;
+  }
+
+  &__list {
+    // list-style: none;
+    padding: 6px 0;
+    // margin: 0;
+  }
+
+  &__header {
+    // padding: 10px;
+    padding: 6px math.div($--select-item-height, 2);
+    border-bottom: 1px solid $border-color-light;
+  }
+
+  &__footer {
+    padding: 6px math.div($--select-item-height, 2);
+    border-top: 1px solid $border-color-light;
+  }
+
+  &__item {
+    display: flex;
+    align-items: center;
+
+    font-size: $font-size-base;
+    // padding: 0 32px 0 20px;
+    padding: 0 math.div($--select-item-height, 2);
+    position: relative;
+    // @include utils-ellipsis;
+    color: $text-color-regular;
+    height: $--select-item-height;
+    // line-height: 34px;
+    // box-sizing: border-box;
+    cursor: pointer;
+    outline: none;
+
+    &.is-hovering {
+      background-color: $fill-color-light;
+    }
+
+    &.is-selected {
+      color: $color-primary;
+      font-weight: bold;
+    }
+
+    &.is-disabled {
+      color: $text-color-placeholder;
+      cursor: not-allowed;
+      background-color: unset;
+    }
+  }
+
+  &.is-multiple {
+    .el-select-dropdown__item.is-selected::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      // right: 20px;
+      right: math.div($--select-item-height, 2);
+      width: 12px;
+      height: 12px;
+      transform: translateY(-50%);
+      background-color: $color-primary;
+      mask: url("data:image/svg+xml;utf8,%3Csvg width='200' height='200' viewBox='0 0 1024 1024' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill='currentColor' d='M406.656 706.944L195.84 496.256a32 32 0 10-45.248 45.248l256 256 512-512a32 32 0 00-45.248-45.248L406.592 706.944z'%3E%3C/path%3E%3C/svg%3E") no-repeat;
+      mask-size: 100% 100%;
+    }
+
+    .el-select-dropdown__item.is-disabled::after {
+      background-color: $text-color-placeholder;
+    }
+  }
+}
+
+.el-select-group {
+  margin: 0;
+  padding: 0;
+
+  &__wrap {
+    position: relative;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  &__title {
+    box-sizing: border-box;
+    padding: 0 20px;
+    font-size: $font-size-extraSmall;
+    color: $text-color-secondary;
+    line-height: 30px;
+    @include utils-ellipsis;
+  }
+
+  .el-select-dropdown__item {
+    padding-left: 20px;
+  }
+}

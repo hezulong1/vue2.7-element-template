@@ -79,8 +79,6 @@ $color-info: map.get($colors, 'info', 'base') !default;
   ) !global;
 }
 
-
-
 // $colors.primary.light-i
 // --el-color-primary-light-i
 // 10% 53a8ff
@@ -121,7 +119,7 @@ $border-color-darker: #cdd0d6 !default;
 // Background
 $fill-color-base: #f0f2f5 !default;
 $fill-color-light: #f5f7fa !default;
-$fill-color-lighter: #f8fafc !default; // 官方 #fafafa !default;
+$fill-color-lighter: #f8fafc !default; // #fafafa !default;
 $fill-color-extraLight: #fafcff !default;
 $fill-color-dark: #ebedf0 !default;
 $fill-color-darker: #e6e8eb !default;
@@ -134,7 +132,7 @@ $bg-color-overlay: #ffffff !default;
 // Link
 $link-color: map.get($colors, 'primary', 'light-2') !default;
 $link-color-hover: $color-primary !default;
-$link-color-active: map.get($colors, 'primary', 'dark-1') !default;
+$link-color-active: map.get($colors, 'primary', 'dark-2') !default;
 
 // Box-shadow
 $--box-shadow-base: 0 2px 4px rgba(0, 0, 0, .12), 0 0 6px rgba(0, 0, 0, .04) !default;
@@ -194,3 +192,7 @@ $border-radius-small: 2px;
 // Input
 $input-border-color: $border-color-base !default;
 $input-border-color-hover: $text-color-disabled !default;
+$input-border-color-focus: $color-primary !default;
+
+$focus-outline-color: map.get($colors, 'primary', 'light-5');
+$focus-outline: 2px solid $focus-outline-color;

@@ -89,11 +89,46 @@
         <el-button type="danger">Delete</el-button>
       </el-tooltip>
     </fieldset>
+
+    <fieldset>
+      <legend>Dropdown & Select</legend>
+
+      <el-dropdown split-button :type="dropdownType">
+        Dropdown List
+        <template #dropdown>
+          <el-dropdown-menu>
+            <el-dropdown-item>Action 1</el-dropdown-item>
+            <el-dropdown-item>Action 2</el-dropdown-item>
+            <el-dropdown-item>Action 3</el-dropdown-item>
+            <el-dropdown-item divided>Action 4</el-dropdown-item>
+            <el-dropdown-item>Action 5</el-dropdown-item>
+          </el-dropdown-menu>
+        </template>
+      </el-dropdown>
+
+      <el-select v-model="dropdownType" style="width: 120px">
+        <el-option v-for="item in buttonTypes" :key="item" :value="item">
+          <span style="display: flex; width: 100%; justify-content: space-between;">
+            <span>{{ item }}</span>
+            <span v-if="item === 'default'" style="color: #999; font-size: 12px;">默认</span>
+          </span>
+        </el-option>
+        <template #prefix>
+          <Orange />
+        </template>
+
+        <template #header>
+          选择 Dropdown 类型
+        </template>
+      </el-select>
+    </fieldset>
   </div>
 </template>
 
 <script lang="ts" setup>
+import type { ButtonType } from 'element-ui';
 import { ref } from 'vue';
+import { Orange } from 'element-icons';
 import ElCollapseTransition from '@/components/base/CollapseTransition.vue';
 import Modal from './Modal.vue';
 // CollapseTransition
@@ -124,6 +159,10 @@ const showModal = ref(false);
 const disabled = ref(false);
 const telRef = ref();
 const toRef = ref('body');
+
+// Dropdown & Select
+const buttonTypes = ['primary', 'warning', 'success', 'info', 'danger', 'default'];
+const dropdownType = ref<ButtonType>('default');
 </script>
 
 <style scoped>

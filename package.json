@@ -6,7 +6,7 @@
     "node": ">=16.0.0"
   },
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --host",
     "build": "vite build",
     "preview": "vite preview",
     "lint": "eslint .",
@@ -19,6 +19,7 @@
     "@popperjs/core": "^2.11.8",
     "@vueuse/core": "~11.3.0",
     "async-validator": "^4.2.5",
+    "defu": "^6.1.7",
     "normalize-wheel-es": "^1.2.0",
     "url-polyfill": "^1.1.12",
     "vue": "~2.7.16",
