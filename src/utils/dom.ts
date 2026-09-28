@@ -18,6 +18,18 @@ export function getWindow(e?: Node | UIEvent | null): Window & typeof globalThis
   return window;
 }
 
+export function getActiveElement() {
+  let activeElement = document.activeElement;
+  while (activeElement?.shadowRoot) {
+    activeElement = activeElement.shadowRoot.activeElement;
+  }
+  return activeElement;
+}
+
+export function isActiveElement(element: Element): boolean {
+  return getActiveElement() === element;
+}
+
 export function getComputedStyle(element: Element): CSSStyleDeclaration;
 export function getComputedStyle<P extends keyof CSSStyleDeclaration>(element: Element, property: P): CSSStyleDeclaration[P];
 export function getComputedStyle(element: Element, property?: keyof CSSStyleDeclaration) {
@@ -214,4 +226,40 @@ export function query<E extends Element>(selector: QuerySelector<E>): E | null {
   }
 
   return el;
+}
+
+/**
+ * Scroll with in the container element, positioning the **selected** element at the top
+ * of the container
+ */
+export function scrollIntoView(container: HTMLElement, selected: HTMLElement): void {
+  if (!isClient) return;
+
+  if (!selected) {
+    container.scrollTop = 0;
+    return;
+  }
+
+  const offsetParents: HTMLElement[] = [];
+  let pointer = selected.offsetParent;
+  while (
+    pointer !== null &&
+    container !== pointer &&
+    container.contains(pointer)
+  ) {
+    offsetParents.push(pointer as HTMLElement);
+    pointer = (pointer as HTMLElement).offsetParent;
+  }
+  const top =
+    selected.offsetTop +
+    offsetParents.reduce((prev, curr) => prev + curr.offsetTop, 0);
+  const bottom = top + selected.offsetHeight;
+  const viewRectTop = container.scrollTop;
+  const viewRectBottom = viewRectTop + container.clientHeight;
+
+  if (top < viewRectTop) {
+    container.scrollTop = top;
+  } else if (bottom > viewRectBottom) {
+    container.scrollTop = bottom - container.clientHeight;
+  }
 }
